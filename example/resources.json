@@ -1,0 +1,16 @@
+{
+	"files": [
+		{
+			"handle": "ice_cream_cone_tex",
+			"path": "graphic.jpg",
+			"inType": "jpg",
+			"outType": "RGB"
+		},
+		{
+			"handle": "ice_cream_cone_tex",
+			"path": "graphic.jpg",
+			"inType": "jpg",
+			"outType": "RGB"
+		}
+	]
+}
