@@ -1,6 +1,6 @@
 # Architecture detection
 ifeq ($(OS),Windows_NT)
-     ARCH = WIN32
+     OS_DET = WIN32
     ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
          ARCH = AMD64
     else
@@ -14,10 +14,10 @@ ifeq ($(OS),Windows_NT)
 else
     UNAME_S := $(shell uname -s)
     ifeq ($(UNAME_S),Linux)
-         ARCH = LINUX
+         OS_DET = LINUX
     endif
     ifeq ($(UNAME_S),Darwin)
-         ARCH = OSX
+         OS_DET = OSX
     endif
     UNAME_P := $(shell uname -p)
     ifeq ($(UNAME_P),x86_64)
@@ -38,87 +38,64 @@ EXAMPLE_INC_DIR = include
 DLL_NAME = ResourceFileUtility.dll
 EXAMPLE_EXE = $(EXAMPLE_BIN_DIR)/example.exe
 
-ifeq ($(ARCH),WIN32)
-	VERSION_NAME = win32_mingw
-	DLL_BIN = bin/$(VERSION_NAME)
-	GCC = g++
-	GCC_COMPILE_FLAGS = -O3 -Wall -c -fmessage-length=0
-	GCC_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared
-	GCC_SRC_DIR := src
-	GCC_OBJ_DIR := $(VERSION_NAME)/src
-	CSC = csc
-	CSC_FLAGS = /nologo /optimize /langversion:latest
-	DLL_DIR = $(DLL_BIN)/$(DLL_NAME)
-	MONO_LIB = C:\Program Files\Mono\lib
-	CORE_LIB = C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.0.6
-	# commands
-	OBJ_DIR_BACKSLASH = $(subst /,\\,$(GCC_OBJ_DIR))
-	DLL_BIN_BACKSLASH= $(subst /,\\,$(DLL_BIN))
-	DLL_DIR_BACKSLASH= $(subst /,\\,$(DLL_DIR))
-	EXAMPLE_EXE_BACKSLASH= $(subst /,\\,$(EXAMPLE_EXE))
-	OBJ_DIR_CMD = if not exist "$(OBJ_DIR_BACKSLASH)" mkdir $(OBJ_DIR_BACKSLASH)
-	DLL_DIR_CMD = if not exist "$(DLL_BIN_BACKSLASH)" mkdir $(DLL_BIN_BACKSLASH)
-	CPY_DLL_CMD = copy $(DLL_DIR_BACKSLASH) $(EXAMPLE_BIN_DIR) /Y
-	OBJ_DIR_DEL = del /F /Q $(OBJ_DIR_BACKSLASH)\*
-	DLL_DEL_CMD = if exist "$(DLL_DIR_BACKSLASH)" del /F /Q "$(DLL_DIR_BACKSLASH)"
-	EXE_DEL_CMD = if exist "$(EXAMPLE_EXE_BACKSLASH)" del /F /Q "$(EXAMPLE_EXE_BACKSLASH)"
+ifeq ($(OS_DET),WIN32)
+	ifeq ($(ARCH),IA32)
+		VERSION_NAME = win32_mingw$(UNAME_S)
+		DLL_BIN = bin/$(VERSION_NAME)
+		GCC = g++
+		GCC_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+		GCC_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared
+		GCC_SRC_DIR := src
+		GCC_OBJ_DIR := $(VERSION_NAME)/src
+		CSC = csc
+		CSC_FLAGS = /nologo /optimize /langversion:latest
+		DLL_DIR = $(DLL_BIN)/$(DLL_NAME)
+		MONO_LIB = C:\Program Files\Mono\lib
+		CORE_LIB = C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.0.6
+		# commands
+		OBJ_DIR_BACKSLASH = $(subst /,\\,$(GCC_OBJ_DIR))
+		DLL_BIN_BACKSLASH= $(subst /,\\,$(DLL_BIN))
+		DLL_DIR_BACKSLASH= $(subst /,\\,$(DLL_DIR))
+		EXAMPLE_EXE_BACKSLASH= $(subst /,\\,$(EXAMPLE_EXE))
+		OBJ_DIR_CMD = if not exist "$(OBJ_DIR_BACKSLASH)" mkdir $(OBJ_DIR_BACKSLASH)
+		DLL_DIR_CMD = if not exist "$(DLL_BIN_BACKSLASH)" mkdir $(DLL_BIN_BACKSLASH)
+		CPY_DLL_CMD = copy $(DLL_DIR_BACKSLASH) $(EXAMPLE_BIN_DIR) /Y
+		OBJ_DIR_DEL = del /F /Q $(OBJ_DIR_BACKSLASH)\*
+		DLL_DEL_CMD = if exist "$(DLL_DIR_BACKSLASH)" del /F /Q "$(DLL_DIR_BACKSLASH)"
+		EXE_DEL_CMD = if exist "$(EXAMPLE_EXE_BACKSLASH)" del /F /Q "$(EXAMPLE_EXE_BACKSLASH)"
+	endif
+	ifeq ($(ARCH),AMD64)
+		VERSION_NAME = win64_mingw
+		DLL_BIN = bin/$(VERSION_NAME)
+		GCC = g++
+		GCC_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+		GCC_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared
+		GCC_SRC_DIR := src
+		GCC_OBJ_DIR := $(VERSION_NAME)/src
+		CSC = csc
+		CSC_FLAGS = /nologo /optimize /langversion:latest
+		DLL_DIR = $(DLL_BIN)/$(DLL_NAME)
+		MONO_LIB = C:\Program Files\Mono\lib
+		CORE_LIB = C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.0.6
+		# commands
+		OBJ_DIR_BACKSLASH = $(subst /,\\,$(GCC_OBJ_DIR))
+		DLL_BIN_BACKSLASH= $(subst /,\\,$(DLL_BIN))
+		DLL_DIR_BACKSLASH= $(subst /,\\,$(DLL_DIR))
+		EXAMPLE_EXE_BACKSLASH= $(subst /,\\,$(EXAMPLE_EXE))
+		OBJ_DIR_CMD = if not exist "$(OBJ_DIR_BACKSLASH)" mkdir $(OBJ_DIR_BACKSLASH)
+		DLL_DIR_CMD = if not exist "$(DLL_BIN_BACKSLASH)" mkdir $(DLL_BIN_BACKSLASH)
+		CPY_DLL_CMD = copy $(DLL_DIR_BACKSLASH) $(EXAMPLE_BIN_DIR) /Y
+		OBJ_DIR_DEL = del /F /Q $(OBJ_DIR_BACKSLASH)\*
+		DLL_DEL_CMD = if exist "$(DLL_DIR_BACKSLASH)" del /F /Q "$(DLL_DIR_BACKSLASH)"
+		EXE_DEL_CMD = if exist "$(EXAMPLE_EXE_BACKSLASH)" del /F /Q "$(EXAMPLE_EXE_BACKSLASH)"
+	endif
 endif
-ifeq ($(ARCH),IA32)
-	VERSION_NAME = win32_mingw
-	DLL_BIN = bin/$(VERSION_NAME)
-	GCC = g++
-	GCC_COMPILE_FLAGS = -O0 -g3 -Wall -c -fmessage-length=0
-	GCC_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared
-	GCC_SRC_DIR := src
-	GCC_OBJ_DIR := $(VERSION_NAME)/src
-	CSC = csc
-	CSC_FLAGS = /nologo /optimize /langversion:latest
-	DLL_DIR = $(DLL_BIN)/$(DLL_NAME)
-	MONO_LIB = C:\Program Files\Mono\lib
-	CORE_LIB = C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.0.6
-	# commands
-	OBJ_DIR_BACKSLASH = $(subst /,\\,$(GCC_OBJ_DIR))
-	DLL_BIN_BACKSLASH= $(subst /,\\,$(DLL_BIN))
-	DLL_DIR_BACKSLASH= $(subst /,\\,$(DLL_DIR))
-	EXAMPLE_EXE_BACKSLASH= $(subst /,\\,$(EXAMPLE_EXE))
-	OBJ_DIR_CMD = if not exist "$(OBJ_DIR_BACKSLASH)" mkdir $(OBJ_DIR_BACKSLASH)
-	DLL_DIR_CMD = if not exist "$(DLL_BIN_BACKSLASH)" mkdir $(DLL_BIN_BACKSLASH)
-	CPY_DLL_CMD = copy $(DLL_DIR_BACKSLASH) $(EXAMPLE_BIN_DIR) /Y
-	OBJ_DIR_DEL = del /F /Q $(OBJ_DIR_BACKSLASH)\*
-	DLL_DEL_CMD = if exist "$(DLL_DIR_BACKSLASH)" del /F /Q "$(DLL_DIR_BACKSLASH)"
-	EXE_DEL_CMD = if exist "$(EXAMPLE_EXE_BACKSLASH)" del /F /Q "$(EXAMPLE_EXE_BACKSLASH)"
-endif
-ifeq ($(ARCH),AMD64)
-	VERSION_NAME = win64_mingw
-	DLL_BIN = bin/$(VERSION_NAME)
-	GCC = g++
-	GCC_COMPILE_FLAGS = -O0 -g3 -Wall -c -fmessage-length=0
-	GCC_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared
-	GCC_SRC_DIR := src
-	GCC_OBJ_DIR := $(VERSION_NAME)/src
-	CSC = csc
-	CSC_FLAGS = /nologo /optimize /langversion:latest
-	DLL_DIR = $(DLL_BIN)/$(DLL_NAME)
-	MONO_LIB = C:\Program Files\Mono\lib
-	CORE_LIB = C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.0.6
-	# commands
-	OBJ_DIR_BACKSLASH = $(subst /,\\,$(GCC_OBJ_DIR))
-	DLL_BIN_BACKSLASH= $(subst /,\\,$(DLL_BIN))
-	DLL_DIR_BACKSLASH= $(subst /,\\,$(DLL_DIR))
-	EXAMPLE_EXE_BACKSLASH= $(subst /,\\,$(EXAMPLE_EXE))
-	OBJ_DIR_CMD = if not exist "$(OBJ_DIR_BACKSLASH)" mkdir $(OBJ_DIR_BACKSLASH)
-	DLL_DIR_CMD = if not exist "$(DLL_BIN_BACKSLASH)" mkdir $(DLL_BIN_BACKSLASH)
-	CPY_DLL_CMD = copy $(DLL_DIR_BACKSLASH) $(EXAMPLE_BIN_DIR) /Y
-	OBJ_DIR_DEL = del /F /Q $(OBJ_DIR_BACKSLASH)\*
-	DLL_DEL_CMD = if exist "$(DLL_DIR_BACKSLASH)" del /F /Q "$(DLL_DIR_BACKSLASH)"
-	EXE_DEL_CMD = if exist "$(EXAMPLE_EXE_BACKSLASH)" del /F /Q "$(EXAMPLE_EXE_BACKSLASH)"
-endif
-ifeq ($(ARCH),Darwin)
+ifeq ($(OS_DET),OSX)
 	VERSION_NAME = apple
 	DLL_BIN = bin/$(VERSION_NAME)
 	GCC = g++
-	GCC_COMPILE_FLAGS = -O0 -g3 -Wall -c -fmessage-length=0
-	GCC_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared
+	GCC_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+	GCC_LINK_FLAGS = -std=gnu++11 -pthread -lm -mmacosx-version-min=10.9 -static -shared
 	GCC_SRC_DIR := src
 	GCC_OBJ_DIR := $(VERSION_NAME)/src
 	CSC = csc
@@ -130,7 +107,28 @@ ifeq ($(ARCH),Darwin)
 	OBJ_DIR_CMD = mkdir -p $(GCC_OBJ_DIR)
 	DLL_DIR_CMD = mkdir -p $(DLL_BIN)
 	CPY_DLL_CMD = yes | cp -rf $(DLL_DIR) $(EXAMPLE_BIN_DIR)
-	OBJ_DIR_DEL = yes | rm $(GCC_OBJ_DIR)/*
+	OBJ_DIR_DEL = yes | rm -f $(GCC_OBJ_DIR)/*
+	DLL_DEL_CMD = yes | rm -f "$(DLL_DIR)"
+	EXE_DEL_CMD = yes | rm -f "$(EXAMPLE_EXE)"
+endif
+ifeq ($(OS_DET),LINUX)
+	VERSION_NAME = linux
+	DLL_BIN = bin/$(VERSION_NAME)
+	GCC = g++
+	GCC_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+	GCC_LINK_FLAGS = -std=gnu++11 -static -shared
+	GCC_SRC_DIR := src
+	GCC_OBJ_DIR := $(VERSION_NAME)/src
+	CSC = csc
+	CSC_FLAGS = /nologo /optimize /langversion:latest
+	DLL_DIR = $(DLL_BIN)/$(DLL_NAME)
+	MONO_LIB = 
+	CORE_LIB = 
+	# commands
+	OBJ_DIR_CMD = mkdir -p $(GCC_OBJ_DIR)
+	DLL_DIR_CMD = mkdir -p $(DLL_BIN)
+	CPY_DLL_CMD = yes | cp -rf $(DLL_DIR) $(EXAMPLE_BIN_DIR)
+	OBJ_DIR_DEL = yes | rm -f $(GCC_OBJ_DIR)/*
 	DLL_DEL_CMD = yes | rm "$(DLL_DIR)"
 	EXE_DEL_CMD = yes | rm "$(EXAMPLE_EXE)"
 endif
