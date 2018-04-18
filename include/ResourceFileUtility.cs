@@ -2,64 +2,67 @@ namespace ResourceFileUtility {
     using System.Runtime.InteropServices;
     using System;
 
+    public abstract class CallbackHandler {
+        public abstract void fileComplete(string filePath);
+        public abstract void packComplete();
+    }
+
     class Loader {
         [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
-        static extern int math_add(int a, int b);
-        [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
-        static extern int math_add2(int a, int b);
-        [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
-        static extern void coutTest();
-        [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
-        static extern IntPtr compile_new();
-        [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
-        static extern void objSet(IntPtr ptr, int testint);
-        [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
-        static extern int objGet(IntPtr ptr);
-        [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
-        static extern void compile_info(IntPtr ptr, String fileName);
+        static extern IntPtr loader_new();
+
+        private IntPtr thisPtr;
+
+        public Loader() {
+            thisPtr = loader_new();
+        }
+        public IntPtr ptr() {
+            return thisPtr;
+        }
     }
 
     public class Compiler {
         [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
-        static extern int math_add(int a, int b);
+        static extern IntPtr compiler_new();
         [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
-        static extern int math_add2(int a, int b);
+        static extern void compiler_info(IntPtr ptr, string fileName);
         [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
-        static extern void coutTest();
-        [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
-        static extern IntPtr compile_new();
-        [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
-        static extern void objSet(IntPtr ptr, int testint);
-        [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
-        static extern int objGet(IntPtr ptr);
-        [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
-        static extern void compile_info(IntPtr ptr, string fileName);
+        static extern void compiler_pack(IntPtr ptr, string fileName);
 
-        private IntPtr objPtr;
+
+
+        private IntPtr thisPtr;
 
         public Compiler() {
-            objPtr = compile_new();
+            thisPtr = compiler_new();
         }
         public IntPtr ptr() {
-            return objPtr;
+            return thisPtr;
         }
-        public void info(IntPtr ptr, string fileName) {
-            compile_info(ptr, fileName);
+        public void info(string fileName) {
+            compiler_info(thisPtr, fileName);
         }
+        public void pack(string fileName) {
+            compiler_pack(thisPtr, fileName);
+        }
+        public void pack(string fileName, CallbackHandler cb) {
+            // how do you handle the callback?
+            compiler_pack(thisPtr, fileName);
+        }
+
     }
 
     class Stream {
         [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
-        static extern int math_add(int a, int b);
-        [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
-        static extern int math_add2(int a, int b);
-        [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
-        static extern void coutTest();
-        [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
-        static extern IntPtr objNew();
-        [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
-        static extern void objSet(IntPtr ptr, int testint);
-        [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
-        static extern int objGet(IntPtr ptr);
+        static extern IntPtr stream_new();
+
+        private IntPtr thisPtr;
+
+        public Stream() {
+            thisPtr = stream_new();
+        }
+        public IntPtr ptr() {
+            return thisPtr;
+        }
     }
 }

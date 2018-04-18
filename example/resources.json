@@ -1,4 +1,8 @@
 {
+	"options": {
+		"directorySize": 256,
+		"tryToUpdate": true
+	},
 	"files": [
 		{
 			"handle": "cone",

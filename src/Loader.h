@@ -1,20 +1,18 @@
-#ifndef COMPILER_H
-#define COMPILER_H
+#ifndef LOADER_H
+#define LOADER_H
 
 #include <iostream>
 #include <string>
 #include <fstream>
-#include "../contrib/json.hpp"
 
 namespace ResourceFileUtility {
 
-class Compiler {
+class Loader {
 public:
 	int test;
-	Compiler();
-	~Compiler();
+	Loader();
+	~Loader();
 	void info(std::string fileName);
-	void pack(std::string fileName);
 };
 
 }

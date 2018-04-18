@@ -1,6 +1,6 @@
-src/compiler.o: ../src/compiler.cpp ../src/compiler.h \
+src/Compiler.o: ../src/Compiler.cpp ../src/Compiler.h \
  ../src/../contrib/json.hpp
 
-../src/compiler.h:
+../src/Compiler.h:
 
 ../src/../contrib/json.hpp:
