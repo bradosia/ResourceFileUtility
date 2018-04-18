@@ -1,6 +1,7 @@
-#include "math.hpp"
-#include "change.h"
 #include <iostream>
+
+#include "compiler.h"
+#include "export.hpp"
 
 using namespace std;
 
@@ -13,22 +14,24 @@ int __stdcall math_add2(int a, int b) {
 }
 
 void __stdcall coutTest() {
-	test();
+	cout << "hey" << endl;
 }
 
-intptr_t __stdcall objNew() {
-	intptr_t test = (intptr_t) new myObj;
-	cout << test << endl;
-	return test;
+intptr_t __stdcall compile_new() {
+	return (intptr_t) new ResourceFileUtility::Compiler;
 }
 
 void __stdcall objSet(intptr_t ptr, int testint) {
-	myObj* objPtr = (myObj*)ptr;
-	objPtr->temp = testint+2;
+	ResourceFileUtility::Compiler* objPtr = (ResourceFileUtility::Compiler*)ptr;
+	objPtr->test = testint+2;
 }
 
 int __stdcall objGet(intptr_t ptr) {
-	myObj* objPtr = (myObj*)ptr;
-	return objPtr->temp;
+	ResourceFileUtility::Compiler* objPtr = (ResourceFileUtility::Compiler*)ptr;
+	return objPtr->test;
 }
 
+void __stdcall compile_info(intptr_t ptr, char* fileName) {
+	ResourceFileUtility::Compiler* objPtr = (ResourceFileUtility::Compiler*)ptr;
+	return objPtr->info(std::string(fileName));
+}
