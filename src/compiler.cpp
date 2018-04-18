@@ -87,6 +87,7 @@ void Compiler::pack(std::string fileName) {
 	std::cout << "Opening \"" << fileName << "\" as the resource output file."
 			<< std::endl;
 	std::fstream fileOut;
+	fileOut.open(fileName, std::fstream::out);
 	if (fileOut.is_open()) {
 		std::cout << "Opened \"" << fileName
 				<< "\" as the resource output file." << std::endl;
