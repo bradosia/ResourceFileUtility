@@ -8,3 +8,4 @@ git pull origin master
 
 make
 mono example/example.exe
+mono --debug example/example.exe
