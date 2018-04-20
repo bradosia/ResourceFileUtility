@@ -100,7 +100,7 @@ ifeq ($(OS_DET),OSX)
 	GCC_SRC_DIR := src
 	GCC_OBJ_DIR := $(VERSION_NAME)/src
 	CSC = csc
-	CSC_FLAGS = /nologo /optimize /langversion:latest /appconfig:/example/src/ResourceFileUtility.config
+	CSC_FLAGS = /nologo /optimize /langversion:latest /appconfig:example/src/ResourceFileUtility.config
 	DLL_DIR = $(DLL_BIN)/$(DLL_NAME)
 	MONO_LIB = 
 	CORE_LIB = 
