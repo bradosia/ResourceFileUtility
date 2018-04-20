@@ -19,7 +19,7 @@
 #define IDAMAN EXTERNC __declspec(dllexport)
 #define IDA_EXPORT __stdcall
 #elif defined __APPLE__ || defined(__MAC__)
-#define IDAMAN EXTERNC
+#define IDAMAN __attribute__((visibility("default")))
 #define IDA_EXPORT __cdecl
 #endif
 
