@@ -6,4 +6,5 @@ cd ResourceFileUtility
 git reset --hard
 git pull origin master
 
+make
 mono example/example.exe

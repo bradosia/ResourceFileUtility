@@ -20,7 +20,7 @@
 #define IDA_EXPORT __stdcall
 #elif defined __APPLE__ || defined(__MAC__)
 #define IDAMAN EXTERNC
-#define IDA_EXPORT __stdcall
+#define IDA_EXPORT __cdecl
 #endif
 
 #include "Loader.h"
