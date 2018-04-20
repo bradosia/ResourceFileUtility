@@ -43,7 +43,7 @@ ifeq ($(OS_DET),WIN32)
 		VERSION_NAME = win32_mingw$(UNAME_S)
 		DLL_BIN = bin/$(VERSION_NAME)
 		GCC = g++
-		GCC_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+		GCC_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -fvisibility=hidden -c -fmessage-length=0
 		GCC_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared
 		GCC_SRC_DIR := src
 		GCC_OBJ_DIR := $(VERSION_NAME)/src
