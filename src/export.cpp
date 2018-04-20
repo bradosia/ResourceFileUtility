@@ -12,36 +12,15 @@
 #define EXTERNC
 #endif
 
+#if defined __linux__ || defined __CYGWIN__
 #define IDAMAN
-#define IDA_EXPORT 
-
-#if defined(__NT__)                   // MS Windows
-#define IDAAPI __stdcall
-#define IDA_EXPORT IDAAPI
-#if defined(__IDP__)                  // modules
-#define IDAMAN EXTERNC
-#else                                 // kernel
-#if defined(__X64__) || defined(__NOEXPORT__)
-#define IDAMAN EXTERNC
-#else
+#define IDA_EXPORT
+#elif defined _WIN32
 #define IDAMAN EXTERNC __declspec(dllexport)
-#endif
-#endif
-#define IDA_LOCAL
-#elif defined(__UNIX__)                 // for unix
-#define IDAAPI
-#if defined(__MAC__)
-#define IDAMAN EXTERNC
-#define IDA_LOCAL
-#else  // Linux
-#if __GNUC__ >= 4
-#define IDAMAN EXTERNC
-#define IDA_LOCAL
-#else
-#define IDAMAN EXTERNC
-#define IDA_LOCAL
-#endif
-#endif
+#define IDA_EXPORT __stdcall
+#elif defined __APPLE__ || defined(__MAC__)
+#define IDAMAN
+#define IDA_EXPORT
 #endif
 
 #include "Loader.h"
