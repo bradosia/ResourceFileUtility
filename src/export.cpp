@@ -19,8 +19,8 @@
 #define IDAMAN EXTERNC __declspec(dllexport)
 #define IDA_EXPORT __stdcall
 #elif defined __APPLE__ || defined(__MAC__)
-#define IDAMAN EXTERNC __declspec(dllexport)
-#define IDA_EXPORT __stdcall
+#define IDAMAN EXTERNC
+#define IDA_EXPORT
 #endif
 
 #include "Loader.h"
