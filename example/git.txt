@@ -1,8 +1,9 @@
 # using git on darwin
-cd ResourceFileUtility
+# creates directory automatically 
 git clone https://github.com/bradosia/ResourceFileUtility
 
 cd ResourceFileUtility
 git reset --hard
 git pull origin master
 
+mono example/example.exe
