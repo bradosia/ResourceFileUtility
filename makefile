@@ -43,7 +43,7 @@ ifeq ($(OS_DET),WIN32)
 		VERSION_NAME = win32_mingw$(UNAME_S)
 		DLL_BIN = bin/$(VERSION_NAME)
 		GCC = g++
-		GCC_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -fvisibility=hidden -c -fmessage-length=0
+		GCC_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
 		GCC_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared
 		GCC_SRC_DIR := src
 		GCC_OBJ_DIR := $(VERSION_NAME)/src
@@ -95,7 +95,7 @@ ifeq ($(OS_DET),OSX)
 	VERSION_NAME = apple
 	DLL_BIN = bin/$(VERSION_NAME)
 	GCC = g++
-	GCC_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 -mmacosx-version-min=10.9
+	GCC_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -fvisibility=hidden -c -fmessage-length=0 -mmacosx-version-min=10.9
 	GCC_LINK_FLAGS = -dynamiclib -std=gnu++11 -current_version 1.0 -compatibility_version 1.0 -fvisibility=hidden -mmacosx-version-min=10.9
 	GCC_SRC_DIR := src
 	GCC_OBJ_DIR := $(VERSION_NAME)/src
