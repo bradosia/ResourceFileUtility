@@ -95,8 +95,8 @@ ifeq ($(OS_DET),OSX)
 	VERSION_NAME = apple
 	DLL_BIN = bin/$(VERSION_NAME)
 	GCC = g++
-	GCC_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -fpic -c -fmessage-length=0 -mmacosx-version-min=10.9
-	GCC_LINK_FLAGS = -std=gnu++11 -fpic -lm -mmacosx-version-min=10.9 -static -dynamiclib
+	GCC_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -fpic -arch x86_64 -c -fmessage-length=0 -mmacosx-version-min=10.9
+	GCC_LINK_FLAGS = -std=gnu++11 -fpic -arch x86_64 -lm -mmacosx-version-min=10.9 -static -dynamiclib
 	GCC_SRC_DIR := src
 	GCC_OBJ_DIR := $(VERSION_NAME)/src
 	CSC = csc
