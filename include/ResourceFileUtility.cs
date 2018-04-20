@@ -22,7 +22,7 @@ namespace ResourceFileUtility {
     }
 
     public class Compiler {
-        [DllImport("ResourceFileUtility.so", CallingConvention = CallingConvention.StdCall)]
+        [DllImport("ResourceFileUtility.dylib", CallingConvention = CallingConvention.StdCall)]
         static extern IntPtr compiler_new();
         /*[DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
         static extern IntPtr compiler_new();*/
