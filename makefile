@@ -35,10 +35,10 @@ EXAMPLE_BIN_DIR = example
 EXAMPLE_LIB_DIR = example
 EXAMPLE_SRC_DIR = example/src
 EXAMPLE_INC_DIR = include
-DLL_NAME = ResourceFileUtility.dll
 EXAMPLE_EXE = $(EXAMPLE_BIN_DIR)/example.exe
 
 ifeq ($(OS_DET),WIN32)
+	DLL_NAME = ResourceFileUtility.dll
 	ifeq ($(ARCH),IA32)
 		VERSION_NAME = win32_mingw$(UNAME_S)
 		DLL_BIN = bin/$(VERSION_NAME)
@@ -91,11 +91,12 @@ ifeq ($(OS_DET),WIN32)
 	endif
 endif
 ifeq ($(OS_DET),OSX)
+	DLL_NAME = ResourceFileUtility.so
 	VERSION_NAME = apple
 	DLL_BIN = bin/$(VERSION_NAME)
 	GCC = g++
 	GCC_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -fpic -c -fmessage-length=0 -mmacosx-version-min=10.9
-	GCC_LINK_FLAGS = -std=gnu++11 -fpic -Wl -dynamiclib -lm -mmacosx-version-min=10.9 -static -shared
+	GCC_LINK_FLAGS = -std=gnu++11 -fpic -Wl,-soname,$(DLL_NAME) -dynamiclib -lm -mmacosx-version-min=10.9 -static -shared
 	GCC_SRC_DIR := src
 	GCC_OBJ_DIR := $(VERSION_NAME)/src
 	CSC = csc
@@ -112,6 +113,7 @@ ifeq ($(OS_DET),OSX)
 	EXE_DEL_CMD = yes | rm -f "$(EXAMPLE_EXE)"
 endif
 ifeq ($(OS_DET),LINUX)
+	DLL_NAME = ResourceFileUtility.so
 	VERSION_NAME = linux
 	DLL_BIN = bin/$(VERSION_NAME)
 	GCC = g++
