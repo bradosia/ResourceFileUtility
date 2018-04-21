@@ -13,3 +13,7 @@ mono --debug example/example_csharp.exe
 mono example/example_cpp.exe
 
 example/example_csharp
+
+
+git commit -m "fixed"
+git push
