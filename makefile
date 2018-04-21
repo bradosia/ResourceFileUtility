@@ -162,7 +162,7 @@ ifeq ($(OS_DET),OSX)
 	BUNDLE_CMD = mkbundle -o $(PROGRAM_CSHARP_BUNDLE) --simple $(PROGRAM_CSHARP_EXE) --library $(SHARED_CPP_PATH)
 	# program c++
 	PROGRAM_CPP_COMPILE = -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-	PROGRAM_CPP_LINK = -static -L"$(LIBRARY_PLATFORM_DIR)"
+	PROGRAM_CPP_LINK = -static -L"$(LIBRARY_PLATFORM_DIR)" -mmacosx-version-min=10.9
 	PROGRAM_CPP_LIBS = -lResourceFileUtility
 	# commands
 	LIBRARY_OBJ_DIR_CMD = mkdir -p $(LIBRARY_OBJ_DIR)
