@@ -66,6 +66,7 @@ ifeq ($(OS_DET),WIN32)
 		OBJ_DIR_DEL = del /F /Q $(OBJ_DIR_BACKSLASH)\*
 		DLL_DEL_CMD = if exist "$(DLL_DIR_BACKSLASH)" del /F /Q "$(DLL_DIR_BACKSLASH)"
 		EXE_DEL_CMD = if exist "$(EXAMPLE_EXE_BACKSLASH)" del /F /Q "$(EXAMPLE_EXE_BACKSLASH)"
+		EXE_DEL_POST_CMD = 
 		BUNDLE_DEL_CMD = if exist "$(EXAMPLE_BUNDLE_BACKSLASH)" del /F /Q "$(EXAMPLE_BUNDLE_BACKSLASH)"
 	endif
 	ifeq ($(ARCH),AMD64)
@@ -94,6 +95,7 @@ ifeq ($(OS_DET),WIN32)
 		OBJ_DIR_DEL = del /F /Q $(OBJ_DIR_BACKSLASH)\*
 		DLL_DEL_CMD = if exist "$(DLL_DIR_BACKSLASH)" del /F /Q "$(DLL_DIR_BACKSLASH)"
 		EXE_DEL_CMD = if exist "$(EXAMPLE_EXE_BACKSLASH)" del /F /Q "$(EXAMPLE_EXE_BACKSLASH)"
+		EXE_DEL_POST_CMD = 
 		BUNDLE_DEL_CMD = if exist "$(EXAMPLE_BUNDLE_BACKSLASH)" del /F /Q "$(EXAMPLE_BUNDLE_BACKSLASH)"
 	endif
 endif
@@ -115,14 +117,16 @@ ifeq ($(OS_DET),OSX)
 	# commands
 	OBJ_DIR_CMD = mkdir -p $(GCC_OBJ_DIR)
 	DLL_DIR_CMD = mkdir -p $(DLL_BIN)
-	CPY_DLL_CMD = yes | cp -rf $(DLL_DIR) $(EXAMPLE_BIN_DIR)
+	CPY_DLL_CMD_UNUSED = yes | cp -rf $(DLL_DIR) $(EXAMPLE_BIN_DIR)
+	CPY_DLL_CMD = 
 	OBJ_DIR_DEL = yes | rm -f $(GCC_OBJ_DIR)/*
 	DLL_DEL_CMD = yes | rm -f "$(DLL_DIR)"
 	EXE_DEL_CMD = yes | rm -f "$(EXAMPLE_EXE)"
+	EXE_DEL_POST_CMD = $(EXE_DEL_CMD)
 	BUNDLE_DEL_CMD = yes | rm -f "$(EXAMPLE_BUNDLE)"
 endif
 ifeq ($(OS_DET),LINUX)
-	DLL_NAME = ResourceFileUtility.so
+	DLL_NAME = libResourceFileUtility.so
 	VERSION_NAME = linux
 	DLL_BIN = bin/$(VERSION_NAME)
 	GCC = g++
@@ -139,10 +143,12 @@ ifeq ($(OS_DET),LINUX)
 	# commands
 	OBJ_DIR_CMD = mkdir -p $(GCC_OBJ_DIR)
 	DLL_DIR_CMD = mkdir -p $(DLL_BIN)
-	CPY_DLL_CMD = yes | cp -rf $(DLL_DIR) $(EXAMPLE_BIN_DIR)
+	CPY_DLL_CMD_UNUSED = yes | cp -rf $(DLL_DIR) $(EXAMPLE_BIN_DIR)
+	CPY_DLL_CMD = 
 	OBJ_DIR_DEL = yes | rm -f $(GCC_OBJ_DIR)/*
 	DLL_DEL_CMD = yes | rm "$(DLL_DIR)"
 	EXE_DEL_CMD = yes | rm "$(EXAMPLE_EXE)"
+	EXE_DEL_POST_CMD = $(EXE_DEL_CMD)
 	BUNDLE_DEL_CMD = yes | rm -f "$(EXAMPLE_BUNDLE)"
 endif
 
@@ -158,6 +164,7 @@ $(EXAMPLE_EXE):
 	$(CSC) $(CSC_FLAGS) /out:$@ /t:exe -lib:$(EXAMPLE_LIB_DIR) $(EXAMPLE_INC_DIR)/$(EXTRA_SRC) $(EXAMPLE_SRC_DIR)/*.cs
 	$(CPY_DLL_CMD)
 	$(BUNDLE_CMD)
+	$(EXE_DEL_POST_CMD)
 	
 $(DLL_DIR): $(GCC_OBJ_FILES)
 	$(GCC) $(GCC_LINK_FLAGS) -o $@ $^
