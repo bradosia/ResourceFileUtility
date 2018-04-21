@@ -98,7 +98,7 @@ ifeq ($(OS_DET),WIN32)
 	endif
 endif
 ifeq ($(OS_DET),OSX)
-	DLL_NAME = ResourceFileUtility.dll
+	DLL_NAME = ResourceFileUtility.dylib
 	VERSION_NAME = apple
 	DLL_BIN = bin/$(VERSION_NAME)
 	GCC = g++
