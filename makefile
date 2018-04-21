@@ -107,9 +107,9 @@ ifeq ($(OS_DET),OSX)
 	GCC_SRC_DIR := src
 	GCC_OBJ_DIR := $(VERSION_NAME)/src
 	CSC = csc
-	CSC_FLAGS = /nologo /optimize /langversion:latest /appconfig:example/src/ResourceFileUtility.config /lib:example/src
+	CSC_FLAGS = /nologo /optimize /langversion:latest /lib:example/src
 	DLL_DIR = $(DLL_BIN)/$(DLL_NAME)
-	BUNDLE_CMD = mkbundle -o $(EXAMPLE_BUNDLE) --simple $(EXAMPLE_EXE) --library $(DLL_DIR) --config example/src/ResourceFileUtility.config
+	BUNDLE_CMD = mkbundle -o $(EXAMPLE_BUNDLE) --simple $(EXAMPLE_EXE) --library $(DLL_DIR)
 	MONO_LIB = 
 	CORE_LIB = 
 	# commands
