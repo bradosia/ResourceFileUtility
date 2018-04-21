@@ -22,7 +22,7 @@ namespace ResourceFileUtility {
     }
 
     public class Compiler {
-        [DllImport("@executable_path/../ResourceFileUtility.dylib", CallingConvention = CallingConvention.StdCall)]
+        [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
         static extern IntPtr compiler_new();
         [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
         static extern void compiler_info(IntPtr ptr, string fileName);

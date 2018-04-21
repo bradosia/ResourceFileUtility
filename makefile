@@ -91,7 +91,7 @@ ifeq ($(OS_DET),WIN32)
 	endif
 endif
 ifeq ($(OS_DET),OSX)
-	DLL_NAME = ResourceFileUtility.dylib
+	DLL_NAME = ResourceFileUtility.dll
 	VERSION_NAME = apple
 	DLL_BIN = bin/$(VERSION_NAME)
 	GCC = g++
@@ -102,6 +102,8 @@ ifeq ($(OS_DET),OSX)
 	CSC = csc
 	CSC_FLAGS = /nologo /optimize /langversion:latest /appconfig:example/src/ResourceFileUtility.config /lib:example/src
 	DLL_DIR = $(DLL_BIN)/$(DLL_NAME)
+	BUNDLE_CMD = mkbundle -o example --library $(DLL_DIR) --config example/src/ResourceFileUtility.config
+	mkbundle -o example/example --simple example/example.exe --library example/ResourceFileUtility.dll --config example/src/ResourceFileUtility.config
 	MONO_LIB = 
 	CORE_LIB = 
 	# commands
