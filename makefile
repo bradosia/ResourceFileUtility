@@ -146,8 +146,8 @@ ifeq ($(OS_DET),LINUX)
 	CPY_DLL_CMD_UNUSED = yes | cp -rf $(DLL_DIR) $(EXAMPLE_BIN_DIR)
 	CPY_DLL_CMD = 
 	OBJ_DIR_DEL = yes | rm -f $(GCC_OBJ_DIR)/*
-	DLL_DEL_CMD = yes | rm "$(DLL_DIR)"
-	EXE_DEL_CMD = yes | rm "$(EXAMPLE_EXE)"
+	DLL_DEL_CMD = yes | rm -f "$(DLL_DIR)"
+	EXE_DEL_CMD = yes | rm -f "$(EXAMPLE_EXE)"
 	EXE_DEL_POST_CMD = $(EXE_DEL_CMD)
 	BUNDLE_DEL_CMD = yes | rm -f "$(EXAMPLE_BUNDLE)"
 endif
