@@ -36,6 +36,7 @@ EXAMPLE_LIB_DIR = example
 EXAMPLE_SRC_DIR = example/src
 EXAMPLE_INC_DIR = include
 EXAMPLE_EXE = $(EXAMPLE_BIN_DIR)/example.exe
+EXAMPLE_BUNDLE = $(EXAMPLE_BIN_DIR)/example
 
 ifeq ($(OS_DET),WIN32)
 	DLL_NAME = ResourceFileUtility.dll
@@ -58,12 +59,14 @@ ifeq ($(OS_DET),WIN32)
 		DLL_BIN_BACKSLASH= $(subst /,\\,$(DLL_BIN))
 		DLL_DIR_BACKSLASH= $(subst /,\\,$(DLL_DIR))
 		EXAMPLE_EXE_BACKSLASH= $(subst /,\\,$(EXAMPLE_EXE))
+		EXAMPLE_BUNDLE_BACKSLASH= $(subst /,\\,$(EXAMPLE_BUNDLE))
 		OBJ_DIR_CMD = if not exist "$(OBJ_DIR_BACKSLASH)" mkdir $(OBJ_DIR_BACKSLASH)
 		DLL_DIR_CMD = if not exist "$(DLL_BIN_BACKSLASH)" mkdir $(DLL_BIN_BACKSLASH)
 		CPY_DLL_CMD = copy $(DLL_DIR_BACKSLASH) $(EXAMPLE_BIN_DIR) /Y
 		OBJ_DIR_DEL = del /F /Q $(OBJ_DIR_BACKSLASH)\*
 		DLL_DEL_CMD = if exist "$(DLL_DIR_BACKSLASH)" del /F /Q "$(DLL_DIR_BACKSLASH)"
 		EXE_DEL_CMD = if exist "$(EXAMPLE_EXE_BACKSLASH)" del /F /Q "$(EXAMPLE_EXE_BACKSLASH)"
+		BUNDLE_DEL_CMD = if exist "$(EXAMPLE_BUNDLE_BACKSLASH)" del /F /Q "$(EXAMPLE_BUNDLE_BACKSLASH)"
 	endif
 	ifeq ($(ARCH),AMD64)
 		VERSION_NAME = win64_mingw
@@ -84,12 +87,14 @@ ifeq ($(OS_DET),WIN32)
 		DLL_BIN_BACKSLASH= $(subst /,\\,$(DLL_BIN))
 		DLL_DIR_BACKSLASH= $(subst /,\\,$(DLL_DIR))
 		EXAMPLE_EXE_BACKSLASH= $(subst /,\\,$(EXAMPLE_EXE))
+		EXAMPLE_BUNDLE_BACKSLASH= $(subst /,\\,$(EXAMPLE_BUNDLE))
 		OBJ_DIR_CMD = if not exist "$(OBJ_DIR_BACKSLASH)" mkdir $(OBJ_DIR_BACKSLASH)
 		DLL_DIR_CMD = if not exist "$(DLL_BIN_BACKSLASH)" mkdir $(DLL_BIN_BACKSLASH)
 		CPY_DLL_CMD = copy $(DLL_DIR_BACKSLASH) $(EXAMPLE_BIN_DIR) /Y
 		OBJ_DIR_DEL = del /F /Q $(OBJ_DIR_BACKSLASH)\*
 		DLL_DEL_CMD = if exist "$(DLL_DIR_BACKSLASH)" del /F /Q "$(DLL_DIR_BACKSLASH)"
 		EXE_DEL_CMD = if exist "$(EXAMPLE_EXE_BACKSLASH)" del /F /Q "$(EXAMPLE_EXE_BACKSLASH)"
+		BUNDLE_DEL_CMD = if exist "$(EXAMPLE_BUNDLE_BACKSLASH)" del /F /Q "$(EXAMPLE_BUNDLE_BACKSLASH)"
 	endif
 endif
 ifeq ($(OS_DET),OSX)
@@ -104,7 +109,7 @@ ifeq ($(OS_DET),OSX)
 	CSC = csc
 	CSC_FLAGS = /nologo /optimize /langversion:latest /appconfig:example/src/ResourceFileUtility.config /lib:example/src
 	DLL_DIR = $(DLL_BIN)/$(DLL_NAME)
-	BUNDLE_CMD = mkbundle -o example --simple $(EXAMPLE_EXE) --library $(DLL_DIR) --config example/src/ResourceFileUtility.config
+	BUNDLE_CMD = mkbundle -o $(EXAMPLE_BUNDLE) --simple $(EXAMPLE_EXE) --library $(DLL_DIR) --config example/src/ResourceFileUtility.config
 	MONO_LIB = 
 	CORE_LIB = 
 	# commands
@@ -114,6 +119,7 @@ ifeq ($(OS_DET),OSX)
 	OBJ_DIR_DEL = yes | rm -f $(GCC_OBJ_DIR)/*
 	DLL_DEL_CMD = yes | rm -f "$(DLL_DIR)"
 	EXE_DEL_CMD = yes | rm -f "$(EXAMPLE_EXE)"
+	BUNDLE_DEL_CMD = yes | rm -f "$(EXAMPLE_BUNDLE)"
 endif
 ifeq ($(OS_DET),LINUX)
 	DLL_NAME = ResourceFileUtility.so
@@ -137,6 +143,7 @@ ifeq ($(OS_DET),LINUX)
 	OBJ_DIR_DEL = yes | rm -f $(GCC_OBJ_DIR)/*
 	DLL_DEL_CMD = yes | rm "$(DLL_DIR)"
 	EXE_DEL_CMD = yes | rm "$(EXAMPLE_EXE)"
+	BUNDLE_DEL_CMD = yes | rm -f "$(EXAMPLE_BUNDLE)"
 endif
 
 GCC_SRC_FILES := $(wildcard $(GCC_SRC_DIR)/*.cpp)
@@ -164,8 +171,10 @@ directories:
 	$(OBJ_DIR_DEL)
 	$(DLL_DEL_CMD)
 	$(EXE_DEL_CMD)
+	$(BUNDLE_DEL_CMD)
 
 clean:
 	$(OBJ_DIR_DEL)
 	$(DLL_DEL_CMD)
 	$(EXE_DEL_CMD)
+	$(BUNDLE_DEL_CMD)
