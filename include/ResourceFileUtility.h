@@ -36,6 +36,14 @@ public:
 	~Stream();
 };
 
+class CallbackHandler {
+public:
+	CallbackHandler();
+	virtual ~CallbackHandler();
+	virtual void fileComplete(std::string filePath);
+	virtual void packComplete();
+};
+
 }
 
 #endif

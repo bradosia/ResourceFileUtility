@@ -31,157 +31,247 @@ else
     endif
 endif
 
-EXAMPLE_BIN_DIR = example
-EXAMPLE_LIB_DIR = example
-EXAMPLE_SRC_DIR = example/src
-EXAMPLE_INC_DIR = include
-EXAMPLE_EXE = $(EXAMPLE_BIN_DIR)/example.exe
-EXAMPLE_BUNDLE = $(EXAMPLE_BIN_DIR)/example
+PROGRAM_BIN_DIR = example
+PROGRAM_SHARED_LIB_DIR = example
+PROGRAM_OBJ_DIR = example/obj
+PROGRAM_SRC_DIR = example/src
+PROGRAM_INC_DIR = include
+LIBRARY_DIR = bin
+PROGRAM_CSHARP_EXE = $(PROGRAM_BIN_DIR)/example_csharp.exe
+PROGRAM_CSHARP_BUNDLE = $(PROGRAM_BIN_DIR)/example_csharp
+PROGRAM_CPP_EXE = $(PROGRAM_BIN_DIR)/example_cpp.exe
 
 ifeq ($(OS_DET),WIN32)
-	DLL_NAME = ResourceFileUtility.dll
+	SHARED_CPP_NAME = ResourceFileUtility.dll
+	STATIC_CPP_NAME = libResourceFileUtility.a
 	ifeq ($(ARCH),IA32)
-		VERSION_NAME = win32_mingw$(UNAME_S)
-		DLL_BIN = bin/$(VERSION_NAME)
+		# paths
+		VERSION_NAME = win32_mingw
+		LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
+		SHARED_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(SHARED_CPP_NAME)
+		STATIC_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(STATIC_CPP_NAME)
+		LIBRARY_SRC_DIR = src
+		LIBRARY_TEMP_DIR = $(VERSION_NAME)
+		LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
+		# cpp library commands and flags
 		GCC = g++
-		GCC_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		GCC_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared
-		GCC_SRC_DIR := src
-		GCC_OBJ_DIR := $(VERSION_NAME)/src
+		LIBRARY_OBJ_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+		SHARED_CPP_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared
+		AR = ar
+		STATIC_CPP_LINK = 
+		# program c#
 		CSC = csc
 		CSC_FLAGS = /nologo /optimize /langversion:latest
-		DLL_DIR = $(DLL_BIN)/$(DLL_NAME)
 		BUNDLE_CMD = 
-		MONO_LIB = C:\Program Files\Mono\lib
-		CORE_LIB = C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.0.6
+		# program c++
+		PROGRAM_CPP_COMPILE = -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+		PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
+		PROGRAM_CPP_LIBS = -lResourceFileUtility
+		# backslash
+		LIBRARY_OBJ_DIR_BACKSLASH = $(subst /,\\,$(LIBRARY_OBJ_DIR))
+		LIBRARY_TEMP_DIR_BACKSLASH = $(subst /,\\,$(LIBRARY_TEMP_DIR))
+		LIBRARY_PLATFORM_DIR_BACKSLASH= $(subst /,\\,$(LIBRARY_PLATFORM_DIR))
+		SHARED_CPP_PATH_BACKSLASH= $(subst /,\\,$(SHARED_CPP_PATH))
+		STATIC_CPP_PATH_BACKSLASH= $(subst /,\\,$(STATIC_CPP_PATH))
+		PROGRAM_CSHARP_EXE_BACKSLASH= $(subst /,\\,$(PROGRAM_CSHARP_EXE))
+		PROGRAM_CSHARP_BUNDLE_BACKSLASH= $(subst /,\\,$(PROGRAM_CSHARP_BUNDLE))
+		PROGRAM_CPP_EXE_BACKSLASH=$(subst /,\\,$(PROGRAM_CPP_EXE))
+		PROGRAM_OBJ_DIR_BACKSLASH=$(subst /,\\,$(PROGRAM_OBJ_DIR))
 		# commands
-		OBJ_DIR_BACKSLASH = $(subst /,\\,$(GCC_OBJ_DIR))
-		DLL_BIN_BACKSLASH= $(subst /,\\,$(DLL_BIN))
-		DLL_DIR_BACKSLASH= $(subst /,\\,$(DLL_DIR))
-		EXAMPLE_EXE_BACKSLASH= $(subst /,\\,$(EXAMPLE_EXE))
-		EXAMPLE_BUNDLE_BACKSLASH= $(subst /,\\,$(EXAMPLE_BUNDLE))
-		OBJ_DIR_CMD = if not exist "$(OBJ_DIR_BACKSLASH)" mkdir $(OBJ_DIR_BACKSLASH)
-		DLL_DIR_CMD = if not exist "$(DLL_BIN_BACKSLASH)" mkdir $(DLL_BIN_BACKSLASH)
-		CPY_DLL_CMD = copy $(DLL_DIR_BACKSLASH) $(EXAMPLE_BIN_DIR) /Y
-		OBJ_DIR_DEL = del /F /Q $(OBJ_DIR_BACKSLASH)\*
-		DLL_DEL_CMD = if exist "$(DLL_DIR_BACKSLASH)" del /F /Q "$(DLL_DIR_BACKSLASH)"
-		EXE_DEL_CMD = if exist "$(EXAMPLE_EXE_BACKSLASH)" del /F /Q "$(EXAMPLE_EXE_BACKSLASH)"
-		EXE_DEL_POST_CMD = 
-		BUNDLE_DEL_CMD = if exist "$(EXAMPLE_BUNDLE_BACKSLASH)" del /F /Q "$(EXAMPLE_BUNDLE_BACKSLASH)"
+		LIBRARY_OBJ_DIR_CMD = if not exist "$(LIBRARY_OBJ_DIR_BACKSLASH)" mkdir $(LIBRARY_OBJ_DIR_BACKSLASH)
+		LIBRARY_PLATFORM_DIR_CMD = if not exist "$(LIBRARY_PLATFORM_DIR_BACKSLASH)" mkdir $(LIBRARY_PLATFORM_DIR_BACKSLASH)
+		PROGRAM_OBJ_DIR_CMD = if not exist "$(PROGRAM_OBJ_DIR_BACKSLASH)" mkdir $(PROGRAM_OBJ_DIR_BACKSLASH)
+		COPY_SHARED_LIBRARY_CMD = copy $(SHARED_CPP_PATH_BACKSLASH) $(PROGRAM_BIN_DIR) /Y
+		LIBRARY_TEMP_DIR_DEL = if exist "$(LIBRARY_TEMP_DIR_BACKSLASH)" rd /s /q "$(LIBRARY_TEMP_DIR_BACKSLASH)"
+		PROGRAM_OBJ_DIR_DEL = if exist "$(PROGRAM_OBJ_DIR_BACKSLASH)" rd /s /q "$(PROGRAM_OBJ_DIR_BACKSLASH)"
+		SHARED_LIBRARY_DEL_CMD = if exist "$(SHARED_CPP_PATH_BACKSLASH)" del /F /Q "$(SHARED_CPP_PATH_BACKSLASH)"
+		STATIC_LIBRARY_DEL_CMD = if exist "$(STATIC_CPP_PATH_BACKSLASH)" del /F /Q "$(STATIC_CPP_PATH_BACKSLASH)"
+		PROGRAM_CSHARP_DEL_CMD = if exist "$(PROGRAM_CSHARP_EXE_BACKSLASH)" del /F /Q "$(PROGRAM_CSHARP_EXE_BACKSLASH)"
+		PROGRAM_CSHARP_DEL_POST_CMD = 
+		BUNDLE_CSHARP_DEL_CMD = if exist "$(PROGRAM_CSHARP_BUNDLE_BACKSLASH)" del /F /Q "$(PROGRAM_CSHARP_BUNDLE_BACKSLASH)"
+		PROGRAM_CPP_DEL_CMD = if exist "$(PROGRAM_CPP_EXE_BACKSLASH)" del /F /Q "$(PROGRAM_CPP_EXE_BACKSLASH)"
 	endif
 	ifeq ($(ARCH),AMD64)
+		# paths
 		VERSION_NAME = win64_mingw
-		DLL_BIN = bin/$(VERSION_NAME)
+		LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
+		SHARED_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(SHARED_CPP_NAME)
+		STATIC_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(STATIC_CPP_NAME)
+		LIBRARY_SRC_DIR = src
+		LIBRARY_TEMP_DIR = $(VERSION_NAME)
+		LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
+		# cpp library commands and flags
 		GCC = g++
-		GCC_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		GCC_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared
-		GCC_SRC_DIR := src
-		GCC_OBJ_DIR := $(VERSION_NAME)/src
+		LIBRARY_OBJ_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+		SHARED_CPP_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared
+		AR = ar
+		STATIC_CPP_LINK = 
+		# program c#
 		CSC = csc
 		CSC_FLAGS = /nologo /optimize /langversion:latest
-		DLL_DIR = $(DLL_BIN)/$(DLL_NAME)
 		BUNDLE_CMD = 
-		MONO_LIB = C:\Program Files\Mono\lib
-		CORE_LIB = C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.0.6
+		# program c++
+		PROGRAM_CPP_COMPILE = -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+		PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
+		PROGRAM_CPP_LIBS = -lResourceFileUtility
+		# backslash
+		LIBRARY_OBJ_DIR_BACKSLASH = $(subst /,\\,$(LIBRARY_OBJ_DIR))
+		LIBRARY_TEMP_DIR_BACKSLASH = $(subst /,\\,$(LIBRARY_TEMP_DIR))
+		LIBRARY_PLATFORM_DIR_BACKSLASH= $(subst /,\\,$(LIBRARY_PLATFORM_DIR))
+		SHARED_CPP_PATH_BACKSLASH= $(subst /,\\,$(SHARED_CPP_PATH))
+		STATIC_CPP_PATH_BACKSLASH= $(subst /,\\,$(STATIC_CPP_PATH))
+		PROGRAM_CSHARP_EXE_BACKSLASH= $(subst /,\\,$(PROGRAM_CSHARP_EXE))
+		PROGRAM_CSHARP_BUNDLE_BACKSLASH= $(subst /,\\,$(PROGRAM_CSHARP_BUNDLE))
+		PROGRAM_CPP_EXE_BACKSLASH=$(subst /,\\,$(PROGRAM_CPP_EXE))
+		PROGRAM_OBJ_DIR_BACKSLASH=$(subst /,\\,$(PROGRAM_OBJ_DIR))
 		# commands
-		OBJ_DIR_BACKSLASH = $(subst /,\\,$(GCC_OBJ_DIR))
-		DLL_BIN_BACKSLASH= $(subst /,\\,$(DLL_BIN))
-		DLL_DIR_BACKSLASH= $(subst /,\\,$(DLL_DIR))
-		EXAMPLE_EXE_BACKSLASH= $(subst /,\\,$(EXAMPLE_EXE))
-		EXAMPLE_BUNDLE_BACKSLASH= $(subst /,\\,$(EXAMPLE_BUNDLE))
-		OBJ_DIR_CMD = if not exist "$(OBJ_DIR_BACKSLASH)" mkdir $(OBJ_DIR_BACKSLASH)
-		DLL_DIR_CMD = if not exist "$(DLL_BIN_BACKSLASH)" mkdir $(DLL_BIN_BACKSLASH)
-		CPY_DLL_CMD = copy $(DLL_DIR_BACKSLASH) $(EXAMPLE_BIN_DIR) /Y
-		OBJ_DIR_DEL = del /F /Q $(OBJ_DIR_BACKSLASH)\*
-		DLL_DEL_CMD = if exist "$(DLL_DIR_BACKSLASH)" del /F /Q "$(DLL_DIR_BACKSLASH)"
-		EXE_DEL_CMD = if exist "$(EXAMPLE_EXE_BACKSLASH)" del /F /Q "$(EXAMPLE_EXE_BACKSLASH)"
-		EXE_DEL_POST_CMD = 
-		BUNDLE_DEL_CMD = if exist "$(EXAMPLE_BUNDLE_BACKSLASH)" del /F /Q "$(EXAMPLE_BUNDLE_BACKSLASH)"
+		LIBRARY_OBJ_DIR_CMD = if not exist "$(LIBRARY_OBJ_DIR_BACKSLASH)" mkdir $(LIBRARY_OBJ_DIR_BACKSLASH)
+		LIBRARY_PLATFORM_DIR_CMD = if not exist "$(LIBRARY_PLATFORM_DIR_BACKSLASH)" mkdir $(LIBRARY_PLATFORM_DIR_BACKSLASH)
+		PROGRAM_OBJ_DIR_CMD = if not exist "$(PROGRAM_OBJ_DIR_BACKSLASH)" mkdir $(PROGRAM_OBJ_DIR_BACKSLASH)
+		COPY_SHARED_LIBRARY_CMD = copy $(SHARED_CPP_PATH_BACKSLASH) $(PROGRAM_BIN_DIR) /Y
+		LIBRARY_TEMP_DIR_DEL = if exist "$(LIBRARY_TEMP_DIR_BACKSLASH)" rd /s /q "$(LIBRARY_TEMP_DIR_BACKSLASH)"
+		PROGRAM_OBJ_DIR_DEL = if exist "$(PROGRAM_OBJ_DIR_BACKSLASH)" rd /s /q "$(PROGRAM_OBJ_DIR_BACKSLASH)"
+		SHARED_LIBRARY_DEL_CMD = if exist "$(SHARED_CPP_PATH_BACKSLASH)" del /F /Q "$(SHARED_CPP_PATH_BACKSLASH)"
+		STATIC_LIBRARY_DEL_CMD = if exist "$(STATIC_CPP_PATH_BACKSLASH)" del /F /Q "$(STATIC_CPP_PATH_BACKSLASH)"
+		PROGRAM_CSHARP_DEL_CMD = if exist "$(PROGRAM_CSHARP_EXE_BACKSLASH)" del /F /Q "$(PROGRAM_CSHARP_EXE_BACKSLASH)"
+		PROGRAM_CSHARP_DEL_POST_CMD = 
+		BUNDLE_CSHARP_DEL_CMD = if exist "$(PROGRAM_CSHARP_BUNDLE_BACKSLASH)" del /F /Q "$(PROGRAM_CSHARP_BUNDLE_BACKSLASH)"
+		PROGRAM_CPP_DEL_CMD = if exist "$(PROGRAM_CPP_EXE_BACKSLASH)" del /F /Q "$(PROGRAM_CPP_EXE_BACKSLASH)"
 	endif
 endif
 ifeq ($(OS_DET),OSX)
-	DLL_NAME = libResourceFileUtility.dll
+	# paths
+	SHARED_CPP_NAME = libResourceFileUtility.dll
+	STATIC_CPP_NAME = libResourceFileUtility.a
 	VERSION_NAME = apple
-	DLL_BIN = bin/$(VERSION_NAME)
+	LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
+	SHARED_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(SHARED_CPP_NAME)
+	STATIC_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(STATIC_CPP_NAME)
+	LIBRARY_SRC_DIR = src
+	LIBRARY_TEMP_DIR = $(VERSION_NAME)
+	LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
+	# cpp library commands and flags
 	GCC = g++
-	GCC_COMPILE_FLAGS = -O3 -g3 -fPIC -std=gnu++11 -Wall -fvisibility=hidden -c -fmessage-length=0 -mmacosx-version-min=10.9
-	GCC_LINK_FLAGS = -dynamiclib -fPIC -std=gnu++11 -current_version 1.0 -compatibility_version 1.0 -fvisibility=hidden -mmacosx-version-min=10.9
-	GCC_SRC_DIR := src
-	GCC_OBJ_DIR := $(VERSION_NAME)/src
+	LIBRARY_OBJ_COMPILE_FLAGS = -O3 -g3 -fPIC -std=gnu++11 -Wall -fvisibility=hidden -c -fmessage-length=0 -mmacosx-version-min=10.9
+	SHARED_CPP_LINK_FLAGS = -dynamiclib -fPIC -std=gnu++11 -current_version 1.0 -compatibility_version 1.0 -fvisibility=hidden -mmacosx-version-min=10.9
+	AR = ar
+	STATIC_CPP_LINK = 
+	# program c#
 	CSC = csc
 	CSC_FLAGS = /nologo /optimize /langversion:latest /lib:example/src
-	DLL_DIR = $(DLL_BIN)/$(DLL_NAME)
-	BUNDLE_CMD = mkbundle -o $(EXAMPLE_BUNDLE) --simple $(EXAMPLE_EXE) --library $(DLL_DIR)
-	MONO_LIB = 
-	CORE_LIB = 
+	BUNDLE_CMD = mkbundle -o $(PROGRAM_CSHARP_BUNDLE) --simple $(PROGRAM_CSHARP_EXE) --library $(SHARED_CPP_PATH)
+	# program c++
+	PROGRAM_CPP_COMPILE = -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+	PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
+	PROGRAM_CPP_LIBS = -lResourceFileUtility
 	# commands
-	OBJ_DIR_CMD = mkdir -p $(GCC_OBJ_DIR)
-	DLL_DIR_CMD = mkdir -p $(DLL_BIN)
-	CPY_DLL_CMD_UNUSED = yes | cp -rf $(DLL_DIR) $(EXAMPLE_BIN_DIR)
-	CPY_DLL_CMD = 
-	OBJ_DIR_DEL = yes | rm -f $(GCC_OBJ_DIR)/*
-	DLL_DEL_CMD = yes | rm -f "$(DLL_DIR)"
-	EXE_DEL_CMD = yes | rm -f "$(EXAMPLE_EXE)"
-	EXE_DEL_POST_CMD = $(EXE_DEL_CMD)
-	BUNDLE_DEL_CMD = yes | rm -f "$(EXAMPLE_BUNDLE)"
+	LIBRARY_OBJ_DIR_CMD = mkdir -p $(LIBRARY_OBJ_DIR)
+	LIBRARY_PLATFORM_DIR_CMD = mkdir -p $(LIBRARY_PLATFORM_DIR)
+	PROGRAM_OBJ_DIR_CMD = mkdir -p $(PROGRAM_OBJ_DIR)
+	COPY_SHARED_LIBRARY_CMD_UNUSED = yes | cp -rf $(SHARED_CPP_PATH) $(PROGRAM_BIN_DIR)
+	COPY_SHARED_LIBRARY_CMD = 
+	LIBRARY_TEMP_DIR_DEL = yes | rm -rf $(LIBRARY_TEMP_DIR)
+	PROGRAM_OBJ_DIR_DEL = yes | rm -rf $(PROGRAM_OBJ_DIR)
+	SHARED_LIBRARY_DEL_CMD = yes | rm -f "$(SHARED_CPP_PATH)"
+	STATIC_LIBRARY_DEL_CMD = yes | rm -f "$(STATIC_CPP_PATH)"
+	PROGRAM_CSHARP_DEL_CMD = yes | rm -f "$(PROGRAM_CSHARP_EXE)"
+	PROGRAM_CSHARP_DEL_POST_CMD = $(PROGRAM_CSHARP_DEL_CMD)
+	BUNDLE_CSHARP_DEL_CMD = yes | rm -f "$(PROGRAM_CSHARP_BUNDLE)"
+	PROGRAM_CPP_DEL_CMD = yes | rm -f "$(PROGRAM_CPP_EXE)"
 endif
 ifeq ($(OS_DET),LINUX)
-	DLL_NAME = libResourceFileUtility.so
+	# paths
+	SHARED_CPP_NAME = libResourceFileUtility.so
+	STATIC_CPP_NAME = libResourceFileUtility.a
 	VERSION_NAME = linux
-	DLL_BIN = bin/$(VERSION_NAME)
+	LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
+	SHARED_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(SHARED_CPP_NAME)
+	STATIC_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(STATIC_CPP_NAME)
+	LIBRARY_SRC_DIR = src
+	LIBRARY_TEMP_DIR = $(VERSION_NAME)
+	LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
+	# cpp library commands and flags
 	GCC = g++
-	GCC_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-	GCC_LINK_FLAGS = -std=gnu++11 -static -shared
-	GCC_SRC_DIR := src
-	GCC_OBJ_DIR := $(VERSION_NAME)/src
+	LIBRARY_OBJ_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+	SHARED_CPP_LINK_FLAGS = -std=gnu++11 -static -shared
+	LIBRARY_SRC_DIR := src
+	LIBRARY_OBJ_DIR := $(VERSION_NAME)/src
+	AR = ar
+	STATIC_CPP_LINK = 
+	# program c#
 	CSC = csc
 	CSC_FLAGS = /nologo /optimize /langversion:latest
-	DLL_DIR = $(DLL_BIN)/$(DLL_NAME)
 	BUNDLE_CMD = 
-	MONO_LIB = 
-	CORE_LIB = 
+	# program c++
+	PROGRAM_CPP_COMPILE = -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+	PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
+	PROGRAM_CPP_LIBS = -lResourceFileUtility
 	# commands
-	OBJ_DIR_CMD = mkdir -p $(GCC_OBJ_DIR)
-	DLL_DIR_CMD = mkdir -p $(DLL_BIN)
-	CPY_DLL_CMD_UNUSED = yes | cp -rf $(DLL_DIR) $(EXAMPLE_BIN_DIR)
-	CPY_DLL_CMD = 
-	OBJ_DIR_DEL = yes | rm -f $(GCC_OBJ_DIR)/*
-	DLL_DEL_CMD = yes | rm -f "$(DLL_DIR)"
-	EXE_DEL_CMD = yes | rm -f "$(EXAMPLE_EXE)"
-	EXE_DEL_POST_CMD = $(EXE_DEL_CMD)
-	BUNDLE_DEL_CMD = yes | rm -f "$(EXAMPLE_BUNDLE)"
+	LIBRARY_OBJ_DIR_CMD = mkdir -p $(LIBRARY_OBJ_DIR)
+	LIBRARY_PLATFORM_DIR_CMD = mkdir -p $(LIBRARY_PLATFORM_DIR)
+	PROGRAM_OBJ_DIR_CMD = mkdir -p $(PROGRAM_OBJ_DIR)
+	COPY_SHARED_LIBRARY_CMD_UNUSED = yes | cp -rf $(SHARED_CPP_PATH) $(PROGRAM_BIN_DIR)
+	COPY_SHARED_LIBRARY_CMD = 
+	LIBRARY_TEMP_DIR_DEL = yes | rm -rf $(LIBRARY_TEMP_DIR)
+	PROGRAM_OBJ_DIR_DEL = yes | rm -rf $(PROGRAM_OBJ_DIR)
+	SHARED_LIBRARY_DEL_CMD = yes | rm -f "$(SHARED_CPP_PATH)"
+	STATIC_LIBRARY_DEL_CMD = yes | rm -f "$(STATIC_CPP_PATH)"
+	PROGRAM_CSHARP_DEL_CMD = yes | rm -f "$(PROGRAM_CSHARP_EXE)"
+	PROGRAM_CSHARP_DEL_POST_CMD = $(PROGRAM_CSHARP_DEL_CMD)
+	BUNDLE_CSHARP_DEL_CMD = yes | rm -f "$(PROGRAM_CSHARP_BUNDLE)"
+	PROGRAM_CPP_DEL_CMD = yes | rm -f "$(PROGRAM_CPP_EXE)"
 endif
 
-GCC_SRC_FILES := $(wildcard $(GCC_SRC_DIR)/*.cpp)
-GCC_OBJ_FILES := $(patsubst $(GCC_SRC_DIR)/%.cpp,$(GCC_OBJ_DIR)/%.o,$(GCC_SRC_FILES))
+LIBRARY_SRC_FILES := $(wildcard $(LIBRARY_SRC_DIR)/*.cpp)
+LIBRARY_OBJ_FILES := $(patsubst $(LIBRARY_SRC_DIR)/%.cpp,$(LIBRARY_OBJ_DIR)/%.o,$(LIBRARY_SRC_FILES))
+PROGRAM_SRC_FILES := $(wildcard $(PROGRAM_SRC_DIR)/*.cpp)
+PROGRAM_OBJ_FILES := $(patsubst $(PROGRAM_SRC_DIR)/%.cpp,$(PROGRAM_OBJ_DIR)/%.o,$(PROGRAM_SRC_FILES))
 
 EXAMPLE_SRC = *.cs
 EXTRA_SRC = ResourceFileUtility.cs
 
-all: directories $(DLL_DIR) $(EXAMPLE_EXE)
+all: directories $(SHARED_CPP_PATH) $(STATIC_CPP_PATH) $(PROGRAM_CSHARP_EXE) $(PROGRAM_CPP_EXE)
 	
-$(EXAMPLE_EXE):
-	$(CSC) $(CSC_FLAGS) /out:$@ /t:exe -lib:$(EXAMPLE_LIB_DIR) $(EXAMPLE_INC_DIR)/$(EXTRA_SRC) $(EXAMPLE_SRC_DIR)/*.cs
-	$(CPY_DLL_CMD)
+$(PROGRAM_CSHARP_EXE):
+	$(CSC) $(CSC_FLAGS) /out:$@ /t:exe -lib:$(PROGRAM_SHARED_LIB_DIR) $(PROGRAM_INC_DIR)/$(EXTRA_SRC) $(PROGRAM_SRC_DIR)/*.cs
+	$(COPY_SHARED_LIBRARY_CMD)
 	$(BUNDLE_CMD)
-	$(EXE_DEL_POST_CMD)
+	$(PROGRAM_CSHARP_DEL_POST_CMD)
+	$(LIBRARY_TEMP_DIR_DEL)
 	
-$(DLL_DIR): $(GCC_OBJ_FILES)
-	$(GCC) $(GCC_LINK_FLAGS) -o $@ $^
+$(SHARED_CPP_PATH): $(LIBRARY_OBJ_FILES)
+	$(GCC) $(SHARED_CPP_LINK_FLAGS) -o $@ $^
+	
+$(STATIC_CPP_PATH): $(LIBRARY_OBJ_FILES)
+	$(AR) rcs $@ $^ $(STATIC_CPP_LINK)
 
-$(GCC_OBJ_DIR)/%.o: $(GCC_SRC_DIR)/%.cpp
-	$(GCC) $(GCC_COMPILE_FLAGS) -c -o $@ $<
+$(LIBRARY_OBJ_DIR)/%.o: $(LIBRARY_SRC_DIR)/%.cpp
+	$(GCC) $(LIBRARY_OBJ_COMPILE_FLAGS) -c -o $@ $<
+	
+$(PROGRAM_CPP_EXE): $(PROGRAM_OBJ_FILES)
+	$(GCC) $(PROGRAM_CPP_LINK) -o $@ $^ $(PROGRAM_CPP_LIBS)
+	$(PROGRAM_OBJ_DIR_DEL)
+	
+$(PROGRAM_OBJ_DIR)/%.o: $(PROGRAM_SRC_DIR)/%.cpp
+	$(GCC) $(PROGRAM_CPP_COMPILE) -c -o $@ $<
 	
 directories:
-	$(OBJ_DIR_CMD)
-	$(DLL_DIR_CMD)
-	$(OBJ_DIR_DEL)
-	$(DLL_DEL_CMD)
-	$(EXE_DEL_CMD)
-	$(BUNDLE_DEL_CMD)
+	$(LIBRARY_TEMP_DIR_DEL)
+	$(PROGRAM_OBJ_DIR_DEL)
+	$(LIBRARY_OBJ_DIR_CMD)
+	$(PROGRAM_OBJ_DIR_CMD)
+	$(LIBRARY_PLATFORM_DIR_CMD)
+	$(SHARED_LIBRARY_DEL_CMD)
+	$(STATIC_LIBRARY_DEL_CMD)
+	$(PROGRAM_CSHARP_DEL_CMD)
+	$(BUNDLE_CSHARP_DEL_CMD)
+	$(PROGRAM_CPP_DEL_CMD)
 
 clean:
-	$(OBJ_DIR_DEL)
-	$(DLL_DEL_CMD)
-	$(EXE_DEL_CMD)
-	$(BUNDLE_DEL_CMD)
+	$(LIBRARY_TEMP_DIR_DEL)
+	$(PROGRAM_OBJ_DIR_DEL)
+	$(SHARED_LIBRARY_DEL_CMD)
+	$(STATIC_LIBRARY_DEL_CMD)
+	$(PROGRAM_CSHARP_DEL_CMD)
+	$(BUNDLE_CSHARP_DEL_CMD)
+	$(PROGRAM_CPP_DEL_CMD)

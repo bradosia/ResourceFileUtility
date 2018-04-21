@@ -26,6 +26,7 @@
 #include "Loader.h"
 #include "Compiler.h"
 #include "Stream.h"
+#include "CallbackHandler.h"
 
 IDAMAN intptr_t IDA_EXPORT loader_new();
 IDAMAN intptr_t IDA_EXPORT compiler_new();
