@@ -22,9 +22,7 @@ namespace ResourceFileUtility {
     }
 
     public class Compiler {
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        static extern bool SetDllDirectory(string lpPathName);
-        [DllImport("ResourceFileUtility.dylib", CallingConvention = CallingConvention.StdCall)]
+        [DllImport("@executable_path/../ResourceFileUtility.dylib", CallingConvention = CallingConvention.StdCall)]
         static extern IntPtr compiler_new();
         [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
         static extern void compiler_info(IntPtr ptr, string fileName);
@@ -36,7 +34,6 @@ namespace ResourceFileUtility {
         private IntPtr thisPtr;
 
         public Compiler() {
-            SetDllDirectory(".");
             thisPtr = compiler_new();
         }
         public IntPtr ptr() {
