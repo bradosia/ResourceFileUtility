@@ -22,7 +22,7 @@ namespace ResourceFileUtility {
     }
 
     public class Compiler {
-        [DllImport("bin/apple/ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
+        [DllImport("@executable_path/../ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
         static extern IntPtr compiler_new();
         [DllImport("ResourceFileUtility.dll", CallingConvention = CallingConvention.StdCall)]
         static extern void compiler_info(IntPtr ptr, string fileName);
