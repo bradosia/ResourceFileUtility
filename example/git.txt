@@ -10,7 +10,6 @@ make
 mono example/example_csharp.exe
 mono --debug example/example_csharp.exe
 
-mono example/example_csharp.exe
-mono --debug example/example_csharp.exe
+mono example/example_cpp.exe
 
 example/example_csharp
