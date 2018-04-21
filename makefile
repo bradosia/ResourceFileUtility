@@ -40,6 +40,9 @@ LIBRARY_DIR = bin
 PROGRAM_CSHARP_EXE = $(PROGRAM_BIN_DIR)/example_csharp.exe
 PROGRAM_CSHARP_BUNDLE = $(PROGRAM_BIN_DIR)/example_csharp
 PROGRAM_CPP_EXE = $(PROGRAM_BIN_DIR)/example_cpp.exe
+PROGRAM_CPP_APP_NAME = example_cpp
+PROGRAM_CPP_APP = $(PROGRAM_BIN_DIR)/example_cpp.app
+PROGRAM_CPP_APP_ENABLE = 
 
 ifeq ($(OS_DET),WIN32)
 	SHARED_CPP_NAME = ResourceFileUtility.dll
@@ -161,9 +164,11 @@ ifeq ($(OS_DET),OSX)
 	CSC_FLAGS = /nologo /optimize /langversion:latest /lib:example/src
 	BUNDLE_CMD = mkbundle -o $(PROGRAM_CSHARP_BUNDLE) --simple $(PROGRAM_CSHARP_EXE) --library $(SHARED_CPP_PATH)
 	# program c++
-	PROGRAM_CPP_COMPILE = -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+	PROGRAM_CPP_COMPILE = -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 -mmacosx-version-min=10.9
 	PROGRAM_CPP_LINK = -L"$(LIBRARY_PLATFORM_DIR)" -mmacosx-version-min=10.9
 	PROGRAM_CPP_LIBS = -lResourceFileUtility
+	# mac app
+	PROGRAM_CPP_APP_ENABLE = $(PROGRAM_CPP_APP)
 	# commands
 	LIBRARY_OBJ_DIR_CMD = mkdir -p $(LIBRARY_OBJ_DIR)
 	LIBRARY_PLATFORM_DIR_CMD = mkdir -p $(LIBRARY_PLATFORM_DIR)
@@ -230,7 +235,7 @@ PROGRAM_OBJ_FILES := $(patsubst $(PROGRAM_SRC_DIR)/%.cpp,$(PROGRAM_OBJ_DIR)/%.o,
 EXAMPLE_SRC = *.cs
 EXTRA_SRC = ResourceFileUtility.cs
 
-all: directories $(SHARED_CPP_PATH) $(STATIC_CPP_PATH) $(PROGRAM_CSHARP_EXE) $(PROGRAM_CPP_EXE)
+all: directories $(SHARED_CPP_PATH) $(STATIC_CPP_PATH) $(PROGRAM_CSHARP_EXE) $(PROGRAM_CPP_EXE) $(PROGRAM_CPP_APP_ENABLE)
 	
 $(PROGRAM_CSHARP_EXE):
 	$(CSC) $(CSC_FLAGS) /out:$@ /t:exe -lib:$(PROGRAM_SHARED_LIB_DIR) $(PROGRAM_INC_DIR)/$(EXTRA_SRC) $(PROGRAM_SRC_DIR)/*.cs
@@ -254,7 +259,14 @@ $(PROGRAM_CPP_EXE): $(PROGRAM_OBJ_FILES)
 	
 $(PROGRAM_OBJ_DIR)/%.o: $(PROGRAM_SRC_DIR)/%.cpp
 	$(GCC) $(PROGRAM_CPP_COMPILE) -c -o $@ $<
-	
+
+$(PROGRAM_CPP_APP):
+	mkdir -p $(PROGRAM_CPP_APP)/Contents/{MacOS,Resources}
+	cp -R "$(FRAMEWORK_PATH)/SDL2.framework" "./build/$(APP_NAME).app/Contents/Resources/"
+	cp $(PROGRAM_SRC_DIR)/Info.plist "$(PROGRAM_CPP_APP)/Contents/"
+    sed -e "s/APP_NAME/$(APP_NAME)/g" -i "" "./build/$(APP_NAME).app/Contents/Info.plist"
+    cp $(PROGRAM_CPP_EXE) "$(PROGRAM_CPP_APP)/Contents/MacOS/$(PROGRAM_CPP_APP_NAME)"
+
 directories:
 	$(LIBRARY_TEMP_DIR_DEL)
 	$(PROGRAM_OBJ_DIR_DEL)

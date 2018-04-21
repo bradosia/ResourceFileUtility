@@ -7,7 +7,10 @@ git reset --hard
 git pull origin master
 
 make
-mono example/example.exe
-mono --debug example/example.exe
+mono example/example_csharp.exe
+mono --debug example/example_csharp.exe
 
-example/example
+mono example/example_csharp.exe
+mono --debug example/example_csharp.exe
+
+example/example_csharp
