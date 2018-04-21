@@ -91,12 +91,12 @@ ifeq ($(OS_DET),WIN32)
 	endif
 endif
 ifeq ($(OS_DET),OSX)
-	DLL_NAME = ResourceFileUtility.bundle
+	DLL_NAME = ResourceFileUtility.dylib
 	VERSION_NAME = apple
 	DLL_BIN = bin/$(VERSION_NAME)
 	GCC = g++
 	GCC_COMPILE_FLAGS = -O3 -g3 -fPIC -std=gnu++11 -Wall -fvisibility=hidden -c -fmessage-length=0 -mmacosx-version-min=10.9
-	GCC_LINK_FLAGS = -dynamiclib -fPIC -std=gnu++11 -arch i386 -arch x86_64 -current_version 1.0 -compatibility_version 1.0 -fvisibility=hidden -mmacosx-version-min=10.9
+	GCC_LINK_FLAGS = -dynamiclib -fPIC -std=gnu++11 -current_version 1.0 -compatibility_version 1.0 -fvisibility=hidden -mmacosx-version-min=10.9
 	GCC_SRC_DIR := src
 	GCC_OBJ_DIR := $(VERSION_NAME)/src
 	CSC = csc
