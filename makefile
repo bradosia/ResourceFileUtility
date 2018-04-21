@@ -50,6 +50,7 @@ ifeq ($(OS_DET),WIN32)
 		CSC = csc
 		CSC_FLAGS = /nologo /optimize /langversion:latest
 		DLL_DIR = $(DLL_BIN)/$(DLL_NAME)
+		BUNDLE_CMD = 
 		MONO_LIB = C:\Program Files\Mono\lib
 		CORE_LIB = C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.0.6
 		# commands
@@ -75,6 +76,7 @@ ifeq ($(OS_DET),WIN32)
 		CSC = csc
 		CSC_FLAGS = /nologo /optimize /langversion:latest
 		DLL_DIR = $(DLL_BIN)/$(DLL_NAME)
+		BUNDLE_CMD = 
 		MONO_LIB = C:\Program Files\Mono\lib
 		CORE_LIB = C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.0.6
 		# commands
@@ -125,6 +127,7 @@ ifeq ($(OS_DET),LINUX)
 	CSC = csc
 	CSC_FLAGS = /nologo /optimize /langversion:latest
 	DLL_DIR = $(DLL_BIN)/$(DLL_NAME)
+	BUNDLE_CMD = 
 	MONO_LIB = 
 	CORE_LIB = 
 	# commands
@@ -147,6 +150,7 @@ all: directories $(DLL_DIR) $(EXAMPLE_EXE)
 $(EXAMPLE_EXE):
 	$(CSC) $(CSC_FLAGS) /out:$@ /t:exe -lib:$(EXAMPLE_LIB_DIR) $(EXAMPLE_INC_DIR)/$(EXTRA_SRC) $(EXAMPLE_SRC_DIR)/*.cs
 	$(CPY_DLL_CMD)
+	$(BUNDLE_CMD)
 	
 $(DLL_DIR): $(GCC_OBJ_FILES)
 	$(GCC) $(GCC_LINK_FLAGS) -o $@ $^
