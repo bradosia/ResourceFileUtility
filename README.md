@@ -9,7 +9,7 @@ Use gnu make command on project root
 make
 ```
 
-##Android
+## Android
 Install the android NDK
 Add ```<path>\android-ndk-r16b\toolchains\aarch64-linux-android-4.9\prebuilt\windows-x86_64\bin``` to PATH
 Use gnu make command on project root
@@ -17,14 +17,14 @@ Use gnu make command on project root
 make arm-linux-androideabi
 ```
 
-##Iphone
+## Iphone
 Must use mac and clang
 Use gnu make command on project root
 ```sh
 make armv7s
 ```
 
-##Supported
+## Supported
 | OS | Architecture | Supported = X |
 | :---  | :---      | :--- |
 | Windows   | x86     | X    |
