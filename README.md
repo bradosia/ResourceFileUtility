@@ -25,23 +25,23 @@ make armv7s
 ```
 
 ## Supported
-| OS | Architecture | Supported = X |
-| :---  | :---      | :--- |
-| Windows   | x86     | X    |
-| Windows   | x86_64     | X    |
-| iOS Mac   | x86     | O    |
-| iOS Mac   | x86_64     | X    |
-| linux ubuntu   | x86     | O    |
-| linux ubuntu   | x86_64     | O    |
-| iOS iphone   | armv7     | O    |
-| iOS iphone   | armv7s      | O    |
-| iOS iphone   | arm64      | O    |
-| Android   | armeabi     | O    |
-| Android   | armeabi-v7a      | O    |
-| Android   | arm64-v8a      | O    |
-| Android   | x86      | O    |
-| Android   | x86_64     | O    |
-
+| OS | Architecture | Supported = X |  Command |
+| :---  | :---      | :--- | :--- |
+| Windows   | x86     | X    | ```sh make armv7s ``` |
+| Windows   | x86_64     | X    | ```sh make armv7s ``` |
+| iOS Mac   | x86     | O    | ```sh make armv7s ``` |
+| iOS Mac   | x86_64     | X    | ```sh make armv7s ``` |
+| linux ubuntu   | x86     | O    | ```sh make armv7s ``` |
+| linux ubuntu   | x86_64     | O    | ```sh make armv7s ``` |
+| iOS iphone   | armv7     | O    | ```sh make armv7s ``` |
+| iOS iphone   | armv7s      | O    | ```sh make armv7s ``` |
+| iOS iphone   | arm64      | O    | ```sh make armv7s ``` |
+| Android   | armeabi     | O    | ```sh make armv7s ``` |
+| Android   | armeabi-v7a      | O    | ```sh make armv7s ``` |
+| Android   | arm64-v8a      | O    | ```sh make armv7s ``` |
+| Android   | x86      | O    | ```sh make armv7s ``` |
+| Android   | x86_64     | O    | ```sh make armv7s ``` |
+ 
 # Usage Instructions
 ## C++
 there is only a single include needed when statically linking against this library
