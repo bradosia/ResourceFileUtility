@@ -28,20 +28,20 @@ Must use mac and clang<BR>
 ## Supported
 | OS | Architecture | Support |  Command |
 | :---      | :---         | :--- | :--- |
-| Windows   | x86          | X    | ```sh make win-x86 ``` |
-| Windows   | x86_64       | X    | ```sh make win-x86_64 ``` |
-| iOS Mac   | x86          | O    | ```sh make mac-x86 ``` |
-| iOS Mac   | x86_64       | X    | ```sh make mac-x86_64 ``` |
-| linux ubuntu   | x86     | O    | ```sh make linux-ubuntu-x86 ``` |
-| linux ubuntu   | x86_64  | O    | ```sh make linux-ubuntu-x86_64 ``` |
-| iOS iphone   | armv7     | O    | ```sh make ios-armv7 ``` |
-| iOS iphone   | armv7s    | O    | ```sh make ios-armv7s ``` |
-| iOS iphone   | arm64     | O    | ```sh make ios-arm64 ``` |
-| Android   | armeabi      | O    | ```sh make arm-linux-androideabi ``` |
-| Android   | armeabi-v7a  | O    | ```sh make arm-linux-androideabi ``` |
-| Android   | arm64-v8a    | O    | ```sh make aarch64-linux-android ``` |
-| Android   | x86          | O    | ```sh make linux-android-x86_64 ``` |
-| Android   | x86_64       | O    | ```sh make linux-android-x86 ``` |
+| Windows   | x86          | X    | ``` make win-x86 ``` |
+| Windows   | x86_64       | X    | ``` make win-x86_64 ``` |
+| iOS Mac   | x86          | O    | ``` make mac-x86 ``` |
+| iOS Mac   | x86_64       | X    | ``` make mac-x86_64 ``` |
+| linux ubuntu   | x86     | O    | ``` make linux-ubuntu-x86 ``` |
+| linux ubuntu   | x86_64  | O    | ``` make linux-ubuntu-x86_64 ``` |
+| iOS iphone   | armv7     | O    | ``` make ios-armv7 ``` |
+| iOS iphone   | armv7s    | O    | ``` make ios-armv7s ``` |
+| iOS iphone   | arm64     | O    | ``` make ios-arm64 ``` |
+| Android   | armeabi      | O    | ``` make arm-linux-androideabi ``` |
+| Android   | armeabi-v7a  | O    | ``` make arm-linux-androideabi ``` |
+| Android   | arm64-v8a    | O    | ``` make aarch64-linux-android ``` |
+| Android   | x86          | O    | ``` make linux-android-x86_64 ``` |
+| Android   | x86_64       | O    | ``` make linux-android-x86 ``` |
  
 # Usage Instructions
 ## C++
