@@ -9,38 +9,39 @@ Use gnu make command on project root
 make
 ```
 
+## Windows
+Install mingw
+
+## mac
+Install clang
+
+## linux Ubuntu
+Install GCC
+
 ## Android
 Install the android NDK<BR>
 Add ```<path>\android-ndk-r16b\toolchains\aarch64-linux-android-4.9\prebuilt\windows-x86_64\bin``` to PATH<BR>
-Use gnu make command on project root
-```sh
-make arm-linux-androideabi
-```
 
 ## Iphone
 Must use mac and clang<BR>
-Use gnu make command on project root
-```sh
-make armv7s
-```
 
 ## Supported
-| OS | Architecture | Supported = X |  Command |
-| :---  | :---      | :--- | :--- |
-| Windows   | x86     | X    | ```sh make armv7s ``` |
-| Windows   | x86_64     | X    | ```sh make armv7s ``` |
-| iOS Mac   | x86     | O    | ```sh make armv7s ``` |
-| iOS Mac   | x86_64     | X    | ```sh make armv7s ``` |
-| linux ubuntu   | x86     | O    | ```sh make armv7s ``` |
-| linux ubuntu   | x86_64     | O    | ```sh make armv7s ``` |
-| iOS iphone   | armv7     | O    | ```sh make armv7s ``` |
-| iOS iphone   | armv7s      | O    | ```sh make armv7s ``` |
-| iOS iphone   | arm64      | O    | ```sh make armv7s ``` |
-| Android   | armeabi     | O    | ```sh make armv7s ``` |
-| Android   | armeabi-v7a      | O    | ```sh make armv7s ``` |
-| Android   | arm64-v8a      | O    | ```sh make armv7s ``` |
-| Android   | x86      | O    | ```sh make armv7s ``` |
-| Android   | x86_64     | O    | ```sh make armv7s ``` |
+| OS | Architecture | Support |  Command |
+| :---      | :---         | :--- | :--- |
+| Windows   | x86          | X    | ```sh make win-x86 ``` |
+| Windows   | x86_64       | X    | ```sh make win-x86_64 ``` |
+| iOS Mac   | x86          | O    | ```sh make mac-x86 ``` |
+| iOS Mac   | x86_64       | X    | ```sh make mac-x86_64 ``` |
+| linux ubuntu   | x86     | O    | ```sh make linux-ubuntu-x86 ``` |
+| linux ubuntu   | x86_64  | O    | ```sh make linux-ubuntu-x86_64 ``` |
+| iOS iphone   | armv7     | O    | ```sh make ios-armv7 ``` |
+| iOS iphone   | armv7s    | O    | ```sh make ios-armv7s ``` |
+| iOS iphone   | arm64     | O    | ```sh make ios-arm64 ``` |
+| Android   | armeabi      | O    | ```sh make arm-linux-androideabi ``` |
+| Android   | armeabi-v7a  | O    | ```sh make arm-linux-androideabi ``` |
+| Android   | arm64-v8a    | O    | ```sh make aarch64-linux-android ``` |
+| Android   | x86          | O    | ```sh make linux-android-x86_64 ``` |
+| Android   | x86_64       | O    | ```sh make linux-android-x86 ``` |
  
 # Usage Instructions
 ## C++
