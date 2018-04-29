@@ -11,8 +11,8 @@ class CallbackHandler {
 public:
 	CallbackHandler();
 	virtual ~CallbackHandler();
-	virtual void fileComplete(std::string filePath);
-	virtual void packComplete();
+	virtual int fileComplete(char* filePath);
+	virtual int packComplete(char* filePath);
 };
 
 }

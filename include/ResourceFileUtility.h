@@ -13,13 +13,27 @@
 
 namespace ResourceFileUtility {
 
+typedef int (*CBintString)(char* text);
+
+class CallbackHandler {
+public:
+	CallbackHandler();
+	virtual ~CallbackHandler();
+	virtual int fileComplete(char* filePath);
+	virtual int packComplete(char* filePath);
+};
+
 class Compiler {
 public:
-	int test;
+	CBintString callbackFileComplete;
+	CBintString callbackPackComplete;
 	Compiler();
 	~Compiler();
 	void info(std::string fileName);
 	void pack(std::string fileName);
+	void setCallbackFileComplete(CBintString handler_);
+	void setCallbackPackComplete(CBintString handler_);
+	void setCallback(CallbackHandler* handler_);
 };
 
 class Loader {
@@ -34,14 +48,6 @@ class Stream {
 public:
 	Stream();
 	~Stream();
-};
-
-class CallbackHandler {
-public:
-	CallbackHandler();
-	virtual ~CallbackHandler();
-	virtual void fileComplete(std::string filePath);
-	virtual void packComplete();
 };
 
 }

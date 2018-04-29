@@ -31,6 +31,11 @@ else
     endif
 endif
 
+# explicit selection
+arm-linux-androideabi: 
+	OS_DET = ANDROID
+	ARCH = ARM
+
 PROGRAM_BIN_DIR = example
 PROGRAM_SHARED_LIB_DIR = example
 PROGRAM_OBJ_DIR = example/obj

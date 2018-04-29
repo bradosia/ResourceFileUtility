@@ -15,6 +15,6 @@ mono example/example_cpp.exe
 example/example_csharp
 
 git status
-git add -a
+git add .
 git commit -m "fixed"
 git push

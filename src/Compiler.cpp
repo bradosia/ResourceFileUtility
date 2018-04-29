@@ -2,7 +2,9 @@
 
 namespace ResourceFileUtility {
 Compiler::Compiler() {
-
+	callbackFileComplete = 0;
+	callbackPackComplete = 0;
+	callbackHandlerPtr = 0;
 }
 Compiler::~Compiler() {
 
@@ -95,6 +97,24 @@ void Compiler::pack(std::string fileName) {
 		std::cout << "Failed opening \"" << fileName
 				<< "\" as the resource output file." << std::endl;
 	}
+	char *test = new char[50];
+	if (callbackFileComplete != 0) {
+		char *test = new char[50];
+		test = "packed a file test !!";
+		callbackFileComplete(test);
+	}
+}
+
+void Compiler::setCallbackFileComplete(CBintString handler_) {
+	callbackFileComplete = handler_;
+}
+
+void Compiler::setCallbackPackComplete(CBintString handler_) {
+	callbackPackComplete = handler_;
+}
+
+void Compiler::setCallback(CallbackHandler* handler_) {
+	callbackHandlerPtr = handler_;
 }
 
 }

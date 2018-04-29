@@ -32,6 +32,8 @@ IDAMAN intptr_t IDA_EXPORT loader_new();
 IDAMAN intptr_t IDA_EXPORT compiler_new();
 IDAMAN void IDA_EXPORT compiler_info(intptr_t ptr, char* fileName);
 IDAMAN void IDA_EXPORT compiler_pack(intptr_t ptr, char* fileName);
+IDAMAN void IDA_EXPORT compiler_setCallbackFileComplete(intptr_t ptr, ResourceFileUtility::CBintString handler_);
+IDAMAN void IDA_EXPORT compiler_setCallbackPackComplete(intptr_t ptr, ResourceFileUtility::CBintString handler_);
 IDAMAN intptr_t IDA_EXPORT stream_new();
 
 intptr_t loader_new() {
@@ -45,6 +47,16 @@ intptr_t compiler_new() {
 void compiler_info(intptr_t ptr, char* fileName) {
 	ResourceFileUtility::Compiler* objPtr = (ResourceFileUtility::Compiler*) ptr;
 	return objPtr->info(std::string(fileName));
+}
+
+void compiler_setCallbackFileComplete(intptr_t ptr, ResourceFileUtility::CBintString handler_) {
+	ResourceFileUtility::Compiler* objPtr = (ResourceFileUtility::Compiler*) ptr;
+	return objPtr->setCallbackFileComplete(handler_);
+}
+
+void compiler_setCallbackPackComplete(intptr_t ptr, ResourceFileUtility::CBintString handler_) {
+	ResourceFileUtility::Compiler* objPtr = (ResourceFileUtility::Compiler*) ptr;
+	return objPtr->setCallbackPackComplete(handler_);
 }
 
 void compiler_pack(intptr_t ptr, char* fileName) {

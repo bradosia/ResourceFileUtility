@@ -1,21 +1,46 @@
 # ResourceFileUtility
 A utility for compiling media assets into a single resource file. Includes a driver for c#.
 
-## Libraries Used
-JSON for C++<BR>
-License: MIT<BR>
-https://github.com/nlohmann/json
-
 # Build Instructions
 
-## Makefile
+## Auto-detection
+Use gnu make command on project root
 ```sh
 make
 ```
 
-## Darwin
-Please make sure the commands in the makefile for creating and deleting directories are good. They haven't been tested.<BR>
-Currently working on windows 10 with MinGW 64
+##Android
+Install the android NDK
+Add ```<path>\android-ndk-r16b\toolchains\aarch64-linux-android-4.9\prebuilt\windows-x86_64\bin``` to PATH
+Use gnu make command on project root
+```sh
+make arm-linux-androideabi
+```
+
+##Iphone
+Must use mac and clang
+Use gnu make command on project root
+```sh
+make armv7s
+```
+
+##Supported
+| OS | Architecture | Supported = X |
+| :---  | :---      | :--- |
+| Windows   | x86     | X    |
+| Windows   | x86_64     | X    |
+| iOS Mac   | x86     | O    |
+| iOS Mac   | x86_64     | X    |
+| linux ubuntu   | x86     | O    |
+| linux ubuntu   | x86_64     | O    |
+| iOS iphone   | armv7     | O    |
+| iOS iphone   | armv7s      | O    |
+| iOS iphone   | arm64      | O    |
+| Android   | armeabi     | O    |
+| Android   | armeabi-v7a      | O    |
+| Android   | arm64-v8a      | O    |
+| Android   | x86      | O    |
+| Android   | x86_64     | O    |
 
 # Usage Instructions
 ## C++
@@ -89,6 +114,10 @@ if(songInfo.inType == "FILE_FORMAT"){
 }
 ```
 
+## Libraries Used
+JSON for C++<BR>
+License: MIT<BR>
+https://github.com/nlohmann/json
 
 # License
 The class is licensed under the MIT License: <BR>
