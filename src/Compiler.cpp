@@ -97,10 +97,8 @@ void Compiler::pack(std::string fileName) {
 		std::cout << "Failed opening \"" << fileName
 				<< "\" as the resource output file." << std::endl;
 	}
-	char *test = new char[50];
 	if (callbackFileComplete != 0) {
-		char *test = new char[50];
-		test = "packed a file test !!";
+		char test[] = "packed a file test !!";
 		callbackFileComplete(test);
 	}
 }

@@ -10,38 +10,42 @@ make
 ```
 
 ## Windows
+Only Windows host<BR>
 Install mingw
 
-## mac
+## Mac OSX
+Only Mac OSX host<BR>
 Install clang
 
-## linux Ubuntu
+## Linux Ubuntu
 Install GCC
 
 ## Android
 Install the android NDK<BR>
-Add ```<path>\android-ndk-r16b\toolchains\aarch64-linux-android-4.9\prebuilt\windows-x86_64\bin``` to PATH<BR>
+Add ```<NDK_PATH>\toolchains\arm-linux-androideabi-4.9\prebuilt\windows-x86_64\bin``` to PATH<BR>
+Add ```<NDK_PATH>\toolchains\aarch64-linux-android-4.9\prebuilt\windows-x86_64\bin``` to PATH<BR>
 
-## Iphone
-Must use mac and clang<BR>
+## IOS
+Only Mac OSX host<BR>
+Install clang<BR>
 
 ## Supported
 | OS | Architecture | Support |  Command |
 | :---      | :---         | :--- | :--- |
-| Windows   | x86          | X    | ``` make win-x86 ``` |
-| Windows   | x86_64       | X    | ``` make win-x86_64 ``` |
-| iOS Mac   | x86          | O    | ``` make mac-x86 ``` |
-| iOS Mac   | x86_64       | X    | ``` make mac-x86_64 ``` |
-| linux ubuntu   | x86     | O    | ``` make linux-ubuntu-x86 ``` |
-| linux ubuntu   | x86_64  | O    | ``` make linux-ubuntu-x86_64 ``` |
-| iOS iphone   | armv7     | O    | ``` make ios-armv7 ``` |
-| iOS iphone   | armv7s    | O    | ``` make ios-armv7s ``` |
-| iOS iphone   | arm64     | O    | ``` make ios-arm64 ``` |
-| Android   | armeabi      | O    | ``` make arm-linux-androideabi ``` |
-| Android   | armeabi-v7a  | O    | ``` make arm-linux-androideabi ``` |
-| Android   | arm64-v8a    | O    | ``` make aarch64-linux-android ``` |
-| Android   | x86          | O    | ``` make linux-android-x86_64 ``` |
-| Android   | x86_64       | O    | ``` make linux-android-x86 ``` |
+| Windows   | x86          | X    | ``` make OS_DET=WIN32 ARCH=IA32 ``` |
+| Windows   | x86_64       | X    | ``` make OS_DET=WIN32 ARCH=AMD64 ``` |
+| iOS Mac   | x86          | O    | ``` make OS_DET=OSX ARCH=IA32 ``` |
+| iOS Mac   | x86_64       | X    | ``` make OS_DET=OSX ARCH=AMD64 ``` |
+| linux ubuntu   | x86     | O    | ``` make OS_DET=LINUX ARCH=IA32 ``` |
+| linux ubuntu   | x86_64  | O    | ``` make OS_DET=LINUX ARCH=AMD64 ``` |
+| iOS iphone   | armv7     | O    | ``` make OS_DET=IOS ARCH=armv7 ``` |
+| iOS iphone   | armv7s    | O    | ``` make OS_DET=IOS ARCH=armv7s ``` |
+| iOS iphone   | arm64     | O    | ``` make OS_DET=IOS ARCH=arm64 ``` |
+| Android   | armeabi      | O    | ``` make OS_DET=android ARCH=armeabi NDK_PATH=C:\android-ndk-r16b-windows-x86_64\android-ndk-r16b ``` |
+| Android   | armeabi-v7a  | O    | ``` make OS_DET=android ARCH=armeabi-v7a NDK_PATH=C:\android-ndk-r16b-windows-x86_64\android-ndk-r16b ``` |
+| Android   | arm64-v8a    | O    | ``` make OS_DET=android ARCH=arm64-v8a NDK_PATH=C:\android-ndk-r16b-windows-x86_64\android-ndk-r16b ``` |
+| Android   | x86          | O    | ``` make OS_DET=android ARCH=x86 NDK_PATH=C:\android-ndk-r16b-windows-x86_64\android-ndk-r16b ``` |
+| Android   | x86_64       | O    | ``` make OS_DET=android ARCH=x86_64 NDK_PATH=C:\android-ndk-r16b-windows-x86_64\android-ndk-r16b ``` |
  
 # Usage Instructions
 ## C++
