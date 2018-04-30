@@ -188,6 +188,21 @@ ifeq ($(OS_DET),OSX)
 	PROGRAM_CPP_DEL_CMD = yes | rm -f "$(PROGRAM_CPP_EXE)"
 	PROGRAM_CPP_APP_DEL_CMD = yes | rm -rf "$(PROGRAM_CPP_APP)"
 endif
+ifeq ($(OS_DET),android)
+	# untested
+	XCODE_BASE=/Applications/Xcode.app/Contents
+	SIMULATOR_BASE=$(XCODE_BASE)/Developer/Platforms/iPhoneSimulator.platform
+	FRAMEWORKS=$(SIMULATOR_BASE)/Developer/SDKs/iPhoneSimulator6.1.sdk/System/Library/Frameworks/
+	INCLUDES=$(SIMULATOR_BASE)/Developer/SDKs/iPhoneSimulator6.1.sdk/usr/include
+	
+	GCC = clang 
+	PROGRAM_CPP_COMPILE = -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 -mmacosx-version-min=10.9
+	PROGRAM_CPP_LINK = -L"$(LIBRARY_PLATFORM_DIR)" -arch i386 \
+    -mios-simulator-version-min=6.1 \
+    -fobjc-abi-version=2 \
+    -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.1.sdk \
+    -framework Foundation -framework UIKit
+endif
 ifeq ($(OS_DET),LINUX)
 	# paths
 	SHARED_CPP_NAME = libResourceFileUtility.so

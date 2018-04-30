@@ -18,3 +18,7 @@ git status
 git add .
 git commit -m "fixed"
 git push
+
+#OSX simulation
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Applications/iPhone\ \
+Simulator.app/Contents/MacOS/iPhone\ Simulator \ -SimulateApplication ./window

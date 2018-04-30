@@ -34,13 +34,13 @@ Install clang<BR>
 | :---      | :---         | :--- | :--- |
 | Windows   | x86          | X    | ``` make OS_DET=WIN32 ARCH=IA32 ``` |
 | Windows   | x86_64       | X    | ``` make OS_DET=WIN32 ARCH=AMD64 ``` |
-| iOS Mac   | x86          | O    | ``` make OS_DET=OSX ARCH=IA32 ``` |
-| iOS Mac   | x86_64       | X    | ``` make OS_DET=OSX ARCH=AMD64 ``` |
+| macOS   | x86            | O    | ``` make OS_DET=OSX ARCH=IA32 ``` |
+| macOS   | x86_64         | X    | ``` make OS_DET=OSX ARCH=AMD64 ``` |
 | linux ubuntu   | x86     | O    | ``` make OS_DET=LINUX ARCH=IA32 ``` |
 | linux ubuntu   | x86_64  | O    | ``` make OS_DET=LINUX ARCH=AMD64 ``` |
-| iOS iphone   | armv7     | O    | ``` make OS_DET=IOS ARCH=armv7 ``` |
-| iOS iphone   | armv7s    | O    | ``` make OS_DET=IOS ARCH=armv7s ``` |
-| iOS iphone   | arm64     | O    | ``` make OS_DET=IOS ARCH=arm64 ``` |
+| iOS   | armv7            | O    | ``` make OS_DET=IOS ARCH=armv7 ``` |
+| iOS   | armv7s           | O    | ``` make OS_DET=IOS ARCH=armv7s ``` |
+| iOS   | arm64            | O    | ``` make OS_DET=IOS ARCH=arm64 ``` |
 | Android   | armeabi      | O    | ``` make OS_DET=android ARCH=armeabi NDK_PATH=C:\android-ndk-r16b-windows-x86_64\android-ndk-r16b ``` |
 | Android   | armeabi-v7a  | O    | ``` make OS_DET=android ARCH=armeabi-v7a NDK_PATH=C:\android-ndk-r16b-windows-x86_64\android-ndk-r16b ``` |
 | Android   | arm64-v8a    | O    | ``` make OS_DET=android ARCH=arm64-v8a NDK_PATH=C:\android-ndk-r16b-windows-x86_64\android-ndk-r16b ``` |
