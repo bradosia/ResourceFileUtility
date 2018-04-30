@@ -6,6 +6,9 @@
 #ifndef EXPORT_HPP
 #define EXPORT_HPP
 
+#define __cplusplus 201103L
+#define _GLIBCXX_USE_C99 1
+
 #ifdef __cplusplus
 #define EXTERNC         extern "C"
 #else

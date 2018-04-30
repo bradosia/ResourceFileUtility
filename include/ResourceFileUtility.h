@@ -6,6 +6,9 @@
 #ifndef RESOURCE_FILE_UTILITY_H
 #define RESOURCE_FILE_UTILITY_H
 
+#define __cplusplus 201103L
+#define _GLIBCXX_USE_C99 1
+
 #include <iostream>
 #include <string>
 #include <fstream>

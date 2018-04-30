@@ -234,75 +234,59 @@ ifeq ($(OS_DET),android)
 	# paths
 	SHARED_CPP_NAME = libResourceFileUtility.dll
 	STATIC_CPP_NAME = libResourceFileUtility.a
+	ifeq ($(ARCH),armeabi)
+		VERSION_NAME = linux-android-armeabi
+		GCC = arm-linux-androideabi-g++
+		AR = arm-linux-androideabi-ar
+	endif
 	ifeq ($(ARCH),armeabi-v7a)
 		VERSION_NAME = linux-android-armeabi
-		LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
-		SHARED_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(SHARED_CPP_NAME)
-		STATIC_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(STATIC_CPP_NAME)
-		LIBRARY_SRC_DIR = src
-		LIBRARY_TEMP_DIR = $(VERSION_NAME)
-		LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
-		# cpp library commands and flags
 		GCC = arm-linux-androideabi-g++
-		LIBRARY_OBJ_COMPILE_FLAGS = -I"$(NDK_PATH)/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/include" -I"$(NDK_PATH)/sources/cxx-stl/gnu-libstdc++/4.9/include" -I"$(NDK_PATH)/sysroot/usr/include" -I"$(NDK_PATH)/sysroot/usr/include/arm-linux-androideabi" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 
-		LIBRARY_OBJ_COMPILE_FLAGSs = -I"$(NDK_PATH)/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/include" -I"$(NDK_PATH)/sources/cxx-stl/gnu-libstdc++/4.9/include" -I"$(NDK_PATH)/sysroot/usr/include" -I"$(NDK_PATH)/sysroot/usr/include/arm-linux-androideabi" -I"$(NDK_PATH)/sources/cxx-stl/stlport/stlport" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 
-		SHARED_CPP_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared
-		AR = ar
-		STATIC_CPP_LINK = 
-		# program c#
-		CSC = csc
-		CSC_FLAGS = /nologo /optimize /langversion:latest
-		BUNDLE_CMD = 
-		# program c++
-		PROGRAM_CPP_COMPILE = -I"$(PROGRAM_INC_DIR)" -I"$(NDK_PATH)/sysroot/usr/include" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
-		PROGRAM_CPP_LIBS = -lResourceFileUtility
-		# backslash
-		LIBRARY_OBJ_DIR_BACKSLASH = $(subst /,\\,$(LIBRARY_OBJ_DIR))
-		LIBRARY_TEMP_DIR_BACKSLASH = $(subst /,\\,$(LIBRARY_TEMP_DIR))
-		LIBRARY_PLATFORM_DIR_BACKSLASH= $(subst /,\\,$(LIBRARY_PLATFORM_DIR))
-		SHARED_CPP_PATH_BACKSLASH= $(subst /,\\,$(SHARED_CPP_PATH))
-		STATIC_CPP_PATH_BACKSLASH= $(subst /,\\,$(STATIC_CPP_PATH))
-		PROGRAM_CSHARP_EXE_BACKSLASH= $(subst /,\\,$(PROGRAM_CSHARP_EXE))
-		PROGRAM_CSHARP_BUNDLE_BACKSLASH= $(subst /,\\,$(PROGRAM_CSHARP_BUNDLE))
-		PROGRAM_CPP_EXE_BACKSLASH=$(subst /,\\,$(PROGRAM_CPP_EXE))
-		PROGRAM_OBJ_DIR_BACKSLASH=$(subst /,\\,$(PROGRAM_OBJ_DIR))
-		# commands
-		LIBRARY_OBJ_DIR_CMD = if not exist "$(LIBRARY_OBJ_DIR_BACKSLASH)" mkdir $(LIBRARY_OBJ_DIR_BACKSLASH)
-		LIBRARY_PLATFORM_DIR_CMD = if not exist "$(LIBRARY_PLATFORM_DIR_BACKSLASH)" mkdir $(LIBRARY_PLATFORM_DIR_BACKSLASH)
-		PROGRAM_OBJ_DIR_CMD = if not exist "$(PROGRAM_OBJ_DIR_BACKSLASH)" mkdir $(PROGRAM_OBJ_DIR_BACKSLASH)
-		COPY_SHARED_LIBRARY_CMD = copy $(SHARED_CPP_PATH_BACKSLASH) $(PROGRAM_BIN_DIR) /Y
-		LIBRARY_TEMP_DIR_DEL = if exist "$(LIBRARY_TEMP_DIR_BACKSLASH)" rd /s /q "$(LIBRARY_TEMP_DIR_BACKSLASH)"
-		PROGRAM_OBJ_DIR_DEL = if exist "$(PROGRAM_OBJ_DIR_BACKSLASH)" rd /s /q "$(PROGRAM_OBJ_DIR_BACKSLASH)"
-		SHARED_LIBRARY_DEL_CMD = if exist "$(SHARED_CPP_PATH_BACKSLASH)" del /F /Q "$(SHARED_CPP_PATH_BACKSLASH)"
-		STATIC_LIBRARY_DEL_CMD = if exist "$(STATIC_CPP_PATH_BACKSLASH)" del /F /Q "$(STATIC_CPP_PATH_BACKSLASH)"
-		PROGRAM_CSHARP_DEL_CMD = if exist "$(PROGRAM_CSHARP_EXE_BACKSLASH)" del /F /Q "$(PROGRAM_CSHARP_EXE_BACKSLASH)"
-		PROGRAM_CSHARP_DEL_POST_CMD = 
-		BUNDLE_CSHARP_DEL_CMD = if exist "$(PROGRAM_CSHARP_BUNDLE_BACKSLASH)" del /F /Q "$(PROGRAM_CSHARP_BUNDLE_BACKSLASH)"
-		PROGRAM_CPP_DEL_CMD = if exist "$(PROGRAM_CPP_EXE_BACKSLASH)" del /F /Q "$(PROGRAM_CPP_EXE_BACKSLASH)"
+		AR = arm-linux-androideabi-ar
 	endif
 	ifeq ($(ARCH),arm64-v8a)
 		VERSION_NAME = aarch64-linux-android
+		GCC = aarch64-linux-android-g++
+		AR = aarch64-linux-android-ar
+	endif
 		LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
 		SHARED_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(SHARED_CPP_NAME)
 		STATIC_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(STATIC_CPP_NAME)
 		LIBRARY_SRC_DIR = src
 		LIBRARY_TEMP_DIR = $(VERSION_NAME)
 		LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
+	ifeq ($(ARCH),armeabi-v7a)
 		# cpp library commands and flags
-		GCC = aarch64-linux-android-g++
-		LIBRARY_OBJ_COMPILE_FLAGS = -I"$(NDK_PATH)/sources/cxx-stl/gnu-libstdc++/4.9/libs/arm64-v8a/include" -I"$(NDK_PATH)/sources/cxx-stl/gnu-libstdc++/4.9/include" -I"$(NDK_PATH)/sysroot/usr/include" -I"$(NDK_PATH)/sysroot/usr/include/aarch64-linux-android" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 
-		SHARED_CPP_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared
-		AR = ar
+		LIBRARY_OBJ_COMPILE_INCLUDES =  -I"$(NDK_PATH)/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/include" -I"$(NDK_PATH)/sources/cxx-stl/gnu-libstdc++/4.9/include" -I"$(NDK_PATH)/sysroot/usr/include" -I"$(NDK_PATH)/sysroot/usr/include/arm-linux-androideabi"
+		LIBRARY_OBJ_COMPILE_FLAGS = $(LIBRARY_OBJ_COMPILE_INCLUDES) -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 
+		SHARED_CPP_LINK_FLAGS = --sysroot="$(NDK_PATH)/platforms/android-21/arch-arm" -static-libgcc -static-libstdc++ -static -shared
 		STATIC_CPP_LINK = 
 		# program c#
 		CSC = csc
 		CSC_FLAGS = /nologo /optimize /langversion:latest
 		BUNDLE_CMD = 
 		# program c++
-		PROGRAM_CPP_COMPILE = -I"$(PROGRAM_INC_DIR)" -I"$(NDK_PATH)/sysroot/usr/include" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
+		PROGRAM_CPP_COMPILE_INCLUDES = -I"$(NDK_PATH)/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/include" -I"$(NDK_PATH)/sources/cxx-stl/gnu-libstdc++/4.9/include" -I"$(NDK_PATH)/sysroot/usr/include" -I"$(NDK_PATH)/sysroot/usr/include/arm-linux-androideabi"
+		PROGRAM_CPP_COMPILE = $(PROGRAM_CPP_COMPILE_INCLUDES) -I"$(PROGRAM_INC_DIR)" -I"$(NDK_PATH)/sysroot/usr/include" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+		PROGRAM_CPP_LINK = --sysroot="$(NDK_PATH)/platforms/android-21/arch-arm" -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
 		PROGRAM_CPP_LIBS = -lResourceFileUtility
+	endif
+	ifeq ($(ARCH),arm64-v8a)
+		# cpp library commands and flags
+		LIBRARY_OBJ_COMPILE_INCLUDES =  --sysroot="$(NDK_PATH)/platforms/android-21/arch-arm64" -I"$(NDK_PATH)/sources/cxx-stl/gnu-libstdc++/4.9/libs/arm64-v8a/include" -I"$(NDK_PATH)/sources/cxx-stl/gnu-libstdc++/4.9/include" -I"$(NDK_PATH)/sysroot/usr/include" -I"$(NDK_PATH)/sysroot/usr/include/aarch64-linux-android"
+		LIBRARY_OBJ_COMPILE_FLAGS = $(LIBRARY_OBJ_COMPILE_INCLUDES) -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 
+		SHARED_CPP_LINK_FLAGS = --sysroot="$(NDK_PATH)/platforms/android-21/arch-arm64" -static-libgcc -static-libstdc++ -static -shared
+		STATIC_CPP_LINK = 
+		# program c#
+		CSC = csc
+		CSC_FLAGS = /nologo /optimize /langversion:latest
+		BUNDLE_CMD = 
+		# program c++
+		PROGRAM_CPP_COMPILE_INCLUDES = -I"$(NDK_PATH)/sources/cxx-stl/gnu-libstdc++/4.9/libs/arm64-v8a/include" -I"$(NDK_PATH)/sources/cxx-stl/gnu-libstdc++/4.9/include" -I"$(NDK_PATH)/sysroot/usr/include" -I"$(NDK_PATH)/sysroot/usr/include/aarch64-linux-android"
+		PROGRAM_CPP_COMPILE = $(PROGRAM_CPP_COMPILE_INCLUDES) -I"$(PROGRAM_INC_DIR)" -I"$(NDK_PATH)/sysroot/usr/include" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+		PROGRAM_CPP_LINK = --sysroot="$(NDK_PATH)/platforms/android-21/arch-arm64" -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
+		PROGRAM_CPP_LIBS = -lResourceFileUtility
+	endif
 		# backslash
 		LIBRARY_OBJ_DIR_BACKSLASH = $(subst /,\\,$(LIBRARY_OBJ_DIR))
 		LIBRARY_TEMP_DIR_BACKSLASH = $(subst /,\\,$(LIBRARY_TEMP_DIR))
@@ -326,7 +310,6 @@ ifeq ($(OS_DET),android)
 		PROGRAM_CSHARP_DEL_POST_CMD = 
 		BUNDLE_CSHARP_DEL_CMD = if exist "$(PROGRAM_CSHARP_BUNDLE_BACKSLASH)" del /F /Q "$(PROGRAM_CSHARP_BUNDLE_BACKSLASH)"
 		PROGRAM_CPP_DEL_CMD = if exist "$(PROGRAM_CPP_EXE_BACKSLASH)" del /F /Q "$(PROGRAM_CPP_EXE_BACKSLASH)"
-	endif
 endif
 
 LIBRARY_SRC_FILES := $(wildcard $(LIBRARY_SRC_DIR)/*.cpp)
