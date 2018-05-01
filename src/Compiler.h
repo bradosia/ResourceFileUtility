@@ -14,18 +14,26 @@
 #include <fstream>
 #include "../contrib/json.hpp"
 #include "CallbackHandler.h"
+#include "ResourceFile.h"
 
 namespace ResourceFileUtility {
 
 typedef int (*CBintString)(char* text);
 
 class Compiler {
-public:
+private:
+	ResourceFile resourceFileObj;
 	CBintString callbackFileComplete;
 	CBintString callbackPackComplete;
 	ResourceFileUtility::CallbackHandler* callbackHandlerPtr;
+	int metaDirectorySize;
+	/* reads current resource file directory and attempts to append new files and delete old ones.
+	 * An entire recompile will be triggered if new directory size > old directory size */
+	bool tryToUpdate;
+public:
 	Compiler();
-	~Compiler();
+	virtual ~Compiler() {
+	}
 	void info(std::string fileName);
 	void pack(std::string fileName);
 	void setCallbackFileComplete(CBintString handler_);

@@ -3,15 +3,16 @@
 
 #include <iostream>
 #include <string>
-#include <fstream>
+#include "ResourceFile.h"
 
 namespace ResourceFileUtility {
 
 class Loader {
+	ResourceFile resourceFileObj;
 public:
-	int test;
 	Loader();
-	~Loader();
+	virtual ~Loader() {
+	}
 	void info(std::string fileName);
 };
 

@@ -1,0 +1,54 @@
+#ifndef RESOURCE_FILE_H
+#define RESOURCE_FILE_H
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+namespace ResourceFileUtility {
+
+class Directory {
+private:
+	unsigned long long filePosCurrent;
+	unsigned long long filePosNew;
+	unsigned long long fileLenCurrent;
+	unsigned long long fileLenNew;
+};
+
+class Asset {
+private:
+	bool fileWritten;
+	unsigned long long filePosCurrent;
+	unsigned long long filePosNew;
+	unsigned long long fileLenCurrent;
+	unsigned long long fileLenNew;
+};
+
+class ResourceFile {
+private:
+	Directory directory;
+	std::vector<Asset> assetList;
+public:
+	ResourceFile();
+	virtual ~ResourceFile() {
+	}
+};
+
+class Parser {
+public:
+	Parser();
+	virtual ~Parser() {
+	}
+	bool readDirectory(std::fstream resourceFile, Directory& directoryObj,
+			unsigned long long& sizeCurrent);
+	bool writeDirectory(std::fstream resourceFile, Directory& directoryObj,
+			unsigned long long& sizeCurrent);
+	bool insertAsset(std::fstream resourceFile, Asset& assetObj,
+			unsigned long long& sizeCurrent);
+	bool removeAsset(std::fstream resourceFile, Asset& assetObj,
+			unsigned long long& sizeCurrent);
+};
+
+}
+
+#endif

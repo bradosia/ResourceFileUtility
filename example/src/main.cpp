@@ -6,10 +6,10 @@ using namespace std;
 
 class Callback: ResourceFileUtility::CallbackHandler {
 public:
-	void fileComplete(string filePath) {
+	int fileComplete(char* filePath) {
 		cout << "Sucessfully Packed: " << filePath << endl;
 	}
-	void packComplete() {
+	int packComplete(char* filePath) {
 		cout << "Sucessfully Packed all files!" << endl;
 	}
 };

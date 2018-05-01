@@ -5,6 +5,8 @@ Compiler::Compiler() {
 	callbackFileComplete = 0;
 	callbackPackComplete = 0;
 	callbackHandlerPtr = 0;
+	metaDirectorySize = 128; // 128 entries
+	tryToUpdate = true;
 }
 Compiler::~Compiler() {
 
@@ -59,8 +61,8 @@ void Compiler::info(std::string fileName) {
 						<< std::endl;
 			}
 			try {
-				handle = files[i].at("path").get<std::string>();
-				std::cout << "Found handle: " << handle << std::endl;
+				path = files[i].at("path").get<std::string>();
+				std::cout << "Found path: " << handle << std::endl;
 			} catch (...) {
 				std::cout
 						<< "JSON file object does not have the \"path\" attribute"

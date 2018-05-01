@@ -31,7 +31,7 @@ public:
 	CBintString callbackFileComplete;
 	CBintString callbackPackComplete;
 	Compiler();
-	~Compiler();
+	virtual ~Compiler();
 	void info(std::string fileName);
 	void pack(std::string fileName);
 	void setCallbackFileComplete(CBintString handler_);
@@ -43,7 +43,8 @@ class Loader {
 public:
 	int test;
 	Loader();
-	~Loader();
+	virtual ~Loader() {
+	}
 	void info(std::string fileName);
 };
 

@@ -5,8 +5,5 @@ namespace ResourceFileUtility {
 Loader::Loader() {
 
 }
-Loader::~Loader() {
-
-}
 
 }
