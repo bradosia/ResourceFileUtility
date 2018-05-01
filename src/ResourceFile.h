@@ -7,8 +7,23 @@
 
 namespace ResourceFileUtility {
 
+/*
+ * @class Directory
+ * Each Directory entry takes up the bytes
+ * 8 bytes = file CRC64
+ * 8 bytes = file start position (byte)
+ * 8 bytes = file length (byte)
+ * 8 bytes = file type (8 digit ascii)
+ * 32 bytes = file handle (32 digit ascii)
+ * 64 bytes = custom
+ * 128 bytes total
+ */
 class Directory {
 private:
+	class Entry {
+	private:
+
+	};
 	unsigned long long filePosCurrent;
 	unsigned long long filePosNew;
 	unsigned long long fileLenCurrent;
