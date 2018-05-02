@@ -35,7 +35,10 @@ public:
 	virtual ~Compiler() {
 	}
 	void info(std::string fileName);
+	void packEstimate(unsigned long long& sizeCurrent,
+			unsigned long long& sizeTotal);
 	void pack(std::string fileName);
+	Asset resourceFileGetFile(int fileID);
 	void setCallbackFileComplete(CBintString handler_);
 	void setCallbackPackComplete(CBintString handler_);
 	void setCallback(CallbackHandler* handler_);

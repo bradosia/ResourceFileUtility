@@ -6,16 +6,42 @@ ResourceFile::ResourceFile() {
 
 }
 
+void ResourceFile::addFile(std::string handle, std::string filePath,
+		std::string inType, std::string outType) {
+	assetList.push_back(new Asset(handle, filePath, inType, outType));
+}
+unsigned int ResourceFile::assetListSize() {
+	return (unsigned int) assetList.size();
+}
+Asset* ResourceFile::asset(unsigned int assetID) {
+	Asset* assetObj = nullptr;
+	try {
+		assetObj = assetList[assetID];
+	} catch (...) {
+
+	}
+	return assetObj;
+}
+
 Asset::Asset(std::string handle_, std::string filePath_, std::string inType_,
-		std::string outType_){
+		std::string outType_) {
 	handle = handle_;
 	path = filePath_;
 	inType = inType_;
 	outType = outType_;
 }
 
-int Parser::readDirectoryJSON(std::fstream fileJSON, ResourceFile& directoryObj,
-		unsigned long long& sizeCurrent) {
+std::string Asset::getPath() {
+	return path;
+}
+
+void Asset::setExist(bool flag) {
+	fileExist = flag;
+}
+
+int Parser::readDirectoryJSON(std::fstream& fileJSON,
+		ResourceFile& resourceFileObj, unsigned long long& sizeCurrent,
+		unsigned long long& sizeTotal) {
 	nlohmann::json j;
 	std::string handle;
 	std::string filePath;
@@ -25,6 +51,7 @@ int Parser::readDirectoryJSON(std::fstream fileJSON, ResourceFile& directoryObj,
 	bool parseFlag = false;
 	nlohmann::json files;
 	int status = -1;
+	sizeCurrent = sizeTotal = 0;
 
 	if (fileJSON.is_open()) {
 		try {
@@ -54,6 +81,7 @@ int Parser::readDirectoryJSON(std::fstream fileJSON, ResourceFile& directoryObj,
 	 */
 	if (parseFlag) {
 		n = files.size();
+		sizeTotal = (unsigned long long) n;
 		for (i = 0; i < n; i++) {
 			std::string handle = "";
 			std::string filePath = "";
@@ -69,7 +97,7 @@ int Parser::readDirectoryJSON(std::fstream fileJSON, ResourceFile& directoryObj,
 			}
 			try {
 				filePath = files[i].at("path").get<std::string>();
-				std::cout << "Found path: " << handle << std::endl;
+				std::cout << "Found path: " << filePath << std::endl;
 			} catch (...) {
 				std::cout
 						<< "JSON file object does not have the \"path\" attribute"
@@ -77,7 +105,7 @@ int Parser::readDirectoryJSON(std::fstream fileJSON, ResourceFile& directoryObj,
 			}
 			try {
 				inType = files[i].at("inType").get<std::string>();
-				std::cout << "Found handle: " << handle << std::endl;
+				std::cout << "Found inType: " << inType << std::endl;
 			} catch (...) {
 				std::cout
 						<< "JSON file object does not have the \"inType\" attribute"
@@ -85,16 +113,43 @@ int Parser::readDirectoryJSON(std::fstream fileJSON, ResourceFile& directoryObj,
 			}
 			try {
 				outType = files[i].at("outType").get<std::string>();
-				std::cout << "Found handle: " << handle << std::endl;
+				std::cout << "Found outType: " << outType << std::endl;
 			} catch (...) {
 				std::cout
 						<< "JSON file object does not have the \"outType\" attribute"
 						<< std::endl;
 			}
-			directoryObj.addFile(handle, filePath, inType, outType);
+			resourceFileObj.addFile(handle, filePath, inType, outType);
+			sizeCurrent++;
 		}
 	}
 	return status;
+}
+
+int Parser::estimate(Asset& assetObj, unsigned long long& sizeCurrent,
+		unsigned long long& sizeTotal) {
+	unsigned long long fileSize;
+	sizeCurrent = sizeTotal = 0;
+	std::ifstream fileAsset;
+	int retStatus = -1;
+	try {
+		std::cout << assetObj.getPath() << std::endl;
+		fileAsset.open(assetObj.getPath(), std::ios::binary);
+		assetObj.setExist(true);
+	} catch (...) {
+		retStatus = 1;
+		assetObj.setExist(false);
+	}
+	if (fileAsset.is_open()) {
+		fileAsset.seekg(0, std::ios::end); // set the pointer to the end
+		fileSize = fileAsset.tellg(); // get the length of the file
+		fileAsset.seekg(0, std::ios::beg); // set the pointer to the beginning
+		std::cout << "size: " << fileSize << std::endl;
+		Crc64.hash(0, (unsigned char*) "123456789", 1);
+	} else {
+		retStatus = 2;
+	}
+	return retStatus;
 }
 
 }

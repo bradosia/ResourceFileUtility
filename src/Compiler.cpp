@@ -8,20 +8,18 @@ Compiler::Compiler() {
 	metaDirectorySize = 128; // 128 entries
 	tryToUpdate = true;
 }
-Compiler::~Compiler() {
 
-}
 void Compiler::info(std::string fileName) {
 	std::cout << "Opening \"" << fileName << "\" as the resource info file."
 			<< std::endl;
 	std::fstream fileIn;
-	unsigned long long sizeCurrent = 0;
+	unsigned long long sizeCurrent, sizeTotal;
 	int readDirectoryJSONStatus;
 
 	fileIn.open(fileName);
 
 	readDirectoryJSONStatus = Parser::readDirectoryJSON(fileIn, resourceFileObj,
-			sizeCurrent);
+			sizeCurrent, sizeTotal);
 	if (readDirectoryJSONStatus) {
 		if (readDirectoryJSONStatus == 1) {
 			std::cout << "Failed opening \"" << fileName
@@ -29,7 +27,23 @@ void Compiler::info(std::string fileName) {
 		}
 	} else {
 		std::cout << "Failed opening \"" << fileName
-							<< "\" as the resource info file." << std::endl;
+				<< "\" as the resource info file." << std::endl;
+	}
+}
+void Compiler::packEstimate(unsigned long long& sizeCurrent,
+		unsigned long long& sizeTotal) {
+	sizeCurrent = sizeTotal = 0;
+	int estimateStatus;
+	unsigned int i, n;
+	unsigned long long assetSizeCurrent, assetSizeTotal;
+	n = resourceFileObj.assetListSize();
+	for (i = 0; i < n; i++) {
+		std::cout << "size:" << n << " " << i << std::endl;
+		estimateStatus = Parser::estimate(*resourceFileObj.asset(i),
+				assetSizeCurrent, assetSizeTotal);
+		if (estimateStatus) {
+			std::cout << "estimate code: " << estimateStatus << std::endl;
+		}
 	}
 }
 void Compiler::pack(std::string fileName) {

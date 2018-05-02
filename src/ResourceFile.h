@@ -6,6 +6,7 @@
 #include <vector>
 #include <fstream>
 #include "../contrib/json.hpp"
+#include "crc64.h"
 
 namespace ResourceFileUtility {
 
@@ -35,6 +36,7 @@ private:
 
 class Asset {
 private:
+	bool fileExist;
 	bool fileWritten;
 	unsigned long long filePosCurrent;
 	unsigned long long filePosNew;
@@ -47,20 +49,22 @@ private:
 public:
 	Asset(std::string handle_, std::string filePath_, std::string inType_,
 			std::string outType_);
+	std::string getPath();
+	void setExist(bool flag);
 };
 
 class ResourceFile {
 private:
 	Directory directory;
-	std::vector<Asset> assetList;
+	std::vector<Asset*> assetList;
 public:
 	ResourceFile();
 	virtual ~ResourceFile() {
 	}
 	void addFile(std::string handle, std::string filePath, std::string inType,
-			std::string outType) {
-		assetList.push_back(Asset(handle, filePath, inType, outType));
-	}
+			std::string outType);
+	unsigned int assetListSize();
+	Asset* asset(unsigned int assetID);
 };
 
 class Parser {
@@ -70,16 +74,21 @@ public:
 	}
 	virtual ~Parser() {
 	}
-	static int readDirectoryJSON(std::fstream resourceFile,
-			ResourceFile& directoryObj, unsigned long long& sizeCurrent);
-	static int readDirectory(std::fstream resourceFile,
-			ResourceFile& directoryObj, unsigned long long& sizeCurrent);
-	static int writeDirectory(std::fstream resourceFile,
-			ResourceFile& directoryObj, unsigned long long& sizeCurrent);
-	static int insertAsset(std::fstream resourceFile, Asset& assetObj,
-			unsigned long long& sizeCurrent);
-	static int removeAsset(std::fstream resourceFile, Asset& assetObj,
-			unsigned long long& sizeCurrent);
+	static int readDirectoryJSON(std::fstream& resourceFile,
+			ResourceFile& directoryObj, unsigned long long& sizeCurrent,
+			unsigned long long& sizeTotal);
+	static int readDirectory(std::fstream& resourceFile,
+			ResourceFile& directoryObj, unsigned long long& sizeCurrent,
+			unsigned long long& sizeTotal);
+	static int estimate(Asset& assetObj, unsigned long long& sizeCurrent,
+			unsigned long long& sizeTotal);
+	static int writeDirectory(std::fstream& resourceFile,
+			ResourceFile& directoryObj, unsigned long long& sizeCurrent,
+			unsigned long long& sizeTotal);
+	static int insertAsset(std::fstream& resourceFile, Asset& assetObj,
+			unsigned long long& sizeCurrent, unsigned long long& sizeTotal);
+	static int removeAsset(std::fstream& resourceFile, Asset& assetObj,
+			unsigned long long& sizeCurrent, unsigned long long& sizeTotal);
 };
 
 }

@@ -9,10 +9,14 @@ namespace ResourceFileUtility {
 
 class CallbackHandler {
 public:
-	CallbackHandler();
-	virtual ~CallbackHandler();
+	CallbackHandler() {
+
+	}
+	virtual ~CallbackHandler() {
+	}
 	virtual int fileComplete(char* filePath);
 	virtual int packComplete(char* filePath);
+	virtual int estimateFileComplete(int fileID);
 };
 
 }

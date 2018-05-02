@@ -61,7 +61,7 @@ namespace ResourceFileUtility {
                 return cb.packComplete(arg1);
             };
             compiler_setCallbackFileComplete(thisPtr, callbackFileComplete);
-            compiler_setCallbackPackComplete(thisPtr, callbackFileComplete);
+            compiler_setCallbackPackComplete(thisPtr, callbackPackComplete);
         }
 
     }
