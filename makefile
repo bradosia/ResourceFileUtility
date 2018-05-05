@@ -180,10 +180,17 @@ ifeq ($(OS_DET),android)
     -framework Foundation -framework UIKit
 endif
 ifeq ($(OS_DET),LINUX)
+	ifeq ($(ARCH),IA32)
+		SHARED_CPP_NAME = libResourceFileUtility.so
+		STATIC_CPP_NAME = libResourceFileUtility.a
+		VERSION_NAME = linuxDebian-x86-gcc
+	endif
+	ifeq ($(ARCH),AMD64)
+		SHARED_CPP_NAME = libResourceFileUtility.so
+		STATIC_CPP_NAME = libResourceFileUtility.a
+		VERSION_NAME = linuxDebian-x86_64-gcc
+	endif
 	# paths
-	SHARED_CPP_NAME = libResourceFileUtility.so
-	STATIC_CPP_NAME = libResourceFileUtility.a
-	VERSION_NAME = linuxDebian-x86_64-gcc
 	LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
 	SHARED_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(SHARED_CPP_NAME)
 	STATIC_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(STATIC_CPP_NAME)
@@ -193,7 +200,7 @@ ifeq ($(OS_DET),LINUX)
 	# cpp library commands and flags
 	GCC = g++
 	LIBRARY_OBJ_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-	SHARED_CPP_LINK_FLAGS = -std=gnu++11 -static -shared
+	SHARED_CPP_LINK_FLAGS = -fPIC -std=gnu++11 -static -shared
 	LIBRARY_SRC_DIR := src
 	LIBRARY_OBJ_DIR := $(VERSION_NAME)/src
 	AR = ar
