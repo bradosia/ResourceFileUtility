@@ -200,7 +200,7 @@ ifeq ($(OS_DET),LINUX)
 	# cpp library commands and flags
 	GCC = g++
 	LIBRARY_OBJ_COMPILE_FLAGS = -fPIC -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-	SHARED_CPP_LINK_FLAGS = -fPIC -std=gnu++11 -static -shared
+	SHARED_CPP_LINK_FLAGS = -fPIC -std=gnu++11 -shared
 	AR = ar
 	STATIC_CPP_LINK = 
 	# program c#
