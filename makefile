@@ -199,7 +199,7 @@ ifeq ($(OS_DET),LINUX)
 	LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
 	# cpp library commands and flags
 	GCC = g++
-	LIBRARY_OBJ_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+	LIBRARY_OBJ_COMPILE_FLAGS = -fPIC -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
 	SHARED_CPP_LINK_FLAGS = -fPIC -std=gnu++11 -static -shared
 	AR = ar
 	STATIC_CPP_LINK = 
