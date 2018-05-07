@@ -348,7 +348,7 @@ ifeq ($(OS_DET),IOS)
 		# program c++
 		PROGRAM_CPP_COMPILE_INCLUDES = 
 		PROGRAM_CPP_COMPILE = $(PROGRAM_CPP_COMPILE_INCLUDES) -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -stdlib=libc++ -Wall -c -fmessage-length=0 -arch armv7 -mios-version-min=5.0 -isysroot $(iPhoneSDK)
-		PROGRAM_CPP_LINK = -std=gnu++11 -stdlib=libc++ -L"$(LIBRARY_PLATFORM_DIR)" -L"$(iPhoneSDKLibs)" -static -undefined dynamic_lookup -arch armv7 -mios-version-min=5.0 -isysroot $(iPhoneSDK)
+		PROGRAM_CPP_LINK = -std=gnu++11 -stdlib=libc++ -L"$(LIBRARY_PLATFORM_DIR)" -L"$(iPhoneSDKLibs)" -undefined dynamic_lookup -arch armv7 -mios-version-min=5.0 -isysroot $(iPhoneSDK)
 		PROGRAM_CPP_LIBS = -lResourceFileUtility
 	endif
 	ifeq ($(ARCH),armv7s)

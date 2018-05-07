@@ -2,6 +2,7 @@
 # creates directory automatically 
 git clone https://github.com/bradosia/ResourceFileUtility
 
+cd /Users/CKMo/Brad
 cd ResourceFileUtility
 git reset --hard
 git pull origin master
