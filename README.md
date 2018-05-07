@@ -20,6 +20,14 @@ Install clang
 
 ## Linux Ubuntu
 Install GCC
+For C language:
+```shell
+sudo apt-get install gcc-multilib
+```
+For C++ language:
+```shell
+sudo apt-get install g++-multilib
+```
 
 ## Android
 Install the android NDK<BR>
