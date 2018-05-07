@@ -184,11 +184,15 @@ ifeq ($(OS_DET),LINUX)
 		SHARED_CPP_NAME = libResourceFileUtility.so
 		STATIC_CPP_NAME = libResourceFileUtility.a
 		VERSION_NAME = linuxDebian-x86-gcc
+		GCC = gcc
+		AR = ar
 	endif
 	ifeq ($(ARCH),x86_64)
 		SHARED_CPP_NAME = libResourceFileUtility.so
 		STATIC_CPP_NAME = libResourceFileUtility.a
 		VERSION_NAME = linuxDebian-x86_64-gcc
+		GCC = gcc
+		AR = ar
 	endif
 	# paths
 	LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
@@ -197,20 +201,34 @@ ifeq ($(OS_DET),LINUX)
 	LIBRARY_SRC_DIR = src
 	LIBRARY_TEMP_DIR = $(VERSION_NAME)
 	LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
-	# cpp library commands and flags
-	GCC = g++
-	LIBRARY_OBJ_COMPILE_FLAGS = -fPIC -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-	SHARED_CPP_LINK_FLAGS = -fPIC -std=gnu++11 -shared
-	AR = ar
-	STATIC_CPP_LINK = 
-	# program c#
-	CSC = csc
-	CSC_FLAGS = /nologo /optimize /langversion:latest
-	BUNDLE_CMD = 
-	# program c++
-	PROGRAM_CPP_COMPILE = -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-	PROGRAM_CPP_LINK = -static -L"$(LIBRARY_PLATFORM_DIR)"
-	PROGRAM_CPP_LIBS = -lResourceFileUtility
+	ifeq ($(ARCH),x86)
+		# cpp library commands and flags
+		LIBRARY_OBJ_COMPILE_FLAGS = -fPIC -m32 -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+		SHARED_CPP_LINK_FLAGS = -fPIC -m32 -lstdc++ -std=gnu++11 -static-libgcc -static-libstdc++ -static -shared
+		STATIC_CPP_LINK = 
+		# program c#
+		CSC = csc
+		CSC_FLAGS = /nologo /optimize /langversion:latest
+		BUNDLE_CMD = 
+		# program c++
+		PROGRAM_CPP_COMPILE = -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+		PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -L"$(LIBRARY_PLATFORM_DIR)"
+		PROGRAM_CPP_LIBS = -lResourceFileUtility
+	endif
+	ifeq ($(ARCH),x86_64)
+		# cpp library commands and flags
+		LIBRARY_OBJ_COMPILE_FLAGS = -fPIC -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+		SHARED_CPP_LINK_FLAGS = -fPIC -static-libgcc -static-libstdc++ -static -shared
+		STATIC_CPP_LINK = 
+		# program c#
+		CSC = csc
+		CSC_FLAGS = /nologo /optimize /langversion:latest
+		BUNDLE_CMD = 
+		# program c++
+		PROGRAM_CPP_COMPILE = -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+		PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
+		PROGRAM_CPP_LIBS = -lResourceFileUtility
+	endif
 	# commands
 	LIBRARY_OBJ_DIR_CMD = mkdir -p $(LIBRARY_OBJ_DIR)
 	LIBRARY_PLATFORM_DIR_CMD = mkdir -p $(LIBRARY_PLATFORM_DIR)
