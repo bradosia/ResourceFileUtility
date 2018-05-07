@@ -211,22 +211,22 @@ ifeq ($(OS_DET),LINUX)
 		CSC_FLAGS = /nologo /optimize /langversion:latest
 		BUNDLE_CMD = 
 		# program c++
-		PROGRAM_CPP_COMPILE = -lstdc++ -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		PROGRAM_CPP_LINK = -m32 -lstdc++ -static-libgcc -static-libstdc++ -L"$(LIBRARY_PLATFORM_DIR)"
+		PROGRAM_CPP_COMPILE = -fPIC -m32 -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+		PROGRAM_CPP_LINK = -fPIC -m32 -lstdc++ -static-libgcc -static-libstdc++ -L"$(LIBRARY_PLATFORM_DIR)"
 		PROGRAM_CPP_LIBS = -lResourceFileUtility
 	endif
 	ifeq ($(ARCH),x86_64)
 		# cpp library commands and flags
 		LIBRARY_OBJ_COMPILE_FLAGS = -fPIC -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		SHARED_CPP_LINK_FLAGS = -fPIC -static-libgcc -static-libstdc++ -static -shared
+		SHARED_CPP_LINK_FLAGS = -fPIC lstdc++ -static-libgcc -static-libstdc++ -static -shared
 		STATIC_CPP_LINK = 
 		# program c#
 		CSC = csc
 		CSC_FLAGS = /nologo /optimize /langversion:latest
 		BUNDLE_CMD = 
 		# program c++
-		PROGRAM_CPP_COMPILE = -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
+		PROGRAM_CPP_COMPILE = -fPIC -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+		PROGRAM_CPP_LINK = -fPIC lstdc++ -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
 		PROGRAM_CPP_LIBS = -lResourceFileUtility
 	endif
 	# commands
