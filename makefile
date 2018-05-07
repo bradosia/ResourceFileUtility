@@ -315,6 +315,7 @@ ifeq ($(OS_DET),IOS)
 		VERSION_NAME = ios-armv7
 		GCC = clang++
 		AR = ar
+		iPhoneSDK = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk
 	endif
 	ifeq ($(ARCH),armv7s)
 		VERSION_NAME = ios-armv7s
@@ -336,8 +337,8 @@ ifeq ($(OS_DET),IOS)
 		# cpp library commands and flags
 		GCC = clang++
 		LIBRARY_OBJ_COMPILE_INCLUDES =  
-		LIBRARY_OBJ_COMPILE_FLAGS = $(LIBRARY_OBJ_COMPILE_INCLUDES) -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 -arch armv7 -mios-version-min=5.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk
-		SHARED_CPP_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared -arch armv7 -mios-version-min=5.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk
+		LIBRARY_OBJ_COMPILE_FLAGS = $(LIBRARY_OBJ_COMPILE_INCLUDES) -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 -arch armv7 -mios-version-min=5.0 -isysroot $(iPhoneSDK)
+		SHARED_CPP_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared -arch armv7 -mios-version-min=5.0 -isysroot $(iPhoneSDK)
 		STATIC_CPP_LINK =
 		# program c#
 		CSC = csc
@@ -345,16 +346,16 @@ ifeq ($(OS_DET),IOS)
 		BUNDLE_CMD = 
 		# program c++
 		PROGRAM_CPP_COMPILE_INCLUDES = 
-		PROGRAM_CPP_COMPILE = $(PROGRAM_CPP_COMPILE_INCLUDES) -I"$(PROGRAM_INC_DIR)" -I"$(NDK_PATH)/sysroot/usr/include" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 -arch armv7 -mios-version-min=5.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk
-		PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)" -arch armv7 -mios-version-min=5.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk
+		PROGRAM_CPP_COMPILE = $(PROGRAM_CPP_COMPILE_INCLUDES) -I"$(PROGRAM_INC_DIR)" -I"$(NDK_PATH)/sysroot/usr/include" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 -arch armv7 -mios-version-min=5.0 -isysroot $(iPhoneSDK)
+		PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)" -arch armv7 -mios-version-min=5.0 -isysroot $(iPhoneSDK)
 		PROGRAM_CPP_LIBS = -lResourceFileUtility
 	endif
 	ifeq ($(ARCH),armv7s)
 		# cpp library commands and flags
 		GCC = clang++
 		LIBRARY_OBJ_COMPILE_INCLUDES =  
-		LIBRARY_OBJ_COMPILE_FLAGS = $(LIBRARY_OBJ_COMPILE_INCLUDES) -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 -arch armv7s -mios-version-min=5.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk
-		SHARED_CPP_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared -arch armv7s -mios-version-min=5.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk
+		LIBRARY_OBJ_COMPILE_FLAGS = $(LIBRARY_OBJ_COMPILE_INCLUDES) -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 -arch armv7s -mios-version-min=5.0 -isysroot $(iPhoneSDK)
+		SHARED_CPP_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared -arch armv7s -mios-version-min=5.0 -isysroot $(iPhoneSDK)
 		STATIC_CPP_LINK =
 		# program c#
 		CSC = csc
