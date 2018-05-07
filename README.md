@@ -11,7 +11,8 @@ make
 
 ## Windows
 Only Windows host<BR>
-Install mingw
+Install MinGW-w64<BR>
+Add ```<MinGW_PATH>\bin``` to PATH<BR>
 
 ## Mac OSX
 Only Mac OSX host<BR>
@@ -32,12 +33,12 @@ Install clang<BR>
 ## Supported
 | OS | Architecture | Support |  Command |
 | :---      | :---         | :--- | :--- |
-| Windows   | x86          | X    | ``` make OS_DET=WIN32 ARCH=IA32 ``` |
-| Windows   | x86_64       | X    | ``` make OS_DET=WIN32 ARCH=AMD64 ``` |
-| macOS   | x86            | O    | ``` make OS_DET=OSX ARCH=IA32 ``` |
-| macOS   | x86_64         | X    | ``` make OS_DET=OSX ARCH=AMD64 ``` |
-| linux ubuntu   | x86     | O    | ``` make OS_DET=LINUX ARCH=IA32 ``` |
-| linux ubuntu   | x86_64  | O    | ``` make OS_DET=LINUX ARCH=AMD64 ``` |
+| Windows   | x86          | X    | ``` make OS_DET=WIN ARCH=x86 ``` |
+| Windows   | x86_64       | X    | ``` make OS_DET=WIN ARCH=x86_64 ``` |
+| macOS   | x86            | O    | ``` make OS_DET=OSX ARCH=x86 ``` |
+| macOS   | x86_64         | X    | ``` make OS_DET=OSX ARCH=x86_64 ``` |
+| linux ubuntu   | x86     | O    | ``` make OS_DET=LINUX ARCH=x86 ``` |
+| linux ubuntu   | x86_64  | O    | ``` make OS_DET=LINUX ARCH=x86_64 ``` |
 | iOS   | armv7            | O    | ``` make OS_DET=IOS ARCH=armv7 ``` |
 | iOS   | armv7s           | O    | ``` make OS_DET=IOS ARCH=armv7s ``` |
 | iOS   | arm64            | O    | ``` make OS_DET=IOS ARCH=arm64 ``` |

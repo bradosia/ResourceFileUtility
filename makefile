@@ -1,15 +1,15 @@
 # Architecture detection
 ifndef OS_DET
 	ifeq ($(OS),Windows_NT)
-	OS_DET = WIN32
+	OS_DET = WIN
 		ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
-			ARCH = AMD64
+			ARCH = x86_64
 		else
 			ifeq ($(PROCESSOR_ARCHITECTURE),AMD64)
-             	ARCH = AMD64
+             	ARCH = x86_64
 			endif
 			ifeq ($(PROCESSOR_ARCHITECTURE),x86)
-             	ARCH = IA32
+             	ARCH = x86
 			endif
 		endif
 	else
@@ -22,10 +22,10 @@ ifndef OS_DET
 		endif
     	UNAME_P := $(shell uname -p)
 		ifeq ($(UNAME_P),x86_64)
-			ARCH = AMD64
+			ARCH = x86_64
 		endif
 		ifneq ($(filter %86,$(UNAME_P)),)
-			ARCH = IA32
+			ARCH = x86
 		endif
     	ifneq ($(filter arm%,$(UNAME_P)),)
 			ARCH = ARM
@@ -47,16 +47,20 @@ PROGRAM_CPP_APP = $(PROGRAM_BIN_DIR)/example_cpp.app
 PROGRAM_CPP_APP_ENABLE = 
 PROGRAM_CPP_APP_DEL_CMD = 
 
-ifeq ($(OS_DET),WIN32)
-	ifeq ($(ARCH),IA32)
+ifeq ($(OS_DET),WIN)
+	ifeq ($(ARCH),x86)
 		SHARED_CPP_NAME = ResourceFileUtility.dll
 		STATIC_CPP_NAME = libResourceFileUtility.a
 		VERSION_NAME = win-x86-mingw
+		GCC = x86_64-w64-mingw32-gcc
+		AR = x86_64-w64-mingw32-gcc-ar
 	endif
-	ifeq ($(ARCH),AMD64)
+	ifeq ($(ARCH),x86_64)
 		SHARED_CPP_NAME = ResourceFileUtility.dll
 		STATIC_CPP_NAME = libResourceFileUtility.a
 		VERSION_NAME = win-x86_64-mingw
+		GCC = gcc
+		AR = ar
 	endif
 	# paths
 	LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
@@ -65,12 +69,10 @@ ifeq ($(OS_DET),WIN32)
 	LIBRARY_SRC_DIR = src
 	LIBRARY_TEMP_DIR = $(VERSION_NAME)
 	LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
-	ifeq ($(ARCH),IA32)
+	ifeq ($(ARCH),x86)
 		# cpp library commands and flags
-		GCC = g++
 		LIBRARY_OBJ_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
 		SHARED_CPP_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared
-		AR = ar
 		STATIC_CPP_LINK = 
 		# program c#
 		CSC = csc
@@ -78,10 +80,10 @@ ifeq ($(OS_DET),WIN32)
 		BUNDLE_CMD = 
 		# program c++
 		PROGRAM_CPP_COMPILE = -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
+		PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -L"$(LIBRARY_PLATFORM_DIR)"
 		PROGRAM_CPP_LIBS = -lResourceFileUtility
 	endif
-	ifeq ($(ARCH),AMD64)
+	ifeq ($(ARCH),x86_64)
 		# cpp library commands and flags
 		GCC = g++
 		LIBRARY_OBJ_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
@@ -94,7 +96,7 @@ ifeq ($(OS_DET),WIN32)
 		BUNDLE_CMD = 
 		# program c++
 		PROGRAM_CPP_COMPILE = -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
+		PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -L"$(LIBRARY_PLATFORM_DIR)"
 		PROGRAM_CPP_LIBS = -lResourceFileUtility
 	endif
 	# backslash
@@ -180,12 +182,12 @@ ifeq ($(OS_DET),android)
     -framework Foundation -framework UIKit
 endif
 ifeq ($(OS_DET),LINUX)
-	ifeq ($(ARCH),IA32)
+	ifeq ($(ARCH),x86)
 		SHARED_CPP_NAME = libResourceFileUtility.so
 		STATIC_CPP_NAME = libResourceFileUtility.a
 		VERSION_NAME = linuxDebian-x86-gcc
 	endif
-	ifeq ($(ARCH),AMD64)
+	ifeq ($(ARCH),x86_64)
 		SHARED_CPP_NAME = libResourceFileUtility.so
 		STATIC_CPP_NAME = libResourceFileUtility.a
 		VERSION_NAME = linuxDebian-x86_64-gcc
