@@ -211,8 +211,8 @@ ifeq ($(OS_DET),LINUX)
 		CSC_FLAGS = /nologo /optimize /langversion:latest
 		BUNDLE_CMD = 
 		# program c++
-		PROGRAM_CPP_COMPILE = -m32 -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		PROGRAM_CPP_LINK = -m32 -static-libgcc -static-libstdc++ -L"$(LIBRARY_PLATFORM_DIR)"
+		PROGRAM_CPP_COMPILE = -lstdc++ -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+		PROGRAM_CPP_LINK = -m32 -lstdc++ -static-libgcc -static-libstdc++ -L"$(LIBRARY_PLATFORM_DIR)"
 		PROGRAM_CPP_LIBS = -lResourceFileUtility
 	endif
 	ifeq ($(ARCH),x86_64)
