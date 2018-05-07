@@ -217,16 +217,16 @@ ifeq ($(OS_DET),LINUX)
 	endif
 	ifeq ($(ARCH),x86_64)
 		# cpp library commands and flags
-		LIBRARY_OBJ_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		SHARED_CPP_LINK_FLAGS = -static-libgcc -static-libstdc++ -shared
+		LIBRARY_OBJ_COMPILE_FLAGS = -fPIC -O3 -g3 -std=gnu++11 -Wall -c
+		SHARED_CPP_LINK_FLAGS = -fPIC -static-libgcc -static-libstdc++ -static -shared
 		STATIC_CPP_LINK = 
 		# program c#
 		CSC = csc
 		CSC_FLAGS = /nologo /optimize /langversion:latest
 		BUNDLE_CMD = 
 		# program c++
-		PROGRAM_CPP_COMPILE = -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
+		PROGRAM_CPP_COMPILE = -fPIC -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+		PROGRAM_CPP_LINK = -fPIC -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
 		PROGRAM_CPP_LIBS = -lResourceFileUtility
 	endif
 	# commands
