@@ -26,3 +26,5 @@ Simulator.app/Contents/MacOS/iPhone\ Simulator \ -SimulateApplication ./window
 
 
 make OS_DET=IOS ARCH=armv7
+make OS_DET=IOS ARCH=armv7s
+make OS_DET=IOS ARCH=arm64
