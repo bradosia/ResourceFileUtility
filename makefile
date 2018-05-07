@@ -184,7 +184,7 @@ ifeq ($(OS_DET),LINUX)
 		SHARED_CPP_NAME = libResourceFileUtility.so
 		STATIC_CPP_NAME = libResourceFileUtility.a
 		VERSION_NAME = linuxDebian-x86-gcc
-		GCC = gcc
+		GCC = g++
 		AR = ar
 	endif
 	ifeq ($(ARCH),x86_64)
@@ -218,7 +218,7 @@ ifeq ($(OS_DET),LINUX)
 	ifeq ($(ARCH),x86_64)
 		# cpp library commands and flags
 		LIBRARY_OBJ_COMPILE_FLAGS = -fPIC -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		SHARED_CPP_LINK_FLAGS = -fPIC lstdc++ -static-libgcc -static-libstdc++ -static -shared
+		SHARED_CPP_LINK_FLAGS = -fPIC -static-libgcc -static-libstdc++ -static -shared
 		STATIC_CPP_LINK = 
 		# program c#
 		CSC = csc
@@ -226,7 +226,7 @@ ifeq ($(OS_DET),LINUX)
 		BUNDLE_CMD = 
 		# program c++
 		PROGRAM_CPP_COMPILE = -fPIC -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		PROGRAM_CPP_LINK = -fPIC lstdc++ -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
+		PROGRAM_CPP_LINK = -fPIC -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
 		PROGRAM_CPP_LIBS = -lResourceFileUtility
 	endif
 	# commands
