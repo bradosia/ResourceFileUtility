@@ -40,21 +40,10 @@
 #ifndef CRC64_H
 #define CRC64_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdint.h>
+#include <iostream>
 
-struct crc64a {
-	uint64_t tab[256];
-};
-
-struct crc64 {
-	uint64_t (*hash)(uint64_t crc, const unsigned char *s, uint64_t l);
-};
-
-struct crc64a Crc64a = { .tab = { UINT64_C(0x0000000000000000), UINT64_C(
+static const uint64_t crc64_tab[256] = { UINT64_C(0x0000000000000000), UINT64_C(
 		0x7ad870c830358979), UINT64_C(0xf5b0e190606b12f2), UINT64_C(
 		0x8f689158505e9b8b), UINT64_C(0xc038e5739841b68f), UINT64_C(
 		0xbae095bba8743ff6), UINT64_C(0x358804e3f82aa47d), UINT64_C(
@@ -182,21 +171,12 @@ struct crc64a Crc64a = { .tab = { UINT64_C(0x0000000000000000), UINT64_C(
 		0x1c3fd4a417c62355), UINT64_C(0x935745fc4798b8de), UINT64_C(
 		0xe98f353477ad31a7), UINT64_C(0xa6df411fbfb21ca3), UINT64_C(
 		0xdc0731d78f8795da), UINT64_C(0x536fa08fdfd90e51), UINT64_C(
-		0x29b7d047efec8728), } };
+		0x29b7d047efec8728), };
 
-uint64_t crc64_hash(uint64_t crc, const unsigned char *s, uint64_t l) {
-	uint64_t j;
-	for (j = 0; j < l; j++) {
-		uint8_t byte = s[j];
-		crc = Crc64a.tab[(uint8_t) crc ^ byte] ^ (crc >> 8);
-	}
-	return crc;
-}
-
-struct crc64 Crc64 = { .hash = crc64_hash };
-
-#ifdef __cplusplus
-}
-#endif
+class hashExt {
+public:
+	static uint64_t crc64(uint64_t crc, const unsigned char *s, uint64_t l);
+	static uint64_t crc64(uint64_t crc, std::istream& streamIn, uint64_t l);
+};
 
 #endif

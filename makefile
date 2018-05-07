@@ -307,6 +307,96 @@ ifeq ($(OS_DET),android)
 		BUNDLE_CSHARP_DEL_CMD = if exist "$(PROGRAM_CSHARP_BUNDLE_BACKSLASH)" del /F /Q "$(PROGRAM_CSHARP_BUNDLE_BACKSLASH)"
 		PROGRAM_CPP_DEL_CMD = if exist "$(PROGRAM_CPP_EXE_BACKSLASH)" del /F /Q "$(PROGRAM_CPP_EXE_BACKSLASH)"
 endif
+ifeq ($(OS_DET),IOS)
+	# paths
+	SHARED_CPP_NAME = libResourceFileUtility.dll
+	STATIC_CPP_NAME = libResourceFileUtility.a
+	ifeq ($(ARCH),armv7)
+		VERSION_NAME = ios-armv7
+		GCC = clang++
+		AR = ar
+	endif
+	ifeq ($(ARCH),armv7s)
+		VERSION_NAME = ios-armv7s
+		GCC = clang++
+		AR = ar
+	endif
+	ifeq ($(ARCH),arm64)
+		VERSION_NAME = ios-arm64
+		GCC = clang++
+		AR = ar
+	endif
+		LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
+		SHARED_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(SHARED_CPP_NAME)
+		STATIC_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(STATIC_CPP_NAME)
+		LIBRARY_SRC_DIR = src
+		LIBRARY_TEMP_DIR = $(VERSION_NAME)
+		LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
+	ifeq ($(ARCH),armv7)
+		# cpp library commands and flags
+		GCC = clang++
+		LIBRARY_OBJ_COMPILE_INCLUDES =  
+		LIBRARY_OBJ_COMPILE_FLAGS = $(LIBRARY_OBJ_COMPILE_INCLUDES) -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 -arch armv7 -mios-version-min=5.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk
+		SHARED_CPP_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared -arch armv7 -mios-version-min=5.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk
+		STATIC_CPP_LINK =
+		# program c#
+		CSC = csc
+		CSC_FLAGS = /nologo /optimize /langversion:latest
+		BUNDLE_CMD = 
+		# program c++
+		PROGRAM_CPP_COMPILE_INCLUDES = 
+		PROGRAM_CPP_COMPILE = $(PROGRAM_CPP_COMPILE_INCLUDES) -I"$(PROGRAM_INC_DIR)" -I"$(NDK_PATH)/sysroot/usr/include" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 -arch armv7 -mios-version-min=5.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk
+		PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)" -arch armv7 -mios-version-min=5.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk
+		PROGRAM_CPP_LIBS = -lResourceFileUtility
+	endif
+	ifeq ($(ARCH),armv7s)
+		# cpp library commands and flags
+		GCC = clang++
+		LIBRARY_OBJ_COMPILE_INCLUDES =  
+		LIBRARY_OBJ_COMPILE_FLAGS = $(LIBRARY_OBJ_COMPILE_INCLUDES) -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 -arch armv7s -mios-version-min=5.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk
+		SHARED_CPP_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared -arch armv7s -mios-version-min=5.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk
+		STATIC_CPP_LINK =
+		# program c#
+		CSC = csc
+		CSC_FLAGS = /nologo /optimize /langversion:latest
+		BUNDLE_CMD = 
+		# program c++
+		PROGRAM_CPP_COMPILE_INCLUDES = 
+		PROGRAM_CPP_COMPILE = $(PROGRAM_CPP_COMPILE_INCLUDES) -I"$(PROGRAM_INC_DIR)" -I"$(NDK_PATH)/sysroot/usr/include" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 -arch armv7 -mios-version-min=5.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk
+		PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)" -arch armv7 -mios-version-min=5.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk
+		PROGRAM_CPP_LIBS = -lResourceFileUtility
+	endif
+	ifeq ($(ARCH),arm64)
+		# cpp library commands and flags
+		LIBRARY_OBJ_COMPILE_INCLUDES =  
+		LIBRARY_OBJ_COMPILE_FLAGS = $(LIBRARY_OBJ_COMPILE_INCLUDES) -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 -arch arm64 -mios-version-min=5.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk
+		SHARED_CPP_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared -arch armv64 -mios-version-min=5.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk
+		STATIC_CPP_LINK = 
+		# program c#
+		CSC = csc
+		CSC_FLAGS = /nologo /optimize /langversion:latest
+		BUNDLE_CMD = 
+		# program c++
+		PROGRAM_CPP_COMPILE_INCLUDES = 
+		PROGRAM_CPP_COMPILE = $(PROGRAM_CPP_COMPILE_INCLUDES) -I"$(PROGRAM_INC_DIR)" -I"$(NDK_PATH)/sysroot/usr/include" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 -arch armv7 -mios-version-min=5.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk
+		PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)" -arch armv7 -mios-version-min=5.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk
+		PROGRAM_CPP_LIBS = -lResourceFileUtility
+	endif
+	# commands
+	LIBRARY_OBJ_DIR_CMD = mkdir -p $(LIBRARY_OBJ_DIR)
+	LIBRARY_PLATFORM_DIR_CMD = mkdir -p $(LIBRARY_PLATFORM_DIR)
+	PROGRAM_OBJ_DIR_CMD = mkdir -p $(PROGRAM_OBJ_DIR)
+	COPY_SHARED_LIBRARY_CMD_UNUSED = yes | cp $(SHARED_CPP_PATH) $(PROGRAM_BIN_DIR)
+	COPY_SHARED_LIBRARY_CMD = 
+	LIBRARY_TEMP_DIR_DEL = yes | rm -rf $(LIBRARY_TEMP_DIR)
+	PROGRAM_OBJ_DIR_DEL = yes | rm -rf $(PROGRAM_OBJ_DIR)
+	SHARED_LIBRARY_DEL_CMD = yes | rm -rf "$(SHARED_CPP_PATH)"
+	STATIC_LIBRARY_DEL_CMD = yes | rm -rf "$(STATIC_CPP_PATH)"
+	PROGRAM_CSHARP_DEL_CMD = yes | rm -f "$(PROGRAM_CSHARP_EXE)"
+	PROGRAM_CSHARP_DEL_POST_CMD = $(PROGRAM_CSHARP_DEL_CMD)
+	BUNDLE_CSHARP_DEL_CMD = yes | rm -f "$(PROGRAM_CSHARP_BUNDLE)"
+	PROGRAM_CPP_DEL_CMD = yes | rm -f "$(PROGRAM_CPP_EXE)"
+endif
 
 LIBRARY_SRC_FILES := $(wildcard $(LIBRARY_SRC_DIR)/*.cpp)
 LIBRARY_OBJ_FILES := $(patsubst $(LIBRARY_SRC_DIR)/%.cpp,$(LIBRARY_OBJ_DIR)/%.o,$(LIBRARY_SRC_FILES))

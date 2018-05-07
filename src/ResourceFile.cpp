@@ -145,7 +145,8 @@ int Parser::estimate(Asset& assetObj, unsigned long long& sizeCurrent,
 		fileSize = fileAsset.tellg(); // get the length of the file
 		fileAsset.seekg(0, std::ios::beg); // set the pointer to the beginning
 		std::cout << "size: " << fileSize << std::endl;
-		Crc64.hash(0, (unsigned char*) "123456789", 1);
+		uint64_t crcHash = hashExt::crc64(0, (std::istream&) fileAsset, fileSize);
+		std::cout << "hash: " << crcHash << std::endl;
 	} else {
 		retStatus = 2;
 	}
