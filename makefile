@@ -461,7 +461,8 @@ $(PROGRAM_OBJ_DIR)/%.o: $(PROGRAM_SRC_DIR)/%.cpp
 
 $(PROGRAM_CPP_APP):
 	yes | rm -rf "$(PROGRAM_CPP_APP)"
-	mkdir -p $(PROGRAM_CPP_APP)/Contents/{MacOS,Resources}
+	mkdir -p $(PROGRAM_CPP_APP)/Contents/MacOS
+	mkdir -p $(PROGRAM_CPP_APP)/Contents/Resources
 	cp $(PROGRAM_SRC_DIR)/Info.plist "$(PROGRAM_CPP_APP)/Contents/"
 	cp $(PROGRAM_CPP_EXE) "$(PROGRAM_CPP_APP)/Contents/MacOS/$(PROGRAM_CPP_APP_NAME)"
 
