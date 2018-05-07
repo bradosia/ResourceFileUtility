@@ -52,7 +52,7 @@ ifeq ($(OS_DET),WIN)
 		SHARED_CPP_NAME = ResourceFileUtility.dll
 		STATIC_CPP_NAME = libResourceFileUtility.a
 		VERSION_NAME = win-x86-mingw
-		GCC = x86_64-w64-mingw32-gcc
+		GCC = x86_64-w64-mingw32-g++
 		AR = x86_64-w64-mingw32-gcc-ar
 	endif
 	ifeq ($(ARCH),x86_64)
@@ -72,7 +72,7 @@ ifeq ($(OS_DET),WIN)
 	ifeq ($(ARCH),x86)
 		# cpp library commands and flags
 		LIBRARY_OBJ_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		SHARED_CPP_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared
+		SHARED_CPP_LINK_FLAGS = -lstdc++ -std=gnu++11 -static-libgcc -static-libstdc++ -static -shared
 		STATIC_CPP_LINK = 
 		# program c#
 		CSC = csc
@@ -85,10 +85,8 @@ ifeq ($(OS_DET),WIN)
 	endif
 	ifeq ($(ARCH),x86_64)
 		# cpp library commands and flags
-		GCC = g++
 		LIBRARY_OBJ_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
 		SHARED_CPP_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -shared
-		AR = ar
 		STATIC_CPP_LINK = 
 		# program c#
 		CSC = csc

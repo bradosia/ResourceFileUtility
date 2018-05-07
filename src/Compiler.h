@@ -3,7 +3,7 @@
 
 #define __cplusplus 201103L
 #define _GLIBCXX_USE_C99 1
-//#define _GLIBCXX_USE_WCHAR_T 1
+#define _GLIBCXX_USE_WCHAR_T 1
 //#define _GLIBCXX_HAVE_WCSTOF 1
 //#undef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
 //#define _GLIBCXX_HAVE_WCHAR_H 1
