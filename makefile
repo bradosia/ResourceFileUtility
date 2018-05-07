@@ -309,7 +309,7 @@ ifeq ($(OS_DET),android)
 endif
 ifeq ($(OS_DET),IOS)
 	# paths
-	SHARED_CPP_NAME = libResourceFileUtility.dll
+	SHARED_CPP_NAME = libResourceFileUtility.so
 	STATIC_CPP_NAME = libResourceFileUtility.a
 	ifeq ($(ARCH),armv7)
 		VERSION_NAME = ios-armv7
@@ -338,7 +338,7 @@ ifeq ($(OS_DET),IOS)
 		GCC = clang++
 		LIBRARY_OBJ_COMPILE_INCLUDES =  
 		LIBRARY_OBJ_COMPILE_FLAGS = $(LIBRARY_OBJ_COMPILE_INCLUDES) -O3 -g3 -std=gnu++11 -stdlib=libc++ -Wall -c -fmessage-length=0 -arch armv7 -mios-version-min=5.0 -isysroot $(iPhoneSDK)
-		SHARED_CPP_LINK_FLAGS = -std=gnu++11 -stdlib=libc++ -static -shared -arch armv7 -mios-version-min=5.0 -isysroot $(iPhoneSDK)
+		SHARED_CPP_LINK_FLAGS = -std=gnu++11 -stdlib=libc++ -static -shared -undefined dynamic_lookup -arch armv7 -mios-version-min=5.0 -isysroot $(iPhoneSDK)
 		STATIC_CPP_LINK =
 		# program c#
 		CSC = csc
