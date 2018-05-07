@@ -22,3 +22,6 @@ git push
 #OSX simulation
 /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Applications/iPhone\ \
 Simulator.app/Contents/MacOS/iPhone\ Simulator \ -SimulateApplication ./window
+
+
+make OS_DET=IOS ARCH=armv7
