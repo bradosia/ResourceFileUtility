@@ -1,6 +1,19 @@
 # ResourceFileUtility
 A utility for compiling media assets into a single resource file. Includes a driver for c#.
 
+# Table of Contents
+
+<!--ts-->
+   * [Build Instructions](#build-instructions)
+   * [Supported](#supported)
+   * [Usage Instructions](#Usage-Instructions)
+      * [Compile Resources](#compile-resources)
+      * [Load Resources](#load-resources)
+      * [Stream Resources](#stream-resources)
+   * [Dependency](#dependency)
+   * [License](#license)
+<!--te-->
+
 # Build Instructions
 
 ## Auto-detection
@@ -128,7 +141,7 @@ if(songInfo.inType == "FILE_FORMAT"){
 }
 ```
 
-## Libraries Used
+## Dependency
 JSON for C++<BR>
 License: MIT<BR>
 https://github.com/nlohmann/json
