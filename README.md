@@ -6,7 +6,7 @@ A utility for compiling media assets into a single resource file. Includes a dri
 <!--ts-->
    * [Build Instructions](#build-instructions)
    * [Supported](#supported)
-   * [Usage Instructions](#Usage-Instructions)
+   * [Usage Instructions](#usage-instructions)
       * [Compile Resources](#compile-resources)
       * [Load Resources](#load-resources)
       * [Stream Resources](#stream-resources)
@@ -75,6 +75,7 @@ there is only a single include needed when statically linking against this libra
 ```cpp
 #include "include/ResourceFileUtility.h"
 ```
+### Compile Resources
 Pack all resources in your json file to a single resource file
 ```cpp
 ResourceFileUtility::Compiler RFUCompiler = new ResourceFileUtility::Compiler();
