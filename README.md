@@ -7,9 +7,14 @@ A utility for compiling media assets into a single resource file. Includes a dri
    * [Build Instructions](#build-instructions)
    * [Supported](#supported)
    * [Usage Instructions](#usage-instructions)
-      * [Compile Resources](#compile-resources)
-      * [Load Resources](#load-resources)
-      * [Stream Resources](#stream-resources)
+      * [C++](#c)
+         * [Compile Resources](#compile-resources)
+         * [Load Resources](#load-resources)
+         * [Stream Resources](#stream-resources)
+      * [C#](#c-1)
+         * [Compile Resources](#compile-resources-1)
+         * [Load Resources](#load-resources-1)
+         * [Stream Resources](#stream-resources-1)
    * [Dependency](#dependency)
    * [License](#license)
 <!--te-->
@@ -75,6 +80,7 @@ there is only a single include needed when statically linking against this libra
 ```cpp
 #include "include/ResourceFileUtility.h"
 ```
+
 ### Compile Resources
 Pack all resources in your json file to a single resource file
 ```cpp
@@ -83,6 +89,7 @@ RFUCompiler.info("resources.json");
 RFUCompiler.pack("assets.data");
 ```
 
+### Load Resources
 Load a resource to memory and handle it
 ```cpp
 ResourceFileUtility::Loader RFULoader = new ResourceFileUtility::Loader();
@@ -93,6 +100,7 @@ if(coneInfo.inType == "FILE_FORMAT"){
 }
 ```
 
+### Stream Resources
 Stream a resource
 ```cpp
 ResourceFileUtility::Loader RFULoader = new ResourceFileUtility::Loader();
@@ -111,6 +119,7 @@ if(songInfo.inType == "FILE_FORMAT"){
 ## C#
 add ```include/ResourceFileUtility.cs``` to your project<BR><BR>
 
+### Compile Resources
 Pack all resources in your json file to a single resource file
 ```csharp
 ResourceFileUtility.Compiler RFUCompiler = new ResourceFileUtility.Compiler();
@@ -118,6 +127,7 @@ RFUCompiler.info("resources.json");
 RFUCompiler.pack("assets.data");
 ```
 
+### Load Resources
 Load a resource to memory and handle it
 ```csharp
 ResourceFileUtility.Loader RFULoader = new ResourceFileUtility.Loader();
@@ -128,6 +138,7 @@ if(coneInfo.inType == "FILE_FORMAT"){
 }
 ```
 
+### Stream Resources
 Stream a resource
 ```csharp
 ResourceFileUtility.Loader RFULoader = new ResourceFileUtility.Loader();
