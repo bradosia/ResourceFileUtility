@@ -12,10 +12,21 @@
 //#undef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
 //#define _GLIBCXX_HAVE_WCHAR_H 1
 
+namespace std {
+class thread {
+	template<class Function, class ... Args>
+	explicit thread(Function&& f, Args&&... args);
+	void join();
+};
+}
+
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <thread>
+//#include <mingw/mingw.thread.h>
+//#include <mingw/mingw.mutex.h>
+//#include <mingw/mingw.condition_variable.h>
 #include "../contrib/json.hpp"
 #include "CallbackHandler.h"
 #include "ResourceFile.h"

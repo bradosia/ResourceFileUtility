@@ -39,3 +39,6 @@ otool -l -arch all <PathToArchive>/Products/Applications/<AppName>.app/<AppBinar
 
 #apple unzip
 gzcat Test.monad | tar xf -
+
+#MinGW-W64 GCC-7.3.0
+#x86_64-posix-sjlj

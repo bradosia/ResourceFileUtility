@@ -10,6 +10,9 @@
 #include <vector>
 #include <fstream>
 #include <chrono>
+//#include <mingw/mingw.thread.h>
+//#include <mingw/mingw.mutex.h>
+//#include <mingw/mingw.condition_variable.h>
 
 namespace ResourceFileUtility {
 

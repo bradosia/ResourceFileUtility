@@ -161,7 +161,7 @@
 								<option id="gnu.cpp.compiler.option.include.paths.609030680" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/include}&quot;"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.other.other.1877483891" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" useByScannerDiscovery="false" value="-c -fmessage-length=0 --std=gnu++11" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.other.other.1877483891" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" useByScannerDiscovery="false" value="-c -fmessage-length=0  -std=gnu++11" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1691718971" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1146388202" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>

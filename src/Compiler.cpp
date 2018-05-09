@@ -36,13 +36,18 @@ void Compiler::estimate() {
 	unsigned long long assetSizeCurrent, assetSizeTotal;
 	n = resourceFileObj.assetListSize();
 	for (i = 0; i < n; i++) {
-		std::thread first(Parser::estimate, resourceFileObj.asset(i));
+		estimateThreadList.push_back(
+				new std::thread(Parser::estimate, resourceFileObj.asset(i)));
 
 		std::cout << "size:" << n << " " << i << std::endl;
 		estimateStatus = Parser::estimate(resourceFileObj.asset(i));
 		if (estimateStatus) {
 			std::cout << "estimate code: " << estimateStatus << std::endl;
 		}
+	}
+	n = estimateThreadList.size();
+	for (i = 0; i < n; i++) {
+		estimateThreadList[i]->join();
 	}
 }
 void Compiler::pack(std::string fileName) {
