@@ -30,17 +30,16 @@ void Compiler::info(std::string fileName) {
 				<< "\" as the resource info file." << std::endl;
 	}
 }
-void Compiler::packEstimate(unsigned long long& sizeCurrent,
-		unsigned long long& sizeTotal) {
-	sizeCurrent = sizeTotal = 0;
+void Compiler::estimate() {
 	int estimateStatus;
 	unsigned int i, n;
 	unsigned long long assetSizeCurrent, assetSizeTotal;
 	n = resourceFileObj.assetListSize();
 	for (i = 0; i < n; i++) {
+		std::thread first(Parser::estimate, resourceFileObj.asset(i));
+
 		std::cout << "size:" << n << " " << i << std::endl;
-		estimateStatus = Parser::estimate(*resourceFileObj.asset(i),
-				assetSizeCurrent, assetSizeTotal);
+		estimateStatus = Parser::estimate(resourceFileObj.asset(i));
 		if (estimateStatus) {
 			std::cout << "estimate code: " << estimateStatus << std::endl;
 		}
@@ -76,4 +75,9 @@ void Compiler::setCallback(CallbackHandler* handler_) {
 	callbackHandlerPtr = handler_;
 }
 
+ResourceFile* Compiler::getResourceFile() {
+	return &resourceFileObj;
+}
+
+//namespace end
 }

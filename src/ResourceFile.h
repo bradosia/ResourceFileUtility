@@ -1,3 +1,7 @@
+/*
+ * ResourceFileUtility
+ * By: Brad Lee
+ */
 #ifndef RESOURCE_FILE_H
 #define RESOURCE_FILE_H
 
@@ -5,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <chrono>
 #include "../contrib/json.hpp"
 #include "crc64.h"
 
@@ -36,21 +41,26 @@ private:
 
 class Asset {
 private:
-	bool fileExist;
-	bool fileWritten;
-	unsigned long long filePosCurrent;
-	unsigned long long filePosNew;
-	unsigned long long fileLenCurrent;
-	unsigned long long fileLenNew;
-	std::string handle;
-	std::string path;
-	std::string inType;
-	std::string outType;
+	bool fileExist, fileWritten, fileProcessing;
+	unsigned long long filePosCurrent, filePosNew, fileLenCurrent, fileLenNew,
+			processBytes, fileBytes, fileReadBytesLast;
+	std::chrono::microseconds processTime, fileReadTimeLast,
+			fileReadTimePerByteLast;
+	std::string handle, path, inType, outType;
 public:
+	Asset();
 	Asset(std::string handle_, std::string filePath_, std::string inType_,
 			std::string outType_);
+	void init();
 	std::string getPath();
 	void setExist(bool flag);
+	void setProcess(bool flag);
+	bool getProcess();
+	unsigned long long getProcessBytes();
+	unsigned long long getFileBytes();
+	void setProcessBytes(unsigned long long val);
+	void setFileBytes(unsigned long long val);
+	void setProcessTime(std::chrono::microseconds val);
 };
 
 class ResourceFile {
@@ -65,6 +75,7 @@ public:
 			std::string outType);
 	unsigned int assetListSize();
 	Asset* asset(unsigned int assetID);
+	unsigned long long sizePending();
 };
 
 class Parser {
@@ -80,8 +91,7 @@ public:
 	static int readDirectory(std::fstream& resourceFile,
 			ResourceFile& directoryObj, unsigned long long& sizeCurrent,
 			unsigned long long& sizeTotal);
-	static int estimate(Asset& assetObj, unsigned long long& sizeCurrent,
-			unsigned long long& sizeTotal);
+	static int estimate(Asset* assetObj);
 	static int writeDirectory(std::fstream& resourceFile,
 			ResourceFile& directoryObj, unsigned long long& sizeCurrent,
 			unsigned long long& sizeTotal);

@@ -39,6 +39,7 @@ PROGRAM_OBJ_DIR = example/obj
 PROGRAM_SRC_DIR = example/src
 PROGRAM_INC_DIR = include
 LIBRARY_DIR = bin
+LIBRARY_SRC_DIR = src
 PROGRAM_CSHARP_EXE = $(PROGRAM_BIN_DIR)/example_csharp.exe
 PROGRAM_CSHARP_BUNDLE = $(PROGRAM_BIN_DIR)/example_csharp
 PROGRAM_CPP_EXE = $(PROGRAM_BIN_DIR)/example_cpp.exe
@@ -46,6 +47,7 @@ PROGRAM_CPP_APP_NAME = example_cpp
 PROGRAM_CPP_APP = $(PROGRAM_BIN_DIR)/example_cpp.app
 PROGRAM_CPP_APP_ENABLE = 
 PROGRAM_CPP_APP_DEL_CMD = 
+PROGRAM_CPP_APP_HEADER = $(PROGRAM_INC_DIR)/ResourceFileUtility_new.h
 
 ifeq ($(OS_DET),WIN)
 	ifeq ($(ARCH),x86)
@@ -59,14 +61,13 @@ ifeq ($(OS_DET),WIN)
 		SHARED_CPP_NAME = ResourceFileUtility.dll
 		STATIC_CPP_NAME = libResourceFileUtility.a
 		VERSION_NAME = win-x86_64-mingw
-		GCC = gcc
+		GCC = g++
 		AR = ar
 	endif
 	# paths
 	LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
 	SHARED_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(SHARED_CPP_NAME)
 	STATIC_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(STATIC_CPP_NAME)
-	LIBRARY_SRC_DIR = src
 	LIBRARY_TEMP_DIR = $(VERSION_NAME)
 	LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
 	ifeq ($(ARCH),x86)
@@ -107,6 +108,7 @@ ifeq ($(OS_DET),WIN)
 	PROGRAM_CSHARP_BUNDLE_BACKSLASH= $(subst /,\\,$(PROGRAM_CSHARP_BUNDLE))
 	PROGRAM_CPP_EXE_BACKSLASH=$(subst /,\\,$(PROGRAM_CPP_EXE))
 	PROGRAM_OBJ_DIR_BACKSLASH=$(subst /,\\,$(PROGRAM_OBJ_DIR))
+	PROGRAM_CPP_APP_HEADER_BACKSLASH=$(subst /,\\,$(PROGRAM_CPP_APP_HEADER))
 	# commands
 	LIBRARY_OBJ_DIR_CMD = if not exist "$(LIBRARY_OBJ_DIR_BACKSLASH)" mkdir $(LIBRARY_OBJ_DIR_BACKSLASH)
 	LIBRARY_PLATFORM_DIR_CMD = if not exist "$(LIBRARY_PLATFORM_DIR_BACKSLASH)" mkdir $(LIBRARY_PLATFORM_DIR_BACKSLASH)
@@ -120,129 +122,9 @@ ifeq ($(OS_DET),WIN)
 	PROGRAM_CSHARP_DEL_POST_CMD = 
 	BUNDLE_CSHARP_DEL_CMD = if exist "$(PROGRAM_CSHARP_BUNDLE_BACKSLASH)" del /F /Q "$(PROGRAM_CSHARP_BUNDLE_BACKSLASH)"
 	PROGRAM_CPP_DEL_CMD = if exist "$(PROGRAM_CPP_EXE_BACKSLASH)" del /F /Q "$(PROGRAM_CPP_EXE_BACKSLASH)"
-endif
-ifeq ($(OS_DET),OSX)
-	# paths
-	SHARED_CPP_NAME = libResourceFileUtility.dll
-	STATIC_CPP_NAME = libResourceFileUtility.a
-	VERSION_NAME = macOS-x86_64-clang
-	LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
-	SHARED_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(SHARED_CPP_NAME)
-	STATIC_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(STATIC_CPP_NAME)
-	LIBRARY_SRC_DIR = src
-	LIBRARY_TEMP_DIR = $(VERSION_NAME)
-	LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
-	# cpp library commands and flags
-	GCC = g++
-	LIBRARY_OBJ_COMPILE_FLAGS = -O3 -g3 -fPIC -std=gnu++11 -Wall -fvisibility=hidden -c -fmessage-length=0 -mmacosx-version-min=10.9
-	SHARED_CPP_LINK_FLAGS = -dynamiclib -fPIC -std=gnu++11 -current_version 1.0 -compatibility_version 1.0 -fvisibility=hidden -mmacosx-version-min=10.9
-	AR = ar
-	STATIC_CPP_LINK = 
-	# program c#
-	CSC = csc
-	CSC_FLAGS = /nologo /optimize /langversion:latest /lib:example/src
-	BUNDLE_CMD = mkbundle -o $(PROGRAM_CSHARP_BUNDLE) --simple $(PROGRAM_CSHARP_EXE) --library $(SHARED_CPP_PATH)
-	# program c++
-	PROGRAM_CPP_COMPILE = -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 -mmacosx-version-min=10.9
-	PROGRAM_CPP_LINK = -L"$(LIBRARY_PLATFORM_DIR)" -mmacosx-version-min=10.9
-	PROGRAM_CPP_LIBS = -lResourceFileUtility
-	# mac app
-	PROGRAM_CPP_APP_ENABLE = $(PROGRAM_CPP_APP)
-	# commands
-	LIBRARY_OBJ_DIR_CMD = mkdir -p $(LIBRARY_OBJ_DIR)
-	LIBRARY_PLATFORM_DIR_CMD = mkdir -p $(LIBRARY_PLATFORM_DIR)
-	PROGRAM_OBJ_DIR_CMD = mkdir -p $(PROGRAM_OBJ_DIR)
-	COPY_SHARED_LIBRARY_CMD_UNUSED = yes | cp -rf $(SHARED_CPP_PATH) $(PROGRAM_BIN_DIR)
-	COPY_SHARED_LIBRARY_CMD = 
-	LIBRARY_TEMP_DIR_DEL = yes | rm -rf $(LIBRARY_TEMP_DIR)
-	PROGRAM_OBJ_DIR_DEL = yes | rm -rf $(PROGRAM_OBJ_DIR)
-	SHARED_LIBRARY_DEL_CMD = yes | rm -f "$(SHARED_CPP_PATH)"
-	STATIC_LIBRARY_DEL_CMD = yes | rm -f "$(STATIC_CPP_PATH)"
-	PROGRAM_CSHARP_DEL_CMD = yes | rm -f "$(PROGRAM_CSHARP_EXE)"
-	PROGRAM_CSHARP_DEL_POST_CMD = $(PROGRAM_CSHARP_DEL_CMD)
-	BUNDLE_CSHARP_DEL_CMD = yes | rm -f "$(PROGRAM_CSHARP_BUNDLE)"
-	PROGRAM_CPP_DEL_CMD = yes | rm -f "$(PROGRAM_CPP_EXE)"
-	PROGRAM_CPP_APP_DEL_CMD = yes | rm -rf "$(PROGRAM_CPP_APP)"
-endif
-ifeq ($(OS_DET),android)
-	# untested
-	XCODE_BASE=/Applications/Xcode.app/Contents
-	SIMULATOR_BASE=$(XCODE_BASE)/Developer/Platforms/iPhoneSimulator.platform
-	FRAMEWORKS=$(SIMULATOR_BASE)/Developer/SDKs/iPhoneSimulator6.1.sdk/System/Library/Frameworks/
-	INCLUDES=$(SIMULATOR_BASE)/Developer/SDKs/iPhoneSimulator6.1.sdk/usr/include
-	
-	GCC = clang 
-	PROGRAM_CPP_COMPILE = -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 -mmacosx-version-min=10.9
-	PROGRAM_CPP_LINK = -L"$(LIBRARY_PLATFORM_DIR)" -arch i386 \
-    -mios-simulator-version-min=6.1 \
-    -fobjc-abi-version=2 \
-    -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.1.sdk \
-    -framework Foundation -framework UIKit
-endif
-ifeq ($(OS_DET),LINUX)
-	ifeq ($(ARCH),x86)
-		SHARED_CPP_NAME = libResourceFileUtility.so
-		STATIC_CPP_NAME = libResourceFileUtility.a
-		VERSION_NAME = linuxDebian-x86-gcc
-		GCC = g++
-		AR = ar
-	endif
-	ifeq ($(ARCH),x86_64)
-		SHARED_CPP_NAME = libResourceFileUtility.so
-		STATIC_CPP_NAME = libResourceFileUtility.a
-		VERSION_NAME = linuxDebian-x86_64-gcc
-		GCC = gcc
-		AR = ar
-	endif
-	# paths
-	LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
-	SHARED_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(SHARED_CPP_NAME)
-	STATIC_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(STATIC_CPP_NAME)
-	LIBRARY_SRC_DIR = src
-	LIBRARY_TEMP_DIR = $(VERSION_NAME)
-	LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
-	ifeq ($(ARCH),x86)
-		# cpp library commands and flags
-		LIBRARY_OBJ_COMPILE_FLAGS = -m32 -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		SHARED_CPP_LINK_FLAGS = -m32 -lstdc++ -std=gnu++11 -static-libgcc -static-libstdc++ -static -shared
-		STATIC_CPP_LINK = 
-		# program c#
-		CSC = csc
-		CSC_FLAGS = /nologo /optimize /langversion:latest
-		BUNDLE_CMD = 
-		# program c++
-		PROGRAM_CPP_COMPILE = -m32 -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		PROGRAM_CPP_LINK = -m32 -lstdc++ -static-libgcc -static-libstdc++ -L"$(LIBRARY_PLATFORM_DIR)"
-		PROGRAM_CPP_LIBS = -lResourceFileUtility
-	endif
-	ifeq ($(ARCH),x86_64)
-		# cpp library commands and flags
-		LIBRARY_OBJ_COMPILE_FLAGS = -fPIC -O3 -g3 -std=gnu++11 -Wall -c
-		SHARED_CPP_LINK_FLAGS = -fPIC -static-libgcc -static-libstdc++ -static -shared
-		STATIC_CPP_LINK = 
-		# program c#
-		CSC = csc
-		CSC_FLAGS = /nologo /optimize /langversion:latest
-		BUNDLE_CMD = 
-		# program c++
-		PROGRAM_CPP_COMPILE = -fPIC -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		PROGRAM_CPP_LINK = -fPIC -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
-		PROGRAM_CPP_LIBS = -lResourceFileUtility
-	endif
-	# commands
-	LIBRARY_OBJ_DIR_CMD = mkdir -p $(LIBRARY_OBJ_DIR)
-	LIBRARY_PLATFORM_DIR_CMD = mkdir -p $(LIBRARY_PLATFORM_DIR)
-	PROGRAM_OBJ_DIR_CMD = mkdir -p $(PROGRAM_OBJ_DIR)
-	COPY_SHARED_LIBRARY_CMD_UNUSED = yes | cp $(SHARED_CPP_PATH) $(PROGRAM_BIN_DIR)
-	COPY_SHARED_LIBRARY_CMD = 
-	LIBRARY_TEMP_DIR_DEL = yes | rm -rf $(LIBRARY_TEMP_DIR)
-	PROGRAM_OBJ_DIR_DEL = yes | rm -rf $(PROGRAM_OBJ_DIR)
-	SHARED_LIBRARY_DEL_CMD = yes | rm -rf "$(SHARED_CPP_PATH)"
-	STATIC_LIBRARY_DEL_CMD = yes | rm -rf "$(STATIC_CPP_PATH)"
-	PROGRAM_CSHARP_DEL_CMD = yes | rm -f "$(PROGRAM_CSHARP_EXE)"
-	PROGRAM_CSHARP_DEL_POST_CMD = $(PROGRAM_CSHARP_DEL_CMD)
-	BUNDLE_CSHARP_DEL_CMD = yes | rm -f "$(PROGRAM_CSHARP_BUNDLE)"
-	PROGRAM_CPP_DEL_CMD = yes | rm -f "$(PROGRAM_CPP_EXE)"
+	SHARED_LIBRARY_HEADER_CMD = type $(LIBRARY_SRC_DIR)\ResourceFile.h >> $(PROGRAM_CPP_APP_HEADER_BACKSLASH) 2>NUL & \
+		type $(LIBRARY_SRC_DIR)\*.h >> $(PROGRAM_CPP_APP_HEADER_BACKSLASH) 2>NUL
+	SHARED_LIBRARY_HEADER_DEL_CMD = if exist "$(PROGRAM_CPP_APP_HEADER_BACKSLASH)" del /F /Q "$(PROGRAM_CPP_APP_HEADER_BACKSLASH)"
 endif
 ifeq ($(OS_DET),android)
 	# paths
@@ -324,6 +206,118 @@ ifeq ($(OS_DET),android)
 		PROGRAM_CSHARP_DEL_POST_CMD = 
 		BUNDLE_CSHARP_DEL_CMD = if exist "$(PROGRAM_CSHARP_BUNDLE_BACKSLASH)" del /F /Q "$(PROGRAM_CSHARP_BUNDLE_BACKSLASH)"
 		PROGRAM_CPP_DEL_CMD = if exist "$(PROGRAM_CPP_EXE_BACKSLASH)" del /F /Q "$(PROGRAM_CPP_EXE_BACKSLASH)"
+		SHARED_LIBRARY_HEADER_CMD = type $(LIBRARY_SRC_DIR)\*.h >> $(PROGRAM_CPP_APP_HEADER_BACKSLASH) 2>NUL
+		SHARED_LIBRARY_HEADER_DEL_CMD = if exist "$(PROGRAM_CPP_APP_HEADER_BACKSLASH)" del /F /Q "$(PROGRAM_CPP_APP_HEADER_BACKSLASH)"
+endif
+ifeq ($(OS_DET),LINUX)
+	ifeq ($(ARCH),x86)
+		SHARED_CPP_NAME = libResourceFileUtility.so
+		STATIC_CPP_NAME = libResourceFileUtility.a
+		VERSION_NAME = linuxDebian-x86-gcc
+		GCC = g++
+		AR = ar
+	endif
+	ifeq ($(ARCH),x86_64)
+		SHARED_CPP_NAME = libResourceFileUtility.so
+		STATIC_CPP_NAME = libResourceFileUtility.a
+		VERSION_NAME = linuxDebian-x86_64-gcc
+		GCC = gcc
+		AR = ar
+	endif
+	# paths
+	LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
+	SHARED_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(SHARED_CPP_NAME)
+	STATIC_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(STATIC_CPP_NAME)
+	LIBRARY_TEMP_DIR = $(VERSION_NAME)
+	LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
+	ifeq ($(ARCH),x86)
+		# cpp library commands and flags
+		LIBRARY_OBJ_COMPILE_FLAGS = -m32 -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+		SHARED_CPP_LINK_FLAGS = -m32 -lstdc++ -std=gnu++11 -static-libgcc -static-libstdc++ -static -shared
+		STATIC_CPP_LINK = 
+		# program c#
+		CSC = csc
+		CSC_FLAGS = /nologo /optimize /langversion:latest
+		BUNDLE_CMD = 
+		# program c++
+		PROGRAM_CPP_COMPILE = -m32 -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+		PROGRAM_CPP_LINK = -m32 -lstdc++ -static-libgcc -static-libstdc++ -L"$(LIBRARY_PLATFORM_DIR)"
+		PROGRAM_CPP_LIBS = -lResourceFileUtility
+	endif
+	ifeq ($(ARCH),x86_64)
+		# cpp library commands and flags
+		LIBRARY_OBJ_COMPILE_FLAGS = -fPIC -O3 -g3 -std=gnu++11 -Wall -c
+		SHARED_CPP_LINK_FLAGS = -fPIC -static-libgcc -static-libstdc++ -static -shared
+		STATIC_CPP_LINK = 
+		# program c#
+		CSC = csc
+		CSC_FLAGS = /nologo /optimize /langversion:latest
+		BUNDLE_CMD = 
+		# program c++
+		PROGRAM_CPP_COMPILE = -fPIC -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+		PROGRAM_CPP_LINK = -fPIC -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
+		PROGRAM_CPP_LIBS = -lResourceFileUtility
+	endif
+	# commands
+	LIBRARY_OBJ_DIR_CMD = mkdir -p $(LIBRARY_OBJ_DIR)
+	LIBRARY_PLATFORM_DIR_CMD = mkdir -p $(LIBRARY_PLATFORM_DIR)
+	PROGRAM_OBJ_DIR_CMD = mkdir -p $(PROGRAM_OBJ_DIR)
+	COPY_SHARED_LIBRARY_CMD_UNUSED = yes | cp $(SHARED_CPP_PATH) $(PROGRAM_BIN_DIR)
+	COPY_SHARED_LIBRARY_CMD = 
+	LIBRARY_TEMP_DIR_DEL = yes | rm -rf $(LIBRARY_TEMP_DIR)
+	PROGRAM_OBJ_DIR_DEL = yes | rm -rf $(PROGRAM_OBJ_DIR)
+	SHARED_LIBRARY_DEL_CMD = yes | rm -rf "$(SHARED_CPP_PATH)"
+	STATIC_LIBRARY_DEL_CMD = yes | rm -rf "$(STATIC_CPP_PATH)"
+	PROGRAM_CSHARP_DEL_CMD = yes | rm -f "$(PROGRAM_CSHARP_EXE)"
+	PROGRAM_CSHARP_DEL_POST_CMD = $(PROGRAM_CSHARP_DEL_CMD)
+	BUNDLE_CSHARP_DEL_CMD = yes | rm -f "$(PROGRAM_CSHARP_BUNDLE)"
+	PROGRAM_CPP_DEL_CMD = yes | rm -f "$(PROGRAM_CPP_EXE)"
+	SHARED_LIBRARY_HEADER_CMD = cat $(LIBRARY_SRC_DIR)/*.h >> $(PROGRAM_CPP_APP_HEADER)
+	SHARED_LIBRARY_HEADER_DEL_CMD = yes | rm -f "$(PROGRAM_CPP_APP_HEADER_)"
+endif
+ifeq ($(OS_DET),OSX)
+	# paths
+	SHARED_CPP_NAME = libResourceFileUtility.dll
+	STATIC_CPP_NAME = libResourceFileUtility.a
+	VERSION_NAME = macOS-x86_64-clang
+	LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
+	SHARED_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(SHARED_CPP_NAME)
+	STATIC_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(STATIC_CPP_NAME)
+	LIBRARY_TEMP_DIR = $(VERSION_NAME)
+	LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
+	# cpp library commands and flags
+	GCC = g++
+	LIBRARY_OBJ_COMPILE_FLAGS = -O3 -g3 -fPIC -std=gnu++11 -Wall -fvisibility=hidden -c -fmessage-length=0 -mmacosx-version-min=10.9
+	SHARED_CPP_LINK_FLAGS = -dynamiclib -fPIC -std=gnu++11 -current_version 1.0 -compatibility_version 1.0 -fvisibility=hidden -mmacosx-version-min=10.9
+	AR = ar
+	STATIC_CPP_LINK = 
+	# program c#
+	CSC = csc
+	CSC_FLAGS = /nologo /optimize /langversion:latest /lib:example/src
+	BUNDLE_CMD = mkbundle -o $(PROGRAM_CSHARP_BUNDLE) --simple $(PROGRAM_CSHARP_EXE) --library $(SHARED_CPP_PATH)
+	# program c++
+	PROGRAM_CPP_COMPILE = -I"$(PROGRAM_INC_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0 -mmacosx-version-min=10.9
+	PROGRAM_CPP_LINK = -L"$(LIBRARY_PLATFORM_DIR)" -mmacosx-version-min=10.9
+	PROGRAM_CPP_LIBS = -lResourceFileUtility
+	# mac app
+	PROGRAM_CPP_APP_ENABLE = $(PROGRAM_CPP_APP)
+	# commands
+	LIBRARY_OBJ_DIR_CMD = mkdir -p $(LIBRARY_OBJ_DIR)
+	LIBRARY_PLATFORM_DIR_CMD = mkdir -p $(LIBRARY_PLATFORM_DIR)
+	PROGRAM_OBJ_DIR_CMD = mkdir -p $(PROGRAM_OBJ_DIR)
+	COPY_SHARED_LIBRARY_CMD_UNUSED = yes | cp -rf $(SHARED_CPP_PATH) $(PROGRAM_BIN_DIR)
+	COPY_SHARED_LIBRARY_CMD = 
+	LIBRARY_TEMP_DIR_DEL = yes | rm -rf $(LIBRARY_TEMP_DIR)
+	PROGRAM_OBJ_DIR_DEL = yes | rm -rf $(PROGRAM_OBJ_DIR)
+	SHARED_LIBRARY_DEL_CMD = yes | rm -f "$(SHARED_CPP_PATH)"
+	STATIC_LIBRARY_DEL_CMD = yes | rm -f "$(STATIC_CPP_PATH)"
+	PROGRAM_CSHARP_DEL_CMD = yes | rm -f "$(PROGRAM_CSHARP_EXE)"
+	PROGRAM_CSHARP_DEL_POST_CMD = $(PROGRAM_CSHARP_DEL_CMD)
+	BUNDLE_CSHARP_DEL_CMD = yes | rm -f "$(PROGRAM_CSHARP_BUNDLE)"
+	PROGRAM_CPP_DEL_CMD = yes | rm -f "$(PROGRAM_CPP_EXE)"
+	PROGRAM_CPP_APP_DEL_CMD = yes | rm -rf "$(PROGRAM_CPP_APP)"
+	SHARED_LIBRARY_HEADER_CMD = cat $(LIBRARY_SRC_DIR)/*.h >> $(PROGRAM_CPP_APP_HEADER)
+	SHARED_LIBRARY_HEADER_DEL_CMD = yes | rm -f "$(PROGRAM_CPP_APP_HEADER_)"
 endif
 ifeq ($(OS_DET),IOS)
 	# paths
@@ -356,7 +350,6 @@ ifeq ($(OS_DET),IOS)
 		LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
 		SHARED_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(SHARED_CPP_NAME)
 		STATIC_CPP_PATH = $(LIBRARY_PLATFORM_DIR)/$(STATIC_CPP_NAME)
-		LIBRARY_SRC_DIR = src
 		LIBRARY_TEMP_DIR = $(VERSION_NAME)
 		LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
 	ifeq ($(ARCH),armv7)
@@ -424,6 +417,8 @@ ifeq ($(OS_DET),IOS)
 	PROGRAM_CSHARP_DEL_POST_CMD = $(PROGRAM_CSHARP_DEL_CMD)
 	BUNDLE_CSHARP_DEL_CMD = yes | rm -f "$(PROGRAM_CSHARP_BUNDLE)"
 	PROGRAM_CPP_DEL_CMD = yes | rm -f "$(PROGRAM_CPP_EXE)"
+	SHARED_LIBRARY_HEADER_CMD = cat $(LIBRARY_SRC_DIR)/*.h >> $(PROGRAM_CPP_APP_HEADER)
+	SHARED_LIBRARY_HEADER_DEL_CMD = yes | rm -f "$(PROGRAM_CPP_APP_HEADER_)"
 endif
 
 LIBRARY_SRC_FILES := $(wildcard $(LIBRARY_SRC_DIR)/*.cpp)
@@ -445,6 +440,8 @@ $(PROGRAM_CSHARP_EXE):
 	
 $(SHARED_CPP_PATH): $(LIBRARY_OBJ_FILES)
 	$(GCC) $(SHARED_CPP_LINK_FLAGS) -o $@ $^
+	$(SHARED_LIBRARY_HEADER_DEL_CMD)
+	$(SHARED_LIBRARY_HEADER_CMD)
 	
 $(STATIC_CPP_PATH): $(LIBRARY_OBJ_FILES)
 	$(AR) rcs $@ $^ $(STATIC_CPP_LINK)

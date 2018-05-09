@@ -1,3 +1,7 @@
+/*
+ * ResourceFileUtility
+ * By: Brad Lee
+ */
 #ifndef COMPILER_H
 #define COMPILER_H
 
@@ -11,12 +15,15 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <thread>
 #include "../contrib/json.hpp"
 #include "CallbackHandler.h"
 #include "ResourceFile.h"
 
 namespace ResourceFileUtility {
 
+class ResourceFile;
+class Asset;
 typedef int (*CBintString)(char* text);
 
 class Compiler {
@@ -25,6 +32,7 @@ private:
 	CBintString callbackFileComplete;
 	CBintString callbackPackComplete;
 	ResourceFileUtility::CallbackHandler* callbackHandlerPtr;
+	std::vector<std::thread*> estimateThreadList;
 	int metaDirectorySize;
 	/* reads current resource file directory and attempts to append new files and delete old ones.
 	 * An entire recompile will be triggered if new directory size > old directory size */
@@ -34,13 +42,13 @@ public:
 	virtual ~Compiler() {
 	}
 	void info(std::string fileName);
-	void packEstimate(unsigned long long& sizeCurrent,
-			unsigned long long& sizeTotal);
+	void estimate();
 	void pack(std::string fileName);
 	Asset resourceFileGetFile(int fileID);
 	void setCallbackFileComplete(CBintString handler_);
 	void setCallbackPackComplete(CBintString handler_);
 	void setCallback(CallbackHandler* handler_);
+	ResourceFile* getResourceFile();
 };
 
 }

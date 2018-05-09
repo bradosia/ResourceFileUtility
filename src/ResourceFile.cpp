@@ -2,6 +2,61 @@
 
 namespace ResourceFileUtility {
 
+Asset::Asset() {
+	init();
+}
+
+Asset::Asset(std::string handle_, std::string filePath_, std::string inType_,
+		std::string outType_) {
+	init();
+	handle = handle_;
+	path = filePath_;
+	inType = inType_;
+	outType = outType_;
+}
+
+void Asset::init() {
+	fileExist = fileWritten = fileProcessing = false;
+	filePosCurrent = filePosNew = fileLenCurrent = fileLenNew = processBytes =
+			fileBytes = fileReadBytesLast = 0;
+	processTime = fileReadTimeLast = fileReadTimePerByteLast =
+			std::chrono::microseconds(0);
+	handle = path = inType = outType = "";
+}
+
+std::string Asset::getPath() {
+	return path;
+}
+
+void Asset::setExist(bool flag) {
+	fileExist = flag;
+}
+
+void Asset::setProcess(bool flag) {
+	fileProcessing = flag;
+}
+
+bool Asset::getProcess() {
+	return fileProcessing;
+}
+
+unsigned long long Asset::getProcessBytes() {
+	return processBytes;
+}
+unsigned long long Asset::getFileBytes() {
+	return fileBytes;
+}
+void Asset::setProcessBytes(unsigned long long val) {
+	processBytes = val;
+}
+void Asset::setFileBytes(unsigned long long val) {
+	fileBytes = val;
+}
+void Asset::setProcessTime(std::chrono::microseconds val) {
+	processTime = val;
+}
+
+/* ResourceFile implementation */
 ResourceFile::ResourceFile() {
 
 }
@@ -23,20 +78,17 @@ Asset* ResourceFile::asset(unsigned int assetID) {
 	return assetObj;
 }
 
-Asset::Asset(std::string handle_, std::string filePath_, std::string inType_,
-		std::string outType_) {
-	handle = handle_;
-	path = filePath_;
-	inType = inType_;
-	outType = outType_;
-}
-
-std::string Asset::getPath() {
-	return path;
-}
-
-void Asset::setExist(bool flag) {
-	fileExist = flag;
+unsigned long long ResourceFile::sizePending() {
+	unsigned int i, n;
+	unsigned long long size;
+	n = assetList.size();
+	size = 0;
+	for (i = 0; i < n; i++) {
+		if (assetList[i]->getProcess()) {
+			size+=assetList[i]->getFileBytes();
+		}
+	}
+	return size;
 }
 
 int Parser::readDirectoryJSON(std::fstream& fileJSON,
@@ -126,26 +178,25 @@ int Parser::readDirectoryJSON(std::fstream& fileJSON,
 	return status;
 }
 
-int Parser::estimate(Asset& assetObj, unsigned long long& sizeCurrent,
-		unsigned long long& sizeTotal) {
+int Parser::estimate(Asset* assetPtr) {
 	unsigned long long fileSize;
-	sizeCurrent = sizeTotal = 0;
 	std::ifstream fileAsset;
 	int retStatus = -1;
 	try {
-		std::cout << assetObj.getPath() << std::endl;
-		fileAsset.open(assetObj.getPath(), std::ios::binary);
-		assetObj.setExist(true);
+		std::cout << assetPtr->getPath() << std::endl;
+		fileAsset.open(assetPtr->getPath(), std::ios::binary);
+		assetPtr->setExist(true);
 	} catch (...) {
 		retStatus = 1;
-		assetObj.setExist(false);
+		assetPtr->setExist(false);
 	}
 	if (fileAsset.is_open()) {
 		fileAsset.seekg(0, std::ios::end); // set the pointer to the end
 		fileSize = fileAsset.tellg(); // get the length of the file
 		fileAsset.seekg(0, std::ios::beg); // set the pointer to the beginning
 		std::cout << "size: " << fileSize << std::endl;
-		uint64_t crcHash = hashExt::crc64(0, (std::istream&) fileAsset, fileSize);
+		uint64_t crcHash = hashExt::crc64(0, (std::istream&) fileAsset,
+				fileSize);
 		std::cout << "hash: " << crcHash << std::endl;
 	} else {
 		retStatus = 2;

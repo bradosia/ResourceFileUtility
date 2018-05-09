@@ -1,3 +1,7 @@
+/*
+ * ResourceFileUtility
+ * By: Brad Lee
+ */
 #ifndef LOADER_H
 #define LOADER_H
 
@@ -7,6 +11,8 @@
 
 namespace ResourceFileUtility {
 
+class ResourceFile;
+class Asset;
 class Loader {
 	ResourceFile resourceFileObj;
 public:

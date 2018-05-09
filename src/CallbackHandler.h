@@ -1,3 +1,7 @@
+/*
+ * ResourceFileUtility
+ * By: Brad Lee
+ */
 #ifndef CALLBACK_HANDLER_H
 #define CALLBACK_HANDLER_H
 
