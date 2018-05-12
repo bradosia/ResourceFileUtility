@@ -38,12 +38,6 @@ void Compiler::estimate() {
 	for (i = 0; i < n; i++) {
 		estimateThreadList.push_back(
 				new std::thread(Parser::estimate, resourceFileObj.asset(i)));
-
-		std::cout << "size:" << n << " " << i << std::endl;
-		estimateStatus = Parser::estimate(resourceFileObj.asset(i));
-		if (estimateStatus) {
-			std::cout << "estimate code: " << estimateStatus << std::endl;
-		}
 	}
 	n = estimateThreadList.size();
 	for (i = 0; i < n; i++) {
