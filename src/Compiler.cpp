@@ -13,19 +13,17 @@ void Compiler::info(std::string fileName) {
 	std::cout << "Opening \"" << fileName << "\" as the resource info file."
 			<< std::endl;
 	std::fstream fileIn;
-	unsigned long long sizeCurrent, sizeTotal;
 	int readDirectoryJSONStatus;
-
 	fileIn.open(fileName);
-
-	readDirectoryJSONStatus = Parser::readDirectoryJSON(fileIn, resourceFileObj,
-			sizeCurrent, sizeTotal);
+	readDirectoryJSONStatus = Parser::readDirectoryJSON(fileIn,
+			resourceFileObj);
 	if (readDirectoryJSONStatus) {
 		if (readDirectoryJSONStatus == 1) {
 			std::cout << "Failed opening \"" << fileName
 					<< "\" as the resource info file." << std::endl;
 		}
 	} else {
+		Parser::getSize(fileIn, resourceFileObj);
 		std::cout << "Failed opening \"" << fileName
 				<< "\" as the resource info file." << std::endl;
 	}

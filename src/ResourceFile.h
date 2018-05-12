@@ -75,7 +75,8 @@ public:
 			std::string outType);
 	unsigned int assetListSize();
 	Asset* asset(unsigned int assetID);
-	unsigned long long sizePending();
+	unsigned long long getSizeProcessing();
+	unsigned long long getSizeTotal();
 };
 
 class Parser {
@@ -86,12 +87,13 @@ public:
 	virtual ~Parser() {
 	}
 	static int readDirectoryJSON(std::fstream& resourceFile,
-			ResourceFile& directoryObj, unsigned long long& sizeCurrent,
-			unsigned long long& sizeTotal);
+			ResourceFile& directoryObj);
 	static int readDirectory(std::fstream& resourceFile,
 			ResourceFile& directoryObj, unsigned long long& sizeCurrent,
 			unsigned long long& sizeTotal);
-	static int estimate(Asset* assetObj);
+	static int getSize(ResourceFile& directoryObj);
+	static int getSize(Asset* assetPtr);
+	static int estimate(Asset* assetPtr);
 	static int writeDirectory(std::fstream& resourceFile,
 			ResourceFile& directoryObj, unsigned long long& sizeCurrent,
 			unsigned long long& sizeTotal);

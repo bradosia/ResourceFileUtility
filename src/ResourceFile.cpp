@@ -78,22 +78,32 @@ Asset* ResourceFile::asset(unsigned int assetID) {
 	return assetObj;
 }
 
-unsigned long long ResourceFile::sizePending() {
+unsigned long long ResourceFile::getSizeProcessing() {
 	unsigned int i, n;
 	unsigned long long size;
 	n = assetList.size();
 	size = 0;
 	for (i = 0; i < n; i++) {
 		if (assetList[i]->getProcess()) {
-			size+=assetList[i]->getFileBytes();
+			size += assetList[i]->getFileBytes();
 		}
 	}
 	return size;
 }
 
+unsigned long long ResourceFile::getSizeTotal() {
+	unsigned int i, n;
+	unsigned long long size;
+	n = assetList.size();
+	size = 0;
+	for (i = 0; i < n; i++) {
+		size += assetList[i]->getFileBytes();
+	}
+	return size;
+}
+
 int Parser::readDirectoryJSON(std::fstream& fileJSON,
-		ResourceFile& resourceFileObj, unsigned long long& sizeCurrent,
-		unsigned long long& sizeTotal) {
+		ResourceFile& resourceFileObj) {
 	nlohmann::json j;
 	std::string handle;
 	std::string filePath;
@@ -103,8 +113,6 @@ int Parser::readDirectoryJSON(std::fstream& fileJSON,
 	bool parseFlag = false;
 	nlohmann::json files;
 	int status = -1;
-	sizeCurrent = sizeTotal = 0;
-
 	if (fileJSON.is_open()) {
 		try {
 			fileJSON >> j;
@@ -133,7 +141,6 @@ int Parser::readDirectoryJSON(std::fstream& fileJSON,
 	 */
 	if (parseFlag) {
 		n = files.size();
-		sizeTotal = (unsigned long long) n;
 		for (i = 0; i < n; i++) {
 			std::string handle = "";
 			std::string filePath = "";
@@ -172,10 +179,43 @@ int Parser::readDirectoryJSON(std::fstream& fileJSON,
 						<< std::endl;
 			}
 			resourceFileObj.addFile(handle, filePath, inType, outType);
-			sizeCurrent++;
 		}
 	}
 	return status;
+}
+
+int Parser::getSize(ResourceFile& directoryObj) {
+	unsigned int i, n;
+	n = directoryObj.assetListSize();
+	for (i = 0; i < n; i++) {
+		getSize(directoryObj.asset(i));
+	}
+	return 0;
+}
+
+int Parser::getSize(Asset* assetPtr) {
+	std::ifstream fileAsset;
+	int retStatus = -1;
+	try {
+		std::cout << assetPtr->getPath() << std::endl;
+		fileAsset.open(assetPtr->getPath(), std::ios::binary);
+		assetPtr->setExist(true);
+	} catch (...) {
+		retStatus = 1;
+		assetPtr->setExist(false);
+	}
+	if (fileAsset.is_open()) {
+		fileAsset.seekg(0, std::ios::end); // set the pointer to the end
+		assetPtr->setFileBytes(fileAsset.tellg()); // get the length of the file
+		try {
+			fileAsset.close();
+		} catch (...) {
+			// nothing
+		}
+	} else {
+		retStatus = 2;
+	}
+	return retStatus;
 }
 
 int Parser::estimate(Asset* assetPtr) {
