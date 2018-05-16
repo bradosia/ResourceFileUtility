@@ -21,41 +21,35 @@ public:
 	}
 };
 
+void CBprocess(ResourceFileUtility::ResourceFile* resourceFilePtr) {
+	unsigned int sizeTotal, sizeCurrent, loadBarNumber, n, i;
+	sizeTotal = resourceFilePtr->getProcessingBytesTotal();
+	while (true) {
+		sizeCurrent = resourceFilePtr->getProcessingBytes();
+		loadBarNumber =
+				(unsigned int) (sizeCurrent / (double) sizeTotal * 40.0);
+		cout << std::string(loadBarNumber, '#')
+				<< std::string(40 - loadBarNumber, ' ') << "  " << sizeCurrent
+				<< "/" << sizeTotal << "   Progress\r";
+		if (sizeCurrent >= sizeTotal)
+			break;
+	}
+	cout << "\n";
+	cout << resourceFilePtr->estimateToString();
+}
+
 int main() {
 	unsigned fileNumber, sizeTotal, sizeCurrent, loadBarNumber;
 	ResourceFileUtility::Compiler* RFUCompiler =
 			new ResourceFileUtility::Compiler();
 	RFUCompiler->info("resources.json");
-	ResourceFileUtility::ResourceFile* resourceFile = RFUCompiler->getResourceFile();
+	ResourceFileUtility::ResourceFile* resourceFile =
+			RFUCompiler->getResourceFile();
+	cout << resourceFile->infoToString();
 	fileNumber = resourceFile->assetListSize();
-	RFUCompiler->estimate();
-	sizeTotal = resourceFile->sizePending();
-	while (true) {
-		sizeCurrent = 0;
-		for (unsigned int i = 0; i < fileNumber; i++) {
-			sizeCurrent += resourceFile->asset(i)->getProcessBytes();
-		}
-		loadBarNumber =
-				(unsigned int) (sizeCurrent / (double) sizeTotal * 20.0);
-		cout << std::string(loadBarNumber, '#')
-				<< std::string(20 - loadBarNumber, ' ') << " Progress\r";
-		if (sizeCurrent >= sizeTotal)
-			break;
-	}
-	RFUCompiler->pack("assets.data");
-	sizeTotal = resourceFile->sizePending();
-	while (true) {
-		sizeCurrent = 0;
-		for (unsigned int i = 0; i < fileNumber; i++) {
-			sizeCurrent += resourceFile->asset(i)->getProcessBytes();
-		}
-		loadBarNumber =
-				(unsigned int) (sizeCurrent / (double) sizeTotal * 20.0);
-		cout << std::string(loadBarNumber, '#')
-				<< std::string(20 - loadBarNumber, ' ') << " Progress\r";
-		if (sizeCurrent >= sizeTotal)
-			break;
-	}
+	RFUCompiler->estimate(CBprocess);
+	RFUCompiler->pack("assets.data", CBprocess);
+	sizeTotal = resourceFile->getProcessingBytesTotal();
 
 // Keep the console window open in debug mode.
 	string temp;

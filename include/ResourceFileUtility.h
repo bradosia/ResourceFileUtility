@@ -6,13 +6,12 @@
 #define RESOURCE_FILE_H
 
 #include <iostream>
+#include <iomanip>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <fstream>
 #include <chrono>
-//#include <mingw/mingw.thread.h>
-//#include <mingw/mingw.mutex.h>
-//#include <mingw/mingw.condition_variable.h>
 
 namespace ResourceFileUtility {
 
@@ -48,12 +47,16 @@ private:
 	std::chrono::microseconds processTime, fileReadTimeLast,
 			fileReadTimePerByteLast;
 	std::string handle, path, inType, outType;
+	uint64_t crc64;
 public:
 	Asset();
 	Asset(std::string handle_, std::string filePath_, std::string inType_,
 			std::string outType_);
 	void init();
+	std::string getHandle();
 	std::string getPath();
+	std::string getInType();
+	std::string getOutType();
 	void setExist(bool flag);
 	void setProcess(bool flag);
 	bool getProcess();
@@ -62,6 +65,8 @@ public:
 	void setProcessBytes(unsigned long long val);
 	void setFileBytes(unsigned long long val);
 	void setProcessTime(std::chrono::microseconds val);
+	uint64_t getCRC64();
+	void setCRC64(uint64_t val);
 };
 
 class ResourceFile {
@@ -76,7 +81,11 @@ public:
 			std::string outType);
 	unsigned int assetListSize();
 	Asset* asset(unsigned int assetID);
-	unsigned long long sizePending();
+	unsigned long long getProcessingBytesTotal();
+	unsigned long long getProcessingBytes();
+	unsigned long long getSizeTotal();
+	std::string infoToString();
+	std::string estimateToString();
 };
 
 class Parser {
@@ -87,12 +96,13 @@ public:
 	virtual ~Parser() {
 	}
 	static int readDirectoryJSON(std::fstream& resourceFile,
-			ResourceFile& directoryObj, unsigned long long& sizeCurrent,
-			unsigned long long& sizeTotal);
+			ResourceFile& directoryObj);
 	static int readDirectory(std::fstream& resourceFile,
 			ResourceFile& directoryObj, unsigned long long& sizeCurrent,
 			unsigned long long& sizeTotal);
-	static int estimate(Asset* assetObj);
+	static int getSize(ResourceFile& directoryObj);
+	static int getSize(Asset* assetPtr);
+	static int estimate(Asset* assetPtr);
 	static int writeDirectory(std::fstream& resourceFile,
 			ResourceFile& directoryObj, unsigned long long& sizeCurrent,
 			unsigned long long& sizeTotal);
@@ -157,6 +167,7 @@ namespace ResourceFileUtility {
 class ResourceFile;
 class Asset;
 typedef int (*CBintString)(char* text);
+typedef void (*CBvoidResourceFile)(ResourceFile* resourceFilePtr);
 
 class Compiler {
 private:
@@ -175,7 +186,9 @@ public:
 	}
 	void info(std::string fileName);
 	void estimate();
+	void estimate(CBvoidResourceFile handler_);
 	void pack(std::string fileName);
+	void pack(std::string fileName, CBvoidResourceFile handler_);
 	Asset resourceFileGetFile(int fileID);
 	void setCallbackFileComplete(CBintString handler_);
 	void setCallbackPackComplete(CBintString handler_);
@@ -463,6 +476,8 @@ public:
 #define RESOURCE_FILE_H
 
 #include <iostream>
+#include <iomanip>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <fstream>
@@ -502,12 +517,16 @@ private:
 	std::chrono::microseconds processTime, fileReadTimeLast,
 			fileReadTimePerByteLast;
 	std::string handle, path, inType, outType;
+	uint64_t crc64;
 public:
 	Asset();
 	Asset(std::string handle_, std::string filePath_, std::string inType_,
 			std::string outType_);
 	void init();
+	std::string getHandle();
 	std::string getPath();
+	std::string getInType();
+	std::string getOutType();
 	void setExist(bool flag);
 	void setProcess(bool flag);
 	bool getProcess();
@@ -516,6 +535,8 @@ public:
 	void setProcessBytes(unsigned long long val);
 	void setFileBytes(unsigned long long val);
 	void setProcessTime(std::chrono::microseconds val);
+	uint64_t getCRC64();
+	void setCRC64(uint64_t val);
 };
 
 class ResourceFile {
@@ -530,7 +551,11 @@ public:
 			std::string outType);
 	unsigned int assetListSize();
 	Asset* asset(unsigned int assetID);
-	unsigned long long sizePending();
+	unsigned long long getProcessingBytesTotal();
+	unsigned long long getProcessingBytes();
+	unsigned long long getSizeTotal();
+	std::string infoToString();
+	std::string estimateToString();
 };
 
 class Parser {
@@ -541,12 +566,13 @@ public:
 	virtual ~Parser() {
 	}
 	static int readDirectoryJSON(std::fstream& resourceFile,
-			ResourceFile& directoryObj, unsigned long long& sizeCurrent,
-			unsigned long long& sizeTotal);
+			ResourceFile& directoryObj);
 	static int readDirectory(std::fstream& resourceFile,
 			ResourceFile& directoryObj, unsigned long long& sizeCurrent,
 			unsigned long long& sizeTotal);
-	static int estimate(Asset* assetObj);
+	static int getSize(ResourceFile& directoryObj);
+	static int getSize(Asset* assetPtr);
+	static int estimate(Asset* assetPtr);
 	static int writeDirectory(std::fstream& resourceFile,
 			ResourceFile& directoryObj, unsigned long long& sizeCurrent,
 			unsigned long long& sizeTotal);

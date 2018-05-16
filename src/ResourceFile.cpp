@@ -24,8 +24,18 @@ void Asset::init() {
 	handle = path = inType = outType = "";
 }
 
+std::string Asset::getHandle() {
+	return handle;
+}
 std::string Asset::getPath() {
 	return path;
+}
+
+std::string Asset::getInType() {
+	return inType;
+}
+std::string Asset::getOutType() {
+	return outType;
 }
 
 void Asset::setExist(bool flag) {
@@ -55,6 +65,12 @@ void Asset::setFileBytes(unsigned long long val) {
 void Asset::setProcessTime(std::chrono::microseconds val) {
 	processTime = val;
 }
+uint64_t Asset::getCRC64() {
+	return crc64;
+}
+void Asset::setCRC64(uint64_t val) {
+	crc64 = val;
+}
 
 /* ResourceFile implementation */
 ResourceFile::ResourceFile() {
@@ -78,7 +94,7 @@ Asset* ResourceFile::asset(unsigned int assetID) {
 	return assetObj;
 }
 
-unsigned long long ResourceFile::getSizeProcessing() {
+unsigned long long ResourceFile::getProcessingBytesTotal() {
 	unsigned int i, n;
 	unsigned long long size;
 	n = assetList.size();
@@ -86,6 +102,19 @@ unsigned long long ResourceFile::getSizeProcessing() {
 	for (i = 0; i < n; i++) {
 		if (assetList[i]->getProcess()) {
 			size += assetList[i]->getFileBytes();
+		}
+	}
+	return size;
+}
+
+unsigned long long ResourceFile::getProcessingBytes() {
+	unsigned int i, n;
+	unsigned long long size;
+	n = assetList.size();
+	size = 0;
+	for (i = 0; i < n; i++) {
+		if (assetList[i]->getProcess()) {
+			size += assetList[i]->getProcessBytes();
 		}
 	}
 	return size;
@@ -100,6 +129,35 @@ unsigned long long ResourceFile::getSizeTotal() {
 		size += assetList[i]->getFileBytes();
 	}
 	return size;
+}
+
+std::string ResourceFile::infoToString() {
+	std::stringstream stringStream;
+	stringStream << std::left << std::setw(20) << "Handle" << std::setw(10)
+			<< "In Type" << std::setw(10) << "Out Type" << "Path" << std::endl;
+	unsigned int i, n;
+	n = assetList.size();
+	for (i = 0; i < n; i++) {
+		stringStream << std::left << std::setw(20) << assetList[i]->getHandle()
+				<< std::setw(10) << assetList[i]->getInType() << std::setw(10)
+				<< assetList[i]->getOutType() << assetList[i]->getPath()
+				<< std::endl;
+	}
+	return stringStream.str();
+}
+
+std::string ResourceFile::estimateToString() {
+	std::stringstream stringStream;
+	stringStream << std::left << std::setw(20) << "Handle" << std::setw(10)
+			<< "Bytes" << std::setw(32) << "CRC 64" << std::endl;
+	unsigned int i, n;
+	n = assetList.size();
+	for (i = 0; i < n; i++) {
+		stringStream << std::left << std::setw(20) << assetList[i]->getHandle()
+				<< std::setw(10) << assetList[i]->getFileBytes()
+				<< std::setw(32) << assetList[i]->getCRC64() << std::endl;
+	}
+	return stringStream.str();
 }
 
 int Parser::readDirectoryJSON(std::fstream& fileJSON,
@@ -148,7 +206,6 @@ int Parser::readDirectoryJSON(std::fstream& fileJSON,
 			std::string outType = "";
 			try {
 				handle = files[i].at("handle").get<std::string>();
-				std::cout << "Found handle: " << handle << std::endl;
 			} catch (...) {
 				std::cout
 						<< "JSON file object does not have the \"handle\" attribute"
@@ -156,7 +213,6 @@ int Parser::readDirectoryJSON(std::fstream& fileJSON,
 			}
 			try {
 				filePath = files[i].at("path").get<std::string>();
-				std::cout << "Found path: " << filePath << std::endl;
 			} catch (...) {
 				std::cout
 						<< "JSON file object does not have the \"path\" attribute"
@@ -164,7 +220,6 @@ int Parser::readDirectoryJSON(std::fstream& fileJSON,
 			}
 			try {
 				inType = files[i].at("inType").get<std::string>();
-				std::cout << "Found inType: " << inType << std::endl;
 			} catch (...) {
 				std::cout
 						<< "JSON file object does not have the \"inType\" attribute"
@@ -172,7 +227,6 @@ int Parser::readDirectoryJSON(std::fstream& fileJSON,
 			}
 			try {
 				outType = files[i].at("outType").get<std::string>();
-				std::cout << "Found outType: " << outType << std::endl;
 			} catch (...) {
 				std::cout
 						<< "JSON file object does not have the \"outType\" attribute"
@@ -180,6 +234,7 @@ int Parser::readDirectoryJSON(std::fstream& fileJSON,
 			}
 			resourceFileObj.addFile(handle, filePath, inType, outType);
 		}
+		status = 0; //okay
 	}
 	return status;
 }
@@ -197,7 +252,6 @@ int Parser::getSize(Asset* assetPtr) {
 	std::ifstream fileAsset;
 	int retStatus = -1;
 	try {
-		std::cout << assetPtr->getPath() << std::endl;
 		fileAsset.open(assetPtr->getPath(), std::ios::binary);
 		assetPtr->setExist(true);
 	} catch (...) {
@@ -219,11 +273,10 @@ int Parser::getSize(Asset* assetPtr) {
 }
 
 int Parser::estimate(Asset* assetPtr) {
-	unsigned long long fileSize;
+	unsigned long long fileSize, processBytes;
 	std::ifstream fileAsset;
 	int retStatus = -1;
 	try {
-		std::cout << assetPtr->getPath() << std::endl;
 		fileAsset.open(assetPtr->getPath(), std::ios::binary);
 		assetPtr->setExist(true);
 	} catch (...) {
@@ -234,10 +287,26 @@ int Parser::estimate(Asset* assetPtr) {
 		fileAsset.seekg(0, std::ios::end); // set the pointer to the end
 		fileSize = fileAsset.tellg(); // get the length of the file
 		fileAsset.seekg(0, std::ios::beg); // set the pointer to the beginning
-		std::cout << "size: " << fileSize << std::endl;
-		uint64_t crcHash = hashExt::crc64(0, (std::istream&) fileAsset,
-				fileSize);
-		std::cout << "hash: " << crcHash << std::endl;
+		processBytes = 0;
+		unsigned long long j, buffer;
+		uint64_t crcHash;
+		buffer = 256;
+		uint8_t bufferBytes[buffer];
+		j = crcHash = 0;
+		while (j < fileSize) {
+			if (j + buffer > fileSize) {
+				buffer = fileSize - j;
+			}
+			fileAsset.seekg(j, std::ios::beg);
+			fileAsset.read((char*) bufferBytes, buffer);
+			crcHash = hashExt::crc64(crcHash, bufferBytes, (uint64_t) buffer);
+			// update status
+			processBytes += buffer;
+			j += buffer;
+			assetPtr->setProcessBytes(processBytes);
+		}
+		assetPtr->setProcessBytes(fileSize);
+		assetPtr->setCRC64(crcHash);
 	} else {
 		retStatus = 2;
 	}

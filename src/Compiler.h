@@ -12,14 +12,6 @@
 //#undef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
 //#define _GLIBCXX_HAVE_WCHAR_H 1
 
-namespace std {
-class thread {
-	template<class Function, class ... Args>
-	explicit thread(Function&& f, Args&&... args);
-	void join();
-};
-}
-
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -36,6 +28,7 @@ namespace ResourceFileUtility {
 class ResourceFile;
 class Asset;
 typedef int (*CBintString)(char* text);
+typedef void (*CBvoidResourceFile)(ResourceFile* resourceFilePtr);
 
 class Compiler {
 private:
@@ -54,7 +47,9 @@ public:
 	}
 	void info(std::string fileName);
 	void estimate();
+	void estimate(CBvoidResourceFile handler_);
 	void pack(std::string fileName);
+	void pack(std::string fileName, CBvoidResourceFile handler_);
 	Asset resourceFileGetFile(int fileID);
 	void setCallbackFileComplete(CBintString handler_);
 	void setCallbackPackComplete(CBintString handler_);
