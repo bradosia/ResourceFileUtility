@@ -89,7 +89,7 @@ private:
 	Directory directory;
 	std::vector<Asset*> assetList;
 	unsigned long long version, compatibilityVersion // equal compatibility versions can be read/written
-	, writeTimeLast, directoryStartByte, DataStartByte;
+			, writeTimeLast, directoryStartByte, DataStartByte;
 public:
 	ResourceFile();
 	virtual ~ResourceFile() {
@@ -117,18 +117,14 @@ public:
 	static int readDirectoryJSON(std::fstream& resourceFile,
 			ResourceFile& directoryObj);
 	static int readDirectory(std::fstream& resourceFile,
-			ResourceFile& directoryObj, unsigned long long& sizeCurrent,
-			unsigned long long& sizeTotal);
+			ResourceFile& directoryObj);
 	static int getSize(ResourceFile& directoryObj);
 	static int getSize(Asset* assetPtr);
 	static int estimate(Asset* assetPtr);
 	static int writeDirectory(std::fstream& resourceFile,
-			ResourceFile& directoryObj, unsigned long long& sizeCurrent,
-			unsigned long long& sizeTotal);
-	static int insertAsset(std::fstream& resourceFile, Asset& assetObj,
-			unsigned long long& sizeCurrent, unsigned long long& sizeTotal);
-	static int removeAsset(std::fstream& resourceFile, Asset& assetObj,
-			unsigned long long& sizeCurrent, unsigned long long& sizeTotal);
+			ResourceFile& directoryObj);
+	static int insertAsset(std::fstream& resourceFile, Asset& assetObj);
+	static int removeAsset(std::fstream& resourceFile, Asset& assetObj);
 	static unsigned char* ullToBytes(unsigned long long val);
 };
 
