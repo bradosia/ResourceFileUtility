@@ -71,10 +71,25 @@ public:
 	void setCRC64(uint64_t val);
 };
 
+/**
+ * @class ResourceFile
+ * Resource File Meta
+ * 8 bytes = file version
+ * 8 bytes = file compatibility version
+ * 8 bytes = last write time (seconds since unix epoch)
+ * 8 bytes = directory start position (byte)
+ * 8 bytes = directory length (byte)
+ * 8 bytes = data start position (byte)
+ * 8 bytes = data length (byte)
+ * 72 bytes = reserved
+ * 128 bytes total
+ **/
 class ResourceFile {
 private:
 	Directory directory;
 	std::vector<Asset*> assetList;
+	unsigned long long version, compatibilityVersion // equal compatibility versions can be read/written
+	, writeTimeLast, directoryStartByte, DataStartByte;
 public:
 	ResourceFile();
 	virtual ~ResourceFile() {
@@ -86,6 +101,8 @@ public:
 	unsigned long long getProcessingBytesTotal();
 	unsigned long long getProcessingBytes();
 	unsigned long long getSizeTotal();
+	unsigned long long getVersion();
+	unsigned long long getCompatibilityVersion();
 	std::string infoToString();
 	std::string estimateToString();
 };
@@ -112,6 +129,7 @@ public:
 			unsigned long long& sizeCurrent, unsigned long long& sizeTotal);
 	static int removeAsset(std::fstream& resourceFile, Asset& assetObj,
 			unsigned long long& sizeCurrent, unsigned long long& sizeTotal);
+	static unsigned char* ullToBytes(unsigned long long val);
 };
 
 }

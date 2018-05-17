@@ -71,6 +71,14 @@ void Compiler::pack(std::string fileName, CBvoidResourceFile handler_) {
 	if (fileOut.is_open()) {
 		std::cout << "Opened \"" << fileName
 				<< "\" as the resource output file." << std::endl;
+		fileOut.seekg(0, std::ios::beg); // set the pointer to the beginning
+		fileOut.write(
+				(const char*) Parser::ullToBytes(resourceFileObj.getVersion()),
+				8);
+		fileOut.seekg(8, std::ios::beg);
+		fileOut.write(
+				(const char*) Parser::ullToBytes(
+						resourceFileObj.getCompatibilityVersion()), 8);
 	} else {
 		std::cout << "Failed opening \"" << fileName
 				<< "\" as the resource output file." << std::endl;
@@ -79,6 +87,7 @@ void Compiler::pack(std::string fileName, CBvoidResourceFile handler_) {
 		char test[] = "packed a file test !!";
 		callbackFileComplete(test);
 	}
+	fileOut.close();
 }
 
 void Compiler::setCallbackFileComplete(CBintString handler_) {

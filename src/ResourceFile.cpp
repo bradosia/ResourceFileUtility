@@ -74,7 +74,8 @@ void Asset::setCRC64(uint64_t val) {
 
 /* ResourceFile implementation */
 ResourceFile::ResourceFile() {
-
+	version = 1526521021;
+	compatibilityVersion = 1526521021;
 }
 
 void ResourceFile::addFile(std::string handle, std::string filePath,
@@ -129,6 +130,13 @@ unsigned long long ResourceFile::getSizeTotal() {
 		size += assetList[i]->getFileBytes();
 	}
 	return size;
+}
+
+unsigned long long ResourceFile::getVersion() {
+	return version;
+}
+unsigned long long ResourceFile::getCompatibilityVersion() {
+	return compatibilityVersion;
 }
 
 std::string ResourceFile::infoToString() {
@@ -311,6 +319,11 @@ int Parser::estimate(Asset* assetPtr) {
 		retStatus = 2;
 	}
 	return retStatus;
+}
+
+unsigned char* Parser::ullToBytes(unsigned long long val) {
+	unsigned long long *temp = new unsigned long long(val);
+	return (unsigned char*) temp;
 }
 
 }
