@@ -48,14 +48,3 @@ uint64_t hashExt::crc64(uint64_t crc, const unsigned char *s, uint64_t l) {
     }
     return crc;
 }
-
-uint64_t hashExt::crc64(uint64_t crc, std::istream& streamIn, uint64_t l) {
-    uint64_t j;
-    uint8_t byte[1];
-    for (j = 0; j < l; j++) {
-    	streamIn.seekg(j, std::ios::beg);
-    	streamIn.read((char*)byte, 1);
-    	crc = crc64_tab[(uint8_t)crc ^ *byte] ^ (crc >> 8);
-    }
-    return crc;
-}

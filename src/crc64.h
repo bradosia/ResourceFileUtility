@@ -176,7 +176,6 @@ static const uint64_t crc64_tab[256] = { UINT64_C(0x0000000000000000), UINT64_C(
 class hashExt {
 public:
 	static uint64_t crc64(uint64_t crc, const unsigned char *s, uint64_t l);
-	static uint64_t crc64(uint64_t crc, std::istream& streamIn, uint64_t l);
 };
 
 #endif
