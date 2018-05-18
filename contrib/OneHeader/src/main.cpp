@@ -17,7 +17,6 @@ bool copyProcess(ifstream &streamIn, ofstream &streamOut) {
 	bufferSize = 256;
 	char bufferInChar[bufferSize + 1];
 	string streamBuffer;
-	memset(bufferInChar, 0, sizeof(bufferInChar));
 	mode = filePos = 0;
 	streamIn.seekg(0, ios::end); // set the pointer to the end
 	fileSize = streamIn.tellg(); // get the length of the file
@@ -26,14 +25,10 @@ bool copyProcess(ifstream &streamIn, ofstream &streamOut) {
 		streamIn.seekg(filePos, ios::beg);
 		if (filePos + bufferSize > fileSize) {
 			bufferSize = fileSize - filePos;
-			char bufferInCharLast[bufferSize + 1];
-			memset(bufferInCharLast, 0, sizeof(bufferInCharLast));
-			streamIn.read(bufferInCharLast, bufferSize);
-			streamBuffer.append(bufferInCharLast);
-		} else {
-			streamIn.read(bufferInChar, bufferSize);
-			streamBuffer.append(bufferInChar);
 		}
+		memset(bufferInChar, 0, sizeof(bufferInChar));
+		streamIn.read(bufferInChar, bufferSize);
+		streamBuffer.append(bufferInChar);
 		while (true) {
 			if (mode == 0) {
 				directiveStartPos = (unsigned int) streamBuffer.find(
