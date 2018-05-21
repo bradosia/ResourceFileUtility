@@ -1,4 +1,4 @@
-{
+﻿{
 	"options": {
 		"directorySize": 256,
 		"tryToUpdate": true
@@ -105,6 +105,12 @@
 			"path": "resources/music/justinbiebebabyfeat.mp3",
 			"inType": "mp3",
 			"outType": "vorbis"
+		} ,
+		{
+			"handle": "some object",
+			"path": "objects/体系结构.json",
+			"inType": "json",
+			"outType": "gameObj"
 		}
 	]
 }

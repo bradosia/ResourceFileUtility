@@ -6,11 +6,12 @@ Asset::Asset() {
 	init();
 }
 
-Asset::Asset(std::string handle_, std::string filePath_, std::string inType_,
-		std::string outType_) {
+Asset::Asset(std::string handle_, filesystem::path filePath_,
+		std::string inType_, std::string outType_) {
 	init();
+	std::cout << filePath_ << std::endl;
 	handle = handle_;
-	path = filePath_;
+	filePath = filePath_;
 	inType = inType_;
 	outType = outType_;
 }
@@ -21,14 +22,15 @@ void Asset::init() {
 			fileBytes = fileReadBytesLast = 0;
 	processTime = fileReadTimeLast = fileReadTimePerByteLast =
 			std::chrono::microseconds(0);
-	handle = path = inType = outType = "";
+	handle = inType = outType = "";
+	crc64 = 0;
 }
 
 std::string Asset::getHandle() {
 	return handle;
 }
-std::string Asset::getPath() {
-	return path;
+filesystem::path Asset::getFilePath() {
+	return filePath;
 }
 
 std::string Asset::getInType() {
@@ -78,9 +80,14 @@ ResourceFile::ResourceFile() {
 	compatibilityVersion = 1526521021;
 }
 
-void ResourceFile::addFile(std::string handle, std::string filePath,
+void ResourceFile::addFile(std::string handle, std::string filePathString,
 		std::string inType, std::string outType) {
-	assetList.push_back(new Asset(handle, filePath, inType, outType));
+	std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> conversion;
+	std::string mbs = conversion.to_bytes(filePathString);
+
+	filesystem::path p = filesystem::path(filePathString);
+	p.imbue(std::locale("en_US.utf8"));
+	assetList.push_back(new Asset(handle, p, inType, outType));
 }
 unsigned int ResourceFile::assetListSize() {
 	return (unsigned int) assetList.size();
@@ -148,8 +155,8 @@ std::string ResourceFile::infoToString() {
 	for (i = 0; i < n; i++) {
 		stringStream << std::left << std::setw(20) << assetList[i]->getHandle()
 				<< std::setw(10) << assetList[i]->getInType() << std::setw(10)
-				<< assetList[i]->getOutType() << assetList[i]->getPath()
-				<< std::endl;
+				<< assetList[i]->getOutType()
+				<< assetList[i]->getFilePath().string() << std::endl;
 	}
 	return stringStream.str();
 }
@@ -168,7 +175,11 @@ std::string ResourceFile::estimateToString() {
 	return stringStream.str();
 }
 
-int Parser::readDirectoryJSON(std::fstream& fileJSON,
+void ResourceFile::setDirectory(filesystem::path path) {
+	directoryPath = path;
+}
+
+int Parser::readDirectoryJSON(filesystem::fstream& fileJSON,
 		ResourceFile& resourceFileObj) {
 	nlohmann::json j;
 	std::string handle;
@@ -257,10 +268,10 @@ int Parser::getSize(ResourceFile& directoryObj) {
 }
 
 int Parser::getSize(Asset* assetPtr) {
-	std::ifstream fileAsset;
+	filesystem::ifstream fileAsset;
 	int retStatus = -1;
 	try {
-		fileAsset.open(assetPtr->getPath(), std::ios::binary);
+		fileAsset.open(assetPtr->getFilePath(), std::ios::binary);
 		assetPtr->setExist(true);
 	} catch (...) {
 		retStatus = 1;
@@ -282,10 +293,10 @@ int Parser::getSize(Asset* assetPtr) {
 
 int Parser::estimate(Asset* assetPtr) {
 	unsigned long long fileSize, processBytes;
-	std::ifstream fileAsset;
+	filesystem::ifstream fileAsset;
 	int retStatus = -1;
 	try {
-		fileAsset.open(assetPtr->getPath(), std::ios::binary);
+		fileAsset.open(assetPtr->getFilePath(), std::ios::binary);
 		assetPtr->setExist(true);
 	} catch (...) {
 		retStatus = 1;

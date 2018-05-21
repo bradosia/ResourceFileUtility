@@ -5,8 +5,8 @@
 #ifndef COMPILER_H
 #define COMPILER_H
 
-#define __cplusplus 201103L
-#define _GLIBCXX_USE_C99 1
+//#define __cplusplus 201103L
+//#define _GLIBCXX_USE_C99 1
 //#define _GLIBCXX_USE_WCHAR_T 1
 //#define _GLIBCXX_HAVE_WCSTOF 1
 //#undef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
@@ -15,11 +15,14 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <thread>
+#include <boost/thread.hpp>
+#include <boost/filesystem.hpp>
 #include "../contrib/json.hpp"
 #include "CallbackHandler.h"
 #include "ResourceFile.h"
-#include "mingw_threads.h"
+//#include "mingw_threads.h"
+
+using namespace boost;
 
 namespace ResourceFileUtility {
 
@@ -34,7 +37,7 @@ private:
 	CBintString callbackFileComplete;
 	CBintString callbackPackComplete;
 	ResourceFileUtility::CallbackHandler* callbackHandlerPtr;
-	std::vector<std::thread*> estimateThreadList;
+	std::vector<thread*> estimateThreadList;
 	int metaDirectorySize;
 	/* reads current resource file directory and attempts to append new files and delete old ones.
 	 * An entire recompile will be triggered if new directory size > old directory size */

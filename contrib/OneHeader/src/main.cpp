@@ -34,7 +34,6 @@ bool copyProcess(ifstream &streamIn, ofstream &streamOut) {
 				directiveStartPos = (unsigned int) streamBuffer.find(
 						"#include \"");
 				if (directiveStartPos != (unsigned int) string::npos) {
-					cout << "\"#include \"\" discovered " << endl;
 					mode = 1;
 					// write data before #
 					streamOut << streamBuffer.substr(0, directiveStartPos);
@@ -49,13 +48,8 @@ bool copyProcess(ifstream &streamIn, ofstream &streamOut) {
 				directiveEndPos = (unsigned int) streamBuffer.substr(10).find(
 						'"');
 				if (directiveEndPos != (unsigned int) string::npos) {
-					cout << "end\" discovered "
-							<< streamBuffer.substr(10, directiveEndPos) << endl;
 					mode = 0;
 					// erase data at '"'
-					cout << "\" erase "
-							<< streamBuffer.substr(0, directiveEndPos + 11)
-							<< endl;
 					streamBuffer.erase(0, directiveEndPos + 11);
 				} else {
 					break;
@@ -98,7 +92,6 @@ bool oneHeaderToIncludeList(ifstream &streamIn, vector<string> &includeList) {
 				directiveStartPos = (unsigned int) streamBuffer.find(
 						"#include \"");
 				if (directiveStartPos != (unsigned int) string::npos) {
-					cout << "\"#include \"\" discovered " << endl;
 					mode = 1;
 					// erase data before #
 					streamBuffer.erase(0, directiveStartPos);
@@ -111,8 +104,6 @@ bool oneHeaderToIncludeList(ifstream &streamIn, vector<string> &includeList) {
 				directiveEndPos = (unsigned int) streamBuffer.substr(10).find(
 						'"');
 				if (directiveEndPos != (unsigned int) string::npos) {
-					cout << "end\" discovered "
-							<< streamBuffer.substr(10, directiveEndPos) << endl;
 					includeList.push_back(
 							streamBuffer.substr(10, directiveEndPos));
 					// erase data at '"'

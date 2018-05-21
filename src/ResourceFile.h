@@ -12,8 +12,14 @@
 #include <vector>
 #include <fstream>
 #include <chrono>
+#include <locale>
+#include <codecvt>
+#include <boost/locale.hpp>
+#include <boost/filesystem.hpp>
 #include "../contrib/json.hpp"
 #include "crc64.h"
+
+using namespace boost;
 
 namespace ResourceFileUtility {
 
@@ -48,15 +54,16 @@ private:
 			processBytes, fileBytes, fileReadBytesLast;
 	std::chrono::microseconds processTime, fileReadTimeLast,
 			fileReadTimePerByteLast;
-	std::string handle, path, inType, outType;
+	std::string handle, inType, outType;
+	filesystem::path filePath;
 	uint64_t crc64;
 public:
 	Asset();
-	Asset(std::string handle_, std::string filePath_, std::string inType_,
+	Asset(std::string handle_, filesystem::path filePath_, std::string inType_,
 			std::string outType_);
 	void init();
 	std::string getHandle();
-	std::string getPath();
+	filesystem::path getFilePath();
 	std::string getInType();
 	std::string getOutType();
 	void setExist(bool flag);
@@ -79,8 +86,10 @@ public:
  * 8 bytes = last write time (seconds since unix epoch)
  * 8 bytes = directory start position (byte)
  * 8 bytes = directory length (byte)
+ * 8 bytes = directory CRC64
  * 8 bytes = data start position (byte)
  * 8 bytes = data length (byte)
+ * 8 bytes = data CRC64
  * 72 bytes = reserved
  * 128 bytes total
  **/
@@ -90,11 +99,12 @@ private:
 	std::vector<Asset*> assetList;
 	unsigned long long version, compatibilityVersion // equal compatibility versions can be read/written
 			, writeTimeLast, directoryStartByte, DataStartByte;
+	filesystem::path directoryPath;
 public:
 	ResourceFile();
 	virtual ~ResourceFile() {
 	}
-	void addFile(std::string handle, std::string filePath, std::string inType,
+	void addFile(std::string handle, std::string filePathString, std::string inType,
 			std::string outType);
 	unsigned int assetListSize();
 	Asset* asset(unsigned int assetID);
@@ -105,6 +115,7 @@ public:
 	unsigned long long getCompatibilityVersion();
 	std::string infoToString();
 	std::string estimateToString();
+	void setDirectory(filesystem::path path);
 };
 
 class Parser {
@@ -114,17 +125,17 @@ public:
 	}
 	virtual ~Parser() {
 	}
-	static int readDirectoryJSON(std::fstream& resourceFile,
+	static int readDirectoryJSON(filesystem::fstream& resourceFile,
 			ResourceFile& directoryObj);
-	static int readDirectory(std::fstream& resourceFile,
+	static int readDirectory(filesystem::fstream& resourceFile,
 			ResourceFile& directoryObj);
 	static int getSize(ResourceFile& directoryObj);
 	static int getSize(Asset* assetPtr);
 	static int estimate(Asset* assetPtr);
-	static int writeDirectory(std::fstream& resourceFile,
+	static int writeDirectory(filesystem::fstream& resourceFile,
 			ResourceFile& directoryObj);
-	static int insertAsset(std::fstream& resourceFile, Asset& assetObj);
-	static int removeAsset(std::fstream& resourceFile, Asset& assetObj);
+	static int insertAsset(filesystem::fstream& resourceFile, Asset& assetObj);
+	static int removeAsset(filesystem::fstream& resourceFile, Asset& assetObj);
 	static unsigned char* ullToBytes(unsigned long long val);
 };
 

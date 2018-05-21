@@ -9,25 +9,27 @@ Compiler::Compiler() {
 	tryToUpdate = true;
 }
 
-void Compiler::info(std::string fileName) {
-	std::cout << "Opening \"" << fileName << "\" as the resource info file."
-			<< std::endl;
-	std::fstream fileIn;
+void Compiler::info(std::string filePathString) {
+	filesystem::path filePath { filePathString };
+	std::cout << "Opening \"" << filePath.string()
+			<< "\" as the resource info file." << std::endl;
+	filesystem::fstream fileIn;
 	int readDirectoryJSONStatus;
-	fileIn.open(fileName);
+	fileIn.open(filePath);
 	readDirectoryJSONStatus = Parser::readDirectoryJSON(fileIn,
 			resourceFileObj);
 	if (readDirectoryJSONStatus) {
 		if (readDirectoryJSONStatus == 1) {
-			std::cout << "Failed opening \"" << fileName
+			std::cout << "Failed opening \"" << filePath.string()
 					<< "\" as the resource info file." << std::endl;
 		} else if (readDirectoryJSONStatus == -1) {
-			std::cout << "Unknown error in \"" << fileName
+			std::cout << "Unknown error in \"" << filePath.string()
 					<< "\" as the resource info file." << std::endl;
 		}
 	} else {
+		resourceFileObj.setDirectory(filePath.parent_path());
 		Parser::getSize(resourceFileObj);
-		std::cout << "Success opening \"" << fileName
+		std::cout << "Success opening \"" << filePath.string()
 				<< "\" as the resource info file." << std::endl;
 	}
 }
@@ -35,9 +37,7 @@ void Compiler::estimate() {
 	Compiler::estimate([](ResourceFile* resourceFilePtr) {});
 }
 void Compiler::estimate(CBvoidResourceFile handler_) {
-	int estimateStatus;
 	unsigned int i, n;
-	unsigned long long assetSizeCurrent, assetSizeTotal;
 	// re check sizes
 	Parser::getSize(resourceFileObj);
 	// begin estimate threads and set processing flag
@@ -45,10 +45,10 @@ void Compiler::estimate(CBvoidResourceFile handler_) {
 	for (i = 0; i < n; i++) {
 		resourceFileObj.asset(i)->setProcess(true);
 		estimateThreadList.push_back(
-				new std::thread(Parser::estimate, resourceFileObj.asset(i)));
+				new thread(Parser::estimate, resourceFileObj.asset(i)));
 	}
 	// custom handler
-	estimateThreadList.push_back(new std::thread(handler_, &resourceFileObj));
+	estimateThreadList.push_back(new thread(handler_, &resourceFileObj));
 	// join threads
 	n = estimateThreadList.size();
 	for (i = 0; i < n; i++) {
