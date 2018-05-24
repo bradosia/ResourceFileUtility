@@ -21,10 +21,11 @@ A utility for compiling media assets into a single resource file. Includes a dri
 
 # Build Instructions
 
-## Auto-detection
-Use gnu make command on project root
+## Prerequisites
+Install boost libraries<BR>
+You can manually edit the makefile or make with boost include and library paths like so:
 ```sh
-make
+make OS_DET=WIN TARGET_ARCH=x86_64 BOOST_INCLUDE_DIR=C:/boost/include/boost-1_67 BOOST_LIBS_DIR=C:/boost/lib-mgw BOOST_LIBS_POST=-mgw73-mt-x64-1_67
 ```
 
 ## Windows
@@ -48,31 +49,41 @@ sudo apt-get install g++-multilib
 ```
 
 ## Android
+Using Windows x86_64 host for this example:<BR>
 Install the android NDK<BR>
 Add ```<NDK_PATH>\toolchains\arm-linux-androideabi-4.9\prebuilt\windows-x86_64\bin``` to PATH<BR>
 Add ```<NDK_PATH>\toolchains\aarch64-linux-android-4.9\prebuilt\windows-x86_64\bin``` to PATH<BR>
+You can manually edit the makefile or make with android ndk path like so:
+```sh
+make HOST_OS=WIN TARGET_OS=android TARGET_ARCH=x86_64 NDK_PATH=C:\android-ndk-r16b-windows-x86_64\android-ndk-r16b
+```
 
 ## IOS
 Only Mac OSX host<BR>
 Install clang<BR>
+You can manually edit the makefile or make with iphone sdk path like so:
+```sh
+make HOST_OS=OSX TARGET_OS=IOS TARGET_ARCH=x86_64 IPHONE_SDK_PATH=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
+```
 
 ## Supported
-| OS | Architecture | Support |  Command |
-| :---      | :---         | :--- | :--- |
-| Windows   | x86          | X    | ``` make OS_DET=WIN ARCH=x86 ``` |
-| Windows   | x86_64       | X    | ``` make OS_DET=WIN ARCH=x86_64 ``` |
-| macOS   | x86            | O    | ``` make OS_DET=OSX ARCH=x86 ``` |
-| macOS   | x86_64         | X    | ``` make OS_DET=OSX ARCH=x86_64 ``` |
-| linux ubuntu   | x86     | O    | ``` make OS_DET=LINUX ARCH=x86 ``` |
-| linux ubuntu   | x86_64  | O    | ``` make OS_DET=LINUX ARCH=x86_64 ``` |
-| iOS   | armv7            | O    | ``` make OS_DET=IOS ARCH=armv7 ``` |
-| iOS   | armv7s           | O    | ``` make OS_DET=IOS ARCH=armv7s ``` |
-| iOS   | arm64            | O    | ``` make OS_DET=IOS ARCH=arm64 ``` |
-| Android   | armeabi      | O    | ``` make OS_DET=android ARCH=armeabi NDK_PATH=C:\android-ndk-r16b-windows-x86_64\android-ndk-r16b ``` |
-| Android   | armeabi-v7a  | O    | ``` make OS_DET=android ARCH=armeabi-v7a NDK_PATH=C:\android-ndk-r16b-windows-x86_64\android-ndk-r16b ``` |
-| Android   | arm64-v8a    | O    | ``` make OS_DET=android ARCH=arm64-v8a NDK_PATH=C:\android-ndk-r16b-windows-x86_64\android-ndk-r16b ``` |
-| Android   | x86          | O    | ``` make OS_DET=android ARCH=x86 NDK_PATH=C:\android-ndk-r16b-windows-x86_64\android-ndk-r16b ``` |
-| Android   | x86_64       | O    | ``` make OS_DET=android ARCH=x86_64 NDK_PATH=C:\android-ndk-r16b-windows-x86_64\android-ndk-r16b ``` |
+| Host OS | Target OS | Architecture | Support |  Command |
+| :---    | :---      | :---         | :---    | :---     |
+| Windows | Windows   | x86          | X    | ``` make HOST_OS=WIN TARGET_ARCH=x86 ``` |
+| Windows | Windows   | x86_64       | X    | ``` make OS_DET=WIN TARGET_ARCH=x86_64 ``` |
+| Windows | Android   | armeabi      | O    | ``` make HOST_OS=WIN TARGET_OS=android TARGET_ARCH=armeabi ``` |
+| Windows | Android   | armeabi-v7a  | O    | ``` make HOST_OS=WIN TARGET_OS=android TARGET_ARCH=armeabi-v7a ``` |
+| Windows | Android   | arm64-v8a    | O    | ``` make HOST_OS=WIN TARGET_OS=android TARGET_ARCH=arm64-v8a ``` |
+| Windows | Android   | x86          | O    | ``` make HOST_OS=WIN TARGET_OS=android TARGET_ARCH=x86 ``` |
+| Windows | Android   | x86_64       | O    | ``` make HOST_OS=WIN TARGET_OS=android TARGET_ARCH=x86_64 ``` |
+| macOS   | macOS     | x86          | O    | ``` make HOST_OS=OSX TARGET_ARCH=x86 ``` |
+| macOS   | macOS     | x86_64       | X    | ``` make HOST_OS=OSX TARGET_ARCH=x86_64 ``` |
+| macOS   | iOS       | armv7        | O    | ``` make HOST_OS=OSX TARGET_OS=IOS TARGET_ARCH=armv7 ``` |
+| macOS   | iOS       | armv7s       | O    | ``` make HOST_OS=OSX TARGET_OS=IOS TARGET_ARCH=armv7s ``` |
+| macOS   | iOS       | arm64        | O    | ``` make HOST_OS=OSX TARGET_OS=IOS TARGET_ARCH=arm64 ``` |
+| macOS   | iOS       | x86_64       | O    | ``` make HOST_OS=OSX TARGET_OS=IOS TARGET_ARCH=x86_64 ``` |
+| linux ubuntu | linux ubuntu | x86     | O    | ``` make HOST_OS=LINUX TARGET_ARCH=x86 ``` |
+| linux ubuntu | linux ubuntu | x86_64  | O    | ``` make HOST_OS=LINUX TARGET_ARCH=x86_64 ``` |
  
 # Usage Instructions
 ## C++
@@ -190,10 +201,14 @@ if(songInfo.inType == "FILE_FORMAT"){
 ## Dependency
 JSON for C++<BR>
 License: MIT<BR>
-https://github.com/nlohmann/json
+https://github.com/nlohmann/json<BR>
+<BR>
+Boost<BR>
+License:  Boost Software License 1.0<BR>
+https://www.boost.org<BR>
 
 # License
-The class is licensed under the MIT License: <BR>
+The library is licensed under the MIT License: <BR>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

@@ -1,36 +1,160 @@
 # Architecture detection
 ifndef OS_DET
 	ifeq ($(OS),Windows_NT)
-	OS_DET = WIN
+	HOST_OS = WIN
 		ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
-			ARCH = x86_64
+			TARGET_ARCH = x86_64
 		else
 			ifeq ($(PROCESSOR_ARCHITECTURE),AMD64)
-             	ARCH = x86_64
+             	TARGET_ARCH = x86_64
 			endif
 			ifeq ($(PROCESSOR_ARCHITECTURE),x86)
-             	ARCH = x86
+             	TARGET_ARCH = x86
 			endif
 		endif
 	else
     	UNAME_S := $(shell uname -s)
 		ifeq ($(UNAME_S),Linux)
-			OS_DET = LINUX
+			HOST_OS = LINUX
 		endif
 		ifeq ($(UNAME_S),Darwin)
-			OS_DET = OSX
+			HOST_OS = OSX
 		endif
     	UNAME_P := $(shell uname -p)
 		ifeq ($(UNAME_P),x86_64)
-			ARCH = x86_64
+			TARGET_ARCH = x86_64
 		endif
 		ifneq ($(filter %86,$(UNAME_P)),)
-			ARCH = x86
+			TARGET_ARCH = x86
 		endif
     	ifneq ($(filter arm%,$(UNAME_P)),)
-			ARCH = ARM
+			TARGET_ARCH = ARM
     	endif
 	endif
+endif
+
+#default host options
+ifeq ($(HOST_OS),WIN)
+	ifndef COMPILER
+		COMPILER = MINGW
+	endif
+	ifndef TARGET_OS
+		TARGET_OS = WIN
+	endif
+endif
+ifeq ($(HOST_OS),OSX)
+	ifndef COMPILER
+		COMPILER = CLANG
+	endif
+	ifndef TARGET_OS
+		TARGET_OS = OSX
+	endif
+endif
+ifeq ($(HOST_OS),LINUX)
+	ifndef COMPILER
+		COMPILER = GCC
+	endif
+	ifndef TARGET_OS
+		TARGET_OS = LINUX
+	endif
+endif
+
+# paths
+# these paths are custom to your installation
+ifeq ($(HOST_OS),WIN)
+	ifdef ($(COMPILER),MINGW)
+		BOOST_INCLUDE_DIR = C:/boost/include/boost-1_67
+		BOOST_LIBS_DIR = C:/boost/lib-mgw
+		ifeq ($(TARGET_ARCH),x86)
+			BOOST_LIBS_POST = -mgw73-mt-x32-1_67
+			GCC = x86_64-w64-mingw32-g++
+			AR = llvm-ar
+		endif
+		ifeq ($(TARGET_ARCH),x86_64)
+			BOOST_LIBS_POST = -mgw73-mt-x64-1_67
+			GCC = g++
+			AR = ar
+		endif
+	endif
+	ifdef ($(COMPILER),MSVC)
+		BOOST_INCLUDE_DIR = C:/boost/include/boost-1_67
+		BOOST_LIBS_DIR = C:/boost/lib-msvc
+		ifeq ($(TARGET_ARCH),x86)
+			BOOST_LIBS_POST = -vc141-mt-x32-1_67
+			GCC = cl
+			AR = lib
+		endif
+		ifeq ($(TARGET_ARCH),x86_64)
+			BOOST_LIBS_POST = -vc141-mt-x64-1_67
+			GCC = cl
+			AR = lib
+		endif
+	endif
+	ifdef ($(TARGET_OS),ANDROID)
+		BOOST_INCLUDE_DIR = /usr/include
+		BOOST_LIBS_DIR = /usr/lib-android
+		BOOST_LIBS_POST = 
+		NDK_PATH=C:\android-ndk-r16b-windows-x86_64\android-ndk-r16b
+		ifeq ($(TARGET_ARCH),armeabi)
+			GCC = arm-linux-androideabi-g++
+			AR = arm-linux-androideabi-ar
+		endif
+		ifeq ($(TARGET_ARCH),armeabi-v7a)
+			GCC = arm-linux-androideabi-g++
+			AR = arm-linux-androideabi-ar
+		endif
+		ifeq ($(TARGET_ARCH),arm64-v8a)
+			GCC = aarch64-linux-android-g++
+			AR = aarch64-linux-android-ar
+		endif
+	endif
+endif
+ifeq ($(HOST_OS),OSX)
+	ifdef ($(COMPILER),CLANG)
+		BOOST_INCLUDE_DIR = /usr/include
+		BOOST_LIBS_DIR = /usr/lib
+		BOOST_LIBS_POST = 
+		ifeq ($(TARGET_ARCH),x86)
+			GCC = clang++
+			AR = ar
+		endif
+		ifeq ($(TARGET_ARCH),x86_64)
+			GCC = clang++
+			AR = ar
+		endif
+	endif
+	ifdef ($(TARGET_OS),IOS)
+		BOOST_INCLUDE_DIR = /usr/include
+		BOOST_LIBS_DIR = /usr/lib-ios
+		BOOST_LIBS_POST = 
+		IPHONE_SDK_PATH = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
+	endif
+endif
+ifeq ($(HOST_OS),LINUX)
+	ifdef ($(COMPILER),GCC)
+		BOOST_INCLUDE_DIR = /usr/local/include
+		BOOST_LIBS_DIR = /usr/local/lib
+		BOOST_LIBS_POST =
+		GCC = g++
+		AR = ar 
+	endif
+endif
+
+# target OS names
+ifeq ($(TARGET_OS),WIN)
+	TARGET_OS_NAME = win
+endif
+ifeq ($(TARGET_OS),android)
+	TARGET_OS_NAME = android
+endif
+ifeq ($(TARGET_OS),OSX)
+	TARGET_OS_NAME = osx
+endif
+ifeq ($(TARGET_OS),IOS)
+	TARGET_OS_NAME = ios
+endif
+ifeq ($(TARGET_OS),LINUX)
+	TARGET_OS_NAME = linux
 endif
 
 #paths
@@ -56,7 +180,7 @@ LIBRARY_CPP_NAME = ResourceFileUtility
 LIBRARY_CPP_HEADER = $(LIBRARY_INCLUDE_DIR)/$(LIBRARY_CPP_NAME).h
 LIBRARY_CPP_ONE_HEADER = $(LIBRARY_SRC_DIR)/OneHeader.h
 LIBRARY_CPP_VERSION = gnu++11
-LIBRARY_SHARED_LINK_INCLUDES = -lboost_filesystem-mgw73-mt-x64-1_67 -lboost_thread-mgw73-mt-x64-1_67 -lboost_locale-mgw73-mt-x64-1_67 -lboost_system-mgw73-mt-x64-1_67 -liconv
+LIBRARY_SHARED_LINK_INCLUDES = -lboost_filesystem$(BOOST_LIBS_POST) -lboost_thread$(BOOST_LIBS_POST) -lboost_locale$(BOOST_LIBS_POST) -lboost_system$(BOOST_LIBS_POST) -liconv
 # OneHeader c++ program
 PROGRAM_ONE_HEADER_SRC = contrib/OneHeader/src
 PROGRAM_ONE_HEADER_OBJ = contrib/OneHeader/obj
@@ -66,44 +190,16 @@ PROGRAM_ONE_HEADER_EXE = $(PROGRAM_ONE_HEADER_BIN)/OneHeader.exe
 PROGRAM_ONE_HEADER_MAIN_NAME = main
 # example c++ program
 ALL_CPP_COMPILE_INCLUDES = -I"$(LIBRARY_CONTRIB_DIR)" -I"$(LIBRARY_INCLUDE_DIR)"
-PROGRAM_EXAMPLE_CPP_LIBS_FLAG = -lResourceFileUtility -lboost_filesystem-mgw73-mt-x64-1_67 -lboost_thread-mgw73-mt-x64-1_67 -lboost_locale-mgw73-mt-x64-1_67 -lboost_system-mgw73-mt-x64-1_67 -liconv
-
-#default compilers
-ifeq ($(OS_DET),WIN)
-	ifndef COMPILER
-		COMPILER = MINGW
-	endif
-endif
-ifeq ($(OS_DET),OSX)
-	ifndef COMPILER
-		COMPILER = CLANG
-	endif
-endif
+PROGRAM_EXAMPLE_CPP_LIBS_FLAG = -lResourceFileUtility -lboost_filesystem$(BOOST_LIBS_POST) -lboost_thread$(BOOST_LIBS_POST) -lboost_locale$(BOOST_LIBS_POST) -lboost_system$(BOOST_LIBS_POST) -liconv
 
 #compiler flags
 ifeq ($(COMPILER),CLANG)
 	COMPILER_NAME = clang
-	ifeq ($(ARCH),x86)
-		GCC = clang++
-		AR = llvm-ar
-	endif
-	ifeq ($(ARCH),x86_64)
-		GCC = clang++
-		AR = ar
-	endif
 	LIBRARY_OBJ_COMPILE_FLAGS_STANDARD = $(ALL_CPP_COMPILE_INCLUDES) -O3 -g3 -std=$(LIBRARY_CPP_VERSION) -Wall
 	EXAMPLE_PROGRAM_OBJ_COMPILE_FLAGS_STANDARD = $(ALL_CPP_COMPILE_INCLUDES) -O3 -g3 -std=$(LIBRARY_CPP_VERSION) -Wall
 endif
 ifeq ($(COMPILER),MINGW)
 	COMPILER_NAME = mingw
-	ifeq ($(ARCH),x86)
-		GCC = x86_64-w64-mingw32-g++
-		AR = llvm-ar
-	endif
-	ifeq ($(ARCH),x86_64)
-		GCC = g++
-		AR = ar
-	endif
 	LIBRARY_OBJ_COMPILE_FLAGS_STANDARD = $(ALL_CPP_COMPILE_INCLUDES) -O3 -g3 -std=$(LIBRARY_CPP_VERSION) -Wall
 	EXAMPLE_PROGRAM_OBJ_COMPILE_FLAGS_STANDARD = $(ALL_CPP_COMPILE_INCLUDES) -O3 -g3 -std=$(LIBRARY_CPP_VERSION) -Wall
 endif
@@ -112,181 +208,122 @@ ifeq ($(COMPILER),MSVC)
 	LIBRARY_OBJ_COMPILE_FLAGS_STANDARD = $(ALL_CPP_COMPILE_INCLUDES) -O3 -g3 -std=$(LIBRARY_CPP_VERSION) -Wall
 	EXAMPLE_PROGRAM_OBJ_COMPILE_FLAGS_STANDARD = $(ALL_CPP_COMPILE_INCLUDES) -O3 -g3 -std=$(LIBRARY_CPP_VERSION) -Wall
 endif
-
-ifeq ($(OS_DET),WIN)
-	HOST_OS = WIN
-	LIBRARY_CPP_SHARED_NAME = $(LIBRARY_CPP_NAME).dll
-	LIBRARY_CPP_STATIC_NAME = lib$(LIBRARY_CPP_NAME).a
-	ifeq ($(ARCH),x86)
-		VERSION_NAME = win-x86-$(COMPILER_NAME)
+ifeq ($(COMPILER),GCC)
+	COMPILER_NAME = gcc
+	ifeq ($(TARGET_ARCH),x86)
+		LIBRARY_OBJ_COMPILE_FLAGS_STANDARD = $(ALL_CPP_COMPILE_INCLUDES) -m32 -O3 -g3 -std=$(LIBRARY_CPP_VERSION) -Wall
+		EXAMPLE_PROGRAM_OBJ_COMPILE_FLAGS_STANDARD = $(ALL_CPP_COMPILE_INCLUDES) -O3 -g3 -std=$(LIBRARY_CPP_VERSION) -Wall
 	endif
-	ifeq ($(ARCH),x86_64)
-		VERSION_NAME = win-x86_64-$(COMPILER_NAME)
-	endif
-	# paths
-	BOOST_INCLUDE_DIR = C:/boost_1_67_0
-	BOOST_LIBS_DIR = C:/Program Files/boost/lib
-	LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
-	LIBRARY_CPP_SHARED_BIN = $(LIBRARY_PLATFORM_DIR)/$(LIBRARY_CPP_SHARED_NAME)
-	LIBRARY_CPP_STATIC_BIN = $(LIBRARY_PLATFORM_DIR)/$(LIBRARY_CPP_STATIC_NAME)
-	LIBRARY_TEMP_DIR = $(VERSION_NAME)
-	LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
-	ifeq ($(ARCH),x86)
-		# cpp library commands and flags
-		LIBRARY_OBJ_COMPILE_FLAGS = -I"$(BOOST_INCLUDE_DIR)" $(LIBRARY_OBJ_COMPILE_FLAGS_STANDARD)
-		LIBRARY_SHARED_LINK_FLAGS = -L"$(BOOST_LIBS_DIR)" -lstdc++ -shared $(LIBRARY_SHARED_LINK_INCLUDES)
-		LIBRARY_STATIC_LINK_FLAGS = 
-		# program c#
-		PROGRAM_CSHARP_EXE_ENABLE = $(PROGRAM_CSHARP_EXE)
-		CSC = csc
-		CSC_FLAGS = /nologo /optimize /langversion:latest
-		BUNDLE_CMD = 
-		# program c++
-		PROGRAM_CPP_COMPILE = -I"$(BOOST_INCLUDE_DIR)" $(EXAMPLE_PROGRAM_OBJ_COMPILE_FLAGS_STANDARD)
-		PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -L"$(LIBRARY_PLATFORM_DIR)" -L"$(BOOST_LIBS_DIR)" $(PROGRAM_EXAMPLE_CPP_LIBS_FLAG)
-		# OneHeader c++
-		PROGRAM_ONE_HEADER_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -fmessage-length=0
-		PROGRAM_ONE_HEADER_LINK_FLAGS = -static-libgcc -static-libstdc++
-	endif
-	ifeq ($(ARCH),x86_64)
-		# cpp library commands and flags
-		LIBRARY_OBJ_COMPILE_FLAGS = -I"$(BOOST_INCLUDE_DIR)" $(LIBRARY_OBJ_COMPILE_FLAGS_STANDARD)
-		LIBRARY_SHARED_LINK_FLAGS = -L"$(BOOST_LIBS_DIR)" -shared $(LIBRARY_SHARED_LINK_INCLUDES)
-		LIBRARY_STATIC_LINK_FLAGS = 
-		# program c#
-		PROGRAM_CSHARP_EXE_ENABLE = $(PROGRAM_CSHARP_EXE)
-		CSC = csc
-		CSC_FLAGS = /nologo /optimize /langversion:latest
-		BUNDLE_CMD = 
-		# program c++
-		PROGRAM_CPP_COMPILE = -I"$(BOOST_INCLUDE_DIR)" $(EXAMPLE_PROGRAM_OBJ_COMPILE_FLAGS_STANDARD)
-		PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -L"$(LIBRARY_PLATFORM_DIR)" -L"$(BOOST_LIBS_DIR)" $(PROGRAM_EXAMPLE_CPP_LIBS_FLAG)
-		# OneHeader c++
-		PROGRAM_ONE_HEADER_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -fmessage-length=0
-		PROGRAM_ONE_HEADER_LINK_FLAGS = -static-libgcc -static-libstdc++
+	ifeq ($(TARGET_ARCH),x86_64)
+		LIBRARY_OBJ_COMPILE_FLAGS_STANDARD = $(ALL_CPP_COMPILE_INCLUDES) -O3 -g3 -std=$(LIBRARY_CPP_VERSION) -Wall
+		EXAMPLE_PROGRAM_OBJ_COMPILE_FLAGS_STANDARD = $(ALL_CPP_COMPILE_INCLUDES) -O3 -g3 -std=$(LIBRARY_CPP_VERSION) -Wall
 	endif
 endif
-ifeq ($(OS_DET),android)
-	HOST_OS = WIN
-	# paths
+
+# target OS setup
+ifeq ($(TARGET_OS),WIN)
+	LIBRARY_CPP_SHARED_NAME = $(LIBRARY_CPP_NAME).dll
+	LIBRARY_CPP_STATIC_NAME = lib$(LIBRARY_CPP_NAME).a
+endif
+ifeq ($(TARGET_OS),android)
 	LIBRARY_CPP_SHARED_NAME = lib$(LIBRARY_CPP_NAME).dll
 	LIBRARY_CPP_STATIC_NAME = lib$(LIBRARY_CPP_NAME).a
-	ifeq ($(ARCH),armeabi)
-		VERSION_NAME = android-armeabi
-		GCC = arm-linux-androideabi-g++
-		AR = arm-linux-androideabi-ar
-	endif
-	ifeq ($(ARCH),armeabi-v7a)
-		VERSION_NAME = android-armeabi-v7a
-		GCC = arm-linux-androideabi-g++
-		AR = arm-linux-androideabi-ar
-	endif
-	ifeq ($(ARCH),arm64-v8a)
-		VERSION_NAME = android-aarch64
-		GCC = aarch64-linux-android-g++
-		AR = aarch64-linux-android-ar
-	endif
-		LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
-		LIBRARY_CPP_SHARED_BIN = $(LIBRARY_PLATFORM_DIR)/$(LIBRARY_CPP_SHARED_NAME)
-		LIBRARY_CPP_STATIC_BIN = $(LIBRARY_PLATFORM_DIR)/$(LIBRARY_CPP_STATIC_NAME)
-		LIBRARY_SRC_DIR = src
-		LIBRARY_TEMP_DIR = $(VERSION_NAME)
-		LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
-	ifeq ($(ARCH),armeabi-v7a)
+endif
+ifeq ($(TARGET_OS),OSX)
+	LIBRARY_CPP_SHARED_NAME = lib$(LIBRARY_CPP_NAME).so
+	LIBRARY_CPP_STATIC_NAME = lib$(LIBRARY_CPP_NAME).a
+endif
+ifeq ($(TARGET_OS),IOS)
+	LIBRARY_CPP_SHARED_NAME = lib$(LIBRARY_CPP_NAME).so
+	LIBRARY_CPP_STATIC_NAME = lib$(LIBRARY_CPP_NAME).a
+endif
+ifeq ($(TARGET_OS),LINUX)
+	LIBRARY_CPP_SHARED_NAME = lib$(LIBRARY_CPP_NAME).so
+	LIBRARY_CPP_STATIC_NAME = lib$(LIBRARY_CPP_NAME).a
+endif
+VERSION_NAME = $(TARGET_OS_NAME)-$(TARGET_ARCH)-$(COMPILER_NAME)
+# paths
+LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
+LIBRARY_CPP_SHARED_BIN = $(LIBRARY_PLATFORM_DIR)/$(LIBRARY_CPP_SHARED_NAME)
+LIBRARY_CPP_STATIC_BIN = $(LIBRARY_PLATFORM_DIR)/$(LIBRARY_CPP_STATIC_NAME)
+LIBRARY_SRC_DIR = src
+LIBRARY_TEMP_DIR = $(VERSION_NAME)
+LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
+
+# host setup
+ifeq ($(HOST_OS),WIN)
+	HOST_SHELL = WIN
+endif
+ifeq ($(HOST_OS),OSX)
+	HOST_SHELL = UNIX
+endif
+ifeq ($(HOST_OS),LINUX)
+	THOST_SHELL = UNIX
+endif
+
+# target OS setup
+ifeq ($(TARGET_OS),WIN)
+	# cpp library commands and flags
+	LIBRARY_OBJ_COMPILE_FLAGS = -I"$(BOOST_INCLUDE_DIR)" $(LIBRARY_OBJ_COMPILE_FLAGS_STANDARD)
+	LIBRARY_SHARED_LINK_FLAGS = -L"$(BOOST_LIBS_DIR)" -lstdc++ -shared $(LIBRARY_SHARED_LINK_INCLUDES)
+	LIBRARY_STATIC_LINK_FLAGS = 
+	# program c#
+	PROGRAM_CSHARP_EXE_ENABLE = $(PROGRAM_CSHARP_EXE)
+	CSC = csc
+	CSC_FLAGS = /nologo /optimize /langversion:latest
+	BUNDLE_CMD = 
+	# program c++
+	PROGRAM_CPP_COMPILE = -I"$(BOOST_INCLUDE_DIR)" $(EXAMPLE_PROGRAM_OBJ_COMPILE_FLAGS_STANDARD)
+	PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -L"$(LIBRARY_PLATFORM_DIR)" -L"$(BOOST_LIBS_DIR)" $(PROGRAM_EXAMPLE_CPP_LIBS_FLAG)
+	# OneHeader c++
+	PROGRAM_ONE_HEADER_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -fmessage-length=0
+	PROGRAM_ONE_HEADER_LINK_FLAGS = -static-libgcc -static-libstdc++
+endif
+ifeq ($(TARGET_OS),android)
+	ifeq ($(TARGET_ARCH),armeabi-v7a)
 		ARCH_OBJ_COMPILE_INCLUDES =  -I"$(NDK_PATH)/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/include" \
 			-I"$(NDK_PATH)/sources/cxx-stl/gnu-libstdc++/4.9/include" \
 			-I"$(NDK_PATH)/sysroot/usr/include" \
 			-I"$(NDK_PATH)/sysroot/usr/include/arm-linux-androideabi"
-		# cpp library commands and flags
-		LIBRARY_OBJ_COMPILE_FLAGS = $(ALL_CPP_COMPILE_INCLUDES) $(ARCH_OBJ_COMPILE_INCLUDES) -O3 -g3 -std=$(LIBRARY_CPP_VERSION) -Wall -c -fmessage-length=0 
-		LIBRARY_SHARED_LINK_FLAGS = --sysroot="$(NDK_PATH)/platforms/android-21/arch-arm" -static-libgcc -static-libstdc++ -static -shared
-		LIBRARY_STATIC_LINK_FLAGS = 
-		# program c#
-		CSC = csc
-		CSC_FLAGS = /nologo /optimize /langversion:latest
-		BUNDLE_CMD = 
-		# program c++
-		PROGRAM_CPP_COMPILE = $(ALL_CPP_COMPILE_INCLUDES) $(ARCH_OBJ_COMPILE_INCLUDES) -I"$(LIBRARY_INCLUDE_DIR)" -I"$(NDK_PATH)/sysroot/usr/include" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		PROGRAM_CPP_LINK = --sysroot="$(NDK_PATH)/platforms/android-21/arch-arm" -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
+		NDK_SYSROOT_PATH = $(NDK_PATH)/platforms/android-21/arch-arm
 	endif
-	ifeq ($(ARCH),arm64-v8a)
+	ifeq ($(TARGET_ARCH),arm64-v8a)
 		ARCH_OBJ_COMPILE_INCLUDES =  -I"$(NDK_PATH)/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v8a/include" \
 			-I"$(NDK_PATH)/sources/cxx-stl/gnu-libstdc++/4.9/include" \
 			-I"$(NDK_PATH)/sysroot/usr/include" \
 			-I"$(NDK_PATH)/sysroot/usr/include/arm-linux-androideabi"
-		# cpp library commands and flags
-		LIBRARY_OBJ_COMPILE_FLAGS = $(ALL_CPP_COMPILE_INCLUDES) $(ARCH_OBJ_COMPILE_INCLUDES) -O3 -g3 -std=$(LIBRARY_CPP_VERSION) -Wall -c -fmessage-length=0 
-		LIBRARY_SHARED_LINK_FLAGS = --sysroot="$(NDK_PATH)/platforms/android-21/arch-arm64" -static-libgcc -static-libstdc++ -static -shared
-		LIBRARY_STATIC_LINK_FLAGS = 
-		# program c#
-		CSC = csc
-		CSC_FLAGS = /nologo /optimize /langversion:latest
-		BUNDLE_CMD = 
-		# program c++
-		PROGRAM_CPP_COMPILE = $(ALL_CPP_COMPILE_INCLUDES) $(ARCH_OBJ_COMPILE_INCLUDES) -I"$(LIBRARY_INCLUDE_DIR)" -I"$(NDK_PATH)/sysroot/usr/include" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		PROGRAM_CPP_LINK = --sysroot="$(NDK_PATH)/platforms/android-21/arch-arm64" -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
+		NDK_SYSROOT_PATH = $(NDK_PATH)/platforms/android-21/arch-arm64
 	endif
+	# cpp library commands and flags
+	LIBRARY_OBJ_COMPILE_FLAGS = $(ALL_CPP_COMPILE_INCLUDES) $(ARCH_OBJ_COMPILE_INCLUDES) -O3 -g3 -std=$(LIBRARY_CPP_VERSION) -Wall -c -fmessage-length=0 
+	LIBRARY_SHARED_LINK_FLAGS = --sysroot="$(NDK_SYSROOT_PATH)" -static-libgcc -static-libstdc++ -static -shared
+	LIBRARY_STATIC_LINK_FLAGS = 
+	# program c#
+	CSC = csc
+	CSC_FLAGS = /nologo /optimize /langversion:latest
+	BUNDLE_CMD = 
+	# program c++
+	PROGRAM_CPP_COMPILE = $(ALL_CPP_COMPILE_INCLUDES) $(ARCH_OBJ_COMPILE_INCLUDES) -I"$(LIBRARY_INCLUDE_DIR)" -I"$(NDK_PATH)/sysroot/usr/include" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
+	PROGRAM_CPP_LINK = --sysroot="$(NDK_SYSROOT_PATH)" -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
 endif
-ifeq ($(OS_DET),LINUX)
-	HOST_OS = UNIX
-	ifeq ($(ARCH),x86)
-		LIBRARY_CPP_SHARED_NAME = lib$(LIBRARY_CPP_NAME).so
-		LIBRARY_CPP_STATIC_NAME = lib$(LIBRARY_CPP_NAME).a
-		VERSION_NAME = linuxDebian-x86-gcc
-		GCC = g++
-		AR = ar
-	endif
-	ifeq ($(ARCH),x86_64)
-		LIBRARY_CPP_SHARED_NAME = lib$(LIBRARY_CPP_NAME).so
-		LIBRARY_CPP_STATIC_NAME = lib$(LIBRARY_CPP_NAME).a
-		VERSION_NAME = linuxDebian-x86_64-gcc
-		GCC = gcc
-		AR = ar
-	endif
-	# paths
-	LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
-	LIBRARY_CPP_SHARED_BIN = $(LIBRARY_PLATFORM_DIR)/$(LIBRARY_CPP_SHARED_NAME)
-	LIBRARY_CPP_STATIC_BIN = $(LIBRARY_PLATFORM_DIR)/$(LIBRARY_CPP_STATIC_NAME)
-	LIBRARY_TEMP_DIR = $(VERSION_NAME)
-	LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
-	ifeq ($(ARCH),x86)
-		# cpp library commands and flags
-		LIBRARY_OBJ_COMPILE_FLAGS = $(ALL_CPP_COMPILE_INCLUDES) -m32 -O3 -g3 -std=$(LIBRARY_CPP_VERSION) -Wall -c -fmessage-length=0
-		LIBRARY_SHARED_LINK_FLAGS = -m32 -lstdc++ -std=gnu++11 -static-libgcc -static-libstdc++ -static -shared
-		LIBRARY_STATIC_LINK_FLAGS = 
-		# program c#
-		CSC = csc
-		CSC_FLAGS = /nologo /optimize /langversion:latest
-		BUNDLE_CMD = 
-		# program c++
-		PROGRAM_CPP_COMPILE = $(ALL_CPP_COMPILE_INCLUDES) -m32 -I"$(LIBRARY_INCLUDE_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		PROGRAM_CPP_LINK = -m32 -lstdc++ -static-libgcc -static-libstdc++ -L"$(LIBRARY_PLATFORM_DIR)"
-	endif
-	ifeq ($(ARCH),x86_64)
-		# cpp library commands and flags
-		LIBRARY_OBJ_COMPILE_FLAGS = $(ALL_CPP_COMPILE_INCLUDES) -fPIC -O3 -g3 -std=$(LIBRARY_CPP_VERSION) -Wall -c
-		LIBRARY_SHARED_LINK_FLAGS = -fPIC -static-libgcc -static-libstdc++ -static -shared
-		LIBRARY_STATIC_LINK_FLAGS = 
-		# program c#
-		CSC = csc
-		CSC_FLAGS = /nologo /optimize /langversion:latest
-		BUNDLE_CMD = 
-		# program c++
-		PROGRAM_CPP_COMPILE = $(ALL_CPP_COMPILE_INCLUDES) -fPIC -I"$(LIBRARY_INCLUDE_DIR)" -O3 -g3 -std=gnu++11 -Wall -c -fmessage-length=0
-		PROGRAM_CPP_LINK = -fPIC -static-libgcc -static-libstdc++ -static -L"$(LIBRARY_PLATFORM_DIR)"
-	endif
+ifeq ($(TARGET_OS),LINUX)
+	# cpp library commands and flags
+	LIBRARY_OBJ_COMPILE_FLAGS = -I"$(BOOST_INCLUDE_DIR)" $(LIBRARY_OBJ_COMPILE_FLAGS_STANDARD)
+	LIBRARY_SHARED_LINK_FLAGS = -L"$(BOOST_LIBS_DIR)" -lstdc++ -shared $(LIBRARY_SHARED_LINK_INCLUDES)
+	LIBRARY_STATIC_LINK_FLAGS = 
+	# program c#
+	PROGRAM_CSHARP_EXE_ENABLE = $(PROGRAM_CSHARP_EXE)
+	CSC = csc
+	CSC_FLAGS = /nologo /optimize /langversion:latest
+	BUNDLE_CMD = 
+	# program c++
+	PROGRAM_CPP_COMPILE = -I"$(BOOST_INCLUDE_DIR)" $(EXAMPLE_PROGRAM_OBJ_COMPILE_FLAGS_STANDARD)
+	PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -L"$(LIBRARY_PLATFORM_DIR)" -L"$(BOOST_LIBS_DIR)" $(PROGRAM_EXAMPLE_CPP_LIBS_FLAG)
+	# OneHeader c++
+	PROGRAM_ONE_HEADER_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -fmessage-length=0
+	PROGRAM_ONE_HEADER_LINK_FLAGS = -static-libgcc -static-libstdc++
 endif
-ifeq ($(OS_DET),OSX)
-	HOST_OS = UNIX
-	# paths
-	LIBRARY_CPP_SHARED_NAME = lib$(LIBRARY_CPP_NAME).dll
-	LIBRARY_CPP_STATIC_NAME = lib$(LIBRARY_CPP_NAME).a
-	VERSION_NAME = macOS-x86_64-clang
-	LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
-	LIBRARY_CPP_SHARED_BIN = $(LIBRARY_PLATFORM_DIR)/$(LIBRARY_CPP_SHARED_NAME)
-	LIBRARY_CPP_STATIC_BIN = $(LIBRARY_PLATFORM_DIR)/$(LIBRARY_CPP_STATIC_NAME)
-	LIBRARY_TEMP_DIR = $(VERSION_NAME)
-	LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
+ifeq ($(TARGET_OS),OSX)
 	# cpp library commands and flags
 	GCC = g++
 	LIBRARY_OBJ_COMPILE_FLAGS = $(ALL_CPP_COMPILE_INCLUDES) -O3 -g3 -fPIC -std=$(LIBRARY_CPP_VERSION) -Wall -fvisibility=hidden -c -fmessage-length=0 -mmacosx-version-min=10.9
@@ -303,101 +340,41 @@ ifeq ($(OS_DET),OSX)
 	# mac app
 	PROGRAM_CPP_APP_ENABLE = $(PROGRAM_CPP_APP)
 endif
-ifeq ($(OS_DET),IOS)
-	HOST_OS = UNIX
-	# paths
-	LIBRARY_CPP_SHARED_NAME = lib$(LIBRARY_CPP_NAME).so
-	LIBRARY_CPP_STATIC_NAME = lib$(LIBRARY_CPP_NAME).a
-	ifeq ($(ARCH),armv7)
-		VERSION_NAME = ios-armv7
-		GCC = clang++
-		AR = ar
-		iPhoneSDK = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk
-		iPhoneSDKLibs = lib/ios
-		ios_arch = armv7
+ifeq ($(TARGET_OS),IOS)
+	ifeq ($(TARGET_ARCH),armv7)
+		IPHONE_SDK_PATHLibs = lib/ios
+		IOS_ARCH = armv7
 	endif
-	ifeq ($(ARCH),armv7s)
-		VERSION_NAME = ios-armv7s
-		GCC = clang++
-		AR = ar
-		iPhoneSDK = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk
-		iPhoneSDKLibs = lib/ios
-		ios_arch = armv7s
+	ifeq ($(TARGET_ARCH),armv7s)
+		IPHONE_SDK_PATHLibs = lib/ios
+		IOS_ARCH = armv7s
 	endif
-	ifeq ($(ARCH),arm64)
+	ifeq ($(TARGET_ARCH),arm64)
 		VERSION_NAME = ios-arm64
-		GCC = clang++
-		AR = ar
-		iPhoneSDK = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk
-		iPhoneSDKLibs = lib/ios
-		ios_arch = arm64
+		IPHONE_SDK_PATHLibs = lib/ios
+		IOS_ARCH = arm64
 	endif
-		LIBRARY_PLATFORM_DIR = $(LIBRARY_DIR)/$(VERSION_NAME)
-		LIBRARY_CPP_SHARED_BIN = $(LIBRARY_PLATFORM_DIR)/$(LIBRARY_CPP_SHARED_NAME)
-		LIBRARY_CPP_STATIC_BIN = $(LIBRARY_PLATFORM_DIR)/$(LIBRARY_CPP_STATIC_NAME)
-		LIBRARY_TEMP_DIR = $(VERSION_NAME)
-		LIBRARY_OBJ_DIR = $(LIBRARY_TEMP_DIR)/src
-	ifeq ($(ARCH),armv7)
-		# cpp library commands and flags
-		GCC = clang++
-		ALL_CPP_COMPILE_INCLUDES =  
-		LIBRARY_OBJ_COMPILE_FLAGS = $(ALL_CPP_COMPILE_INCLUDES) -O3 -g3 -std=$(LIBRARY_CPP_VERSION) -stdlib=libc++ -Wall -c -fmessage-length=0 \
-			-arch $(ios_arch) -mios-version-min=5.0 -isysroot $(iPhoneSDK)
-		LIBRARY_SHARED_LINK_FLAGS = -std=gnu++11 -stdlib=libc++ -static -shared -undefined dynamic_lookup -arch $(ios_arch) -mios-version-min=5.0 -isysroot $(iPhoneSDK)
-		LIBRARY_STATIC_LINK_FLAGS =
-		# program c#
-		CSC = csc
-		CSC_FLAGS = /nologo /optimize /langversion:latest
-		BUNDLE_CMD = 
-		# program c++
-		PROGRAM_CPP_COMPILE_INCLUDES = 
-		PROGRAM_CPP_COMPILE = $(ALL_CPP_COMPILE_INCLUDES) -O3 -g3 -std=gnu++11 -stdlib=libc++ -Wall -c -fmessage-length=0 \
-			-arch $(ios_arch) -mios-version-min=5.0 -isysroot $(iPhoneSDK)
-		PROGRAM_CPP_LINK = -std=gnu++11 -stdlib=libc++ -L"$(LIBRARY_PLATFORM_DIR)" -L"$(iPhoneSDKLibs)" -undefined dynamic_lookup \
-			-arch $(ios_arch) -mios-version-min=5.0 -isysroot $(iPhoneSDK)
-	endif
-	ifeq ($(ARCH),armv7s)
-		# cpp library commands and flags
-		GCC = clang++
-		ALL_CPP_COMPILE_INCLUDES =  
-		LIBRARY_OBJ_COMPILE_FLAGS = $(ALL_CPP_COMPILE_INCLUDES) -O3 -g3 -std=$(LIBRARY_CPP_VERSION) -stdlib=libc++ -Wall -c -fmessage-length=0 \
-			-arch $(ios_arch) -mios-version-min=5.0 -isysroot $(iPhoneSDK)
-		LIBRARY_SHARED_LINK_FLAGS = -std=gnu++11 -stdlib=libc++ -static -shared -undefined dynamic_lookup -arch $(ios_arch) -mios-version-min=5.0 -isysroot $(iPhoneSDK)
-		LIBRARY_STATIC_LINK_FLAGS =
-		# program c#
-		CSC = csc
-		CSC_FLAGS = /nologo /optimize /langversion:latest
-		BUNDLE_CMD = 
-		# program c++
-		PROGRAM_CPP_COMPILE_INCLUDES = 
-		PROGRAM_CPP_COMPILE = $(ALL_CPP_COMPILE_INCLUDES) -O3 -g3 -std=gnu++11 -stdlib=libc++ -Wall -c -fmessage-length=0 \
-			-arch $(ios_arch) -mios-version-min=5.0 -isysroot $(iPhoneSDK)
-		PROGRAM_CPP_LINK = -std=gnu++11 -stdlib=libc++ -L"$(LIBRARY_PLATFORM_DIR)" -L"$(iPhoneSDKLibs)" -undefined dynamic_lookup \
-			-arch $(ios_arch) -mios-version-min=5.0 -isysroot $(iPhoneSDK)
-	endif
-	ifeq ($(ARCH),arm64)
-		# cpp library commands and flags
-		GCC = clang++
-		ALL_CPP_COMPILE_INCLUDES =  
-		LIBRARY_OBJ_COMPILE_FLAGS = $(ALL_CPP_COMPILE_INCLUDES) -O3 -g3 -std=$(LIBRARY_CPP_VERSION) -stdlib=libc++ -Wall -c -fmessage-length=0 \
-			-arch $(ios_arch) -mios-version-min=5.0 -isysroot $(iPhoneSDK)
-		LIBRARY_SHARED_LINK_FLAGS = -std=gnu++11 -stdlib=libc++ -static -shared -undefined dynamic_lookup -arch $(ios_arch) -mios-version-min=5.0 -isysroot $(iPhoneSDK)
-		LIBRARY_STATIC_LINK_FLAGS =
-		# program c#
-		CSC = csc
-		CSC_FLAGS = /nologo /optimize /langversion:latest
-		BUNDLE_CMD = 
-		# program c++
-		PROGRAM_CPP_COMPILE_INCLUDES = 
-		PROGRAM_CPP_COMPILE = $(ALL_CPP_COMPILE_INCLUDES) -O3 -g3 -std=gnu++11 -stdlib=libc++ -Wall -c -fmessage-length=0 \
-			-arch $(ios_arch) -mios-version-min=5.0 -isysroot $(iPhoneSDK)
-		PROGRAM_CPP_LINK = -std=gnu++11 -stdlib=libc++ -L"$(LIBRARY_PLATFORM_DIR)" -L"$(iPhoneSDKLibs)" -undefined dynamic_lookup \
-			-arch $(ios_arch) -mios-version-min=5.0 -isysroot $(iPhoneSDK)
-		PROGRAM_EXAMPLE_CPP_LIBS_FLAG = -lResourceFileUtility
-	endif
+	# cpp library commands and flags
+	GCC = clang++
+	ALL_CPP_COMPILE_INCLUDES =  
+	LIBRARY_OBJ_COMPILE_FLAGS = $(ALL_CPP_COMPILE_INCLUDES) -O3 -g3 -std=$(LIBRARY_CPP_VERSION) -stdlib=libc++ -Wall -c -fmessage-length=0 \
+		-arch $(IOS_ARCH) -mios-version-min=5.0 -isysroot $(IPHONE_SDK_PATH)
+	LIBRARY_SHARED_LINK_FLAGS = -std=gnu++11 -stdlib=libc++ -static -shared -undefined dynamic_lookup -arch $(IOS_ARCH) -mios-version-min=5.0 -isysroot $(IPHONE_SDK_PATH)
+	LIBRARY_STATIC_LINK_FLAGS =
+	# program c#
+	CSC = csc
+	CSC_FLAGS = /nologo /optimize /langversion:latest
+	BUNDLE_CMD = 
+	# program c++
+	PROGRAM_CPP_COMPILE_INCLUDES = 
+	PROGRAM_CPP_COMPILE = $(ALL_CPP_COMPILE_INCLUDES) -O3 -g3 -std=gnu++11 -stdlib=libc++ -Wall -c -fmessage-length=0 \
+		-arch $(IOS_ARCH) -mios-version-min=5.0 -isysroot $(IPHONE_SDK_PATH)
+	PROGRAM_CPP_LINK = -std=gnu++11 -stdlib=libc++ -L"$(LIBRARY_PLATFORM_DIR)" -L"$(IPHONE_SDK_PATHLibs)" -undefined dynamic_lookup \
+		-arch $(IOS_ARCH) -mios-version-min=5.0 -isysroot $(IPHONE_SDK_PATH)
 endif
 
-ifeq ($(HOST_OS),WIN)
+#shell commands
+ifeq ($(HOST_SHELL),WIN)
 	# backslash
 	LIBRARY_OBJ_DIR_BACKSLASH = $(subst /,\\,$(LIBRARY_OBJ_DIR))
 	LIBRARY_TEMP_DIR_BACKSLASH = $(subst /,\\,$(LIBRARY_TEMP_DIR))
@@ -429,7 +406,7 @@ ifeq ($(HOST_OS),WIN)
 	SHARED_LIBRARY_HEADER_DEL_CMD = if exist "$(LIBRARY_CPP_HEADER_BACKSLASH)" del /F /Q "$(LIBRARY_CPP_HEADER_BACKSLASH)"
 	PROGRAM_ONE_HEADER_EXE_DEL_CMD = if exist "$(PROGRAM_ONE_HEADER_EXE_BACKSLASH)" del /F /Q "$(PROGRAM_ONE_HEADER_EXE_BACKSLASH)"
 endif
-ifeq ($(HOST_OS),UNIX)
+ifeq ($(HOST_SHELL),UNIX)
 	# commands
 	LIBRARY_OBJ_DIR_CMD = mkdir -p $(LIBRARY_OBJ_DIR)
 	LIBRARY_PLATFORM_DIR_CMD = mkdir -p $(LIBRARY_PLATFORM_DIR)
