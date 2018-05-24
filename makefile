@@ -59,7 +59,9 @@ ifeq ($(HOST_OS),LINUX)
 	endif
 endif
 
-# paths
+# CUSTOM PATHS START
+# CUSTOM PATHS START
+# CUSTOM PATHS START
 # these paths are custom to your installation
 ifeq ($(HOST_OS),WIN)
 	ifdef ($(COMPILER),MINGW)
@@ -139,6 +141,9 @@ ifeq ($(HOST_OS),LINUX)
 		AR = ar 
 	endif
 endif
+# CUSTOM PATHS END
+# CUSTOM PATHS END
+# CUSTOM PATHS END
 
 # target OS names
 ifeq ($(TARGET_OS),WIN)
@@ -258,7 +263,7 @@ ifeq ($(HOST_OS),OSX)
 	HOST_SHELL = UNIX
 endif
 ifeq ($(HOST_OS),LINUX)
-	THOST_SHELL = UNIX
+	HOST_SHELL = UNIX
 endif
 
 # target OS setup
