@@ -973,8 +973,12 @@ public:
 #include <chrono>
 #include <locale>
 #include <codecvt>
+#include <io.h>
+#include <fcntl.h>
 #include <boost/locale.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/nowide/fstream.hpp>
+#include <boost/nowide/iostream.hpp>
 
 
 

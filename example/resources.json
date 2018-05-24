@@ -108,7 +108,7 @@
 		} ,
 		{
 			"handle": "some object",
-			"path": "objects/体系结构.json",
+			"path": "resources/objects/体系结构.json",
 			"inType": "json",
 			"outType": "gameObj"
 		}

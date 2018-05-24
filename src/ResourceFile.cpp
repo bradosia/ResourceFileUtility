@@ -9,7 +9,6 @@ Asset::Asset() {
 Asset::Asset(std::string handle_, filesystem::path filePath_,
 		std::string inType_, std::string outType_) {
 	init();
-	std::cout << filePath_ << std::endl;
 	handle = handle_;
 	filePath = filePath_;
 	inType = inType_;
@@ -82,23 +81,11 @@ ResourceFile::ResourceFile() {
 
 void ResourceFile::addFile(std::string handle, std::string filePathStringUTF8,
 		std::string inType, std::string outType) {
-	// Create and install global locale
-	//std::locale::global(boost::locale::generator().generate(""));
-	// Make boost.filesystem use it
-	//boost::filesystem::path::imbue (std::locale());
-	//std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> conversion;
-	//std::string mbs = conversion.to_bytes(filePathString);
-	//std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
-	//std::wstring filePathStringUTF16 = convert.from_bytes(filePathStringUTF8);
-	//_setmode(_fileno(stdout), _O_U16TEXT);
-	//boost::filesystem::path::imbue(std::locale("UTF-16"));
-	std::wstring filePathStringUTF16 = boost::locale::conv::utf_to_utf<wchar_t,
-			char>(filePathStringUTF8);
-	std::cout << filePathStringUTF8 << " to ";
-	std::wcout << filePathStringUTF16 << std::endl;
-	filesystem::path p = filesystem::path(filePathStringUTF16);
-	//p.imbue(std::locale("en_US.utf8"));
-	assetList.push_back(new Asset(handle, p, inType, outType));
+	unsigned int i, n;
+	// boost::nowide being used instead of wide strings
+	/*std::wstring filePathStringUTF16 = boost::locale::conv::utf_to_utf<wchar_t,
+			char>(filePathStringUTF8);*/
+	assetList.push_back(new Asset(handle, filesystem::path(filePathStringUTF8), inType, outType));
 }
 unsigned int ResourceFile::assetListSize() {
 	return (unsigned int) assetList.size();
@@ -279,16 +266,16 @@ int Parser::getSize(ResourceFile& directoryObj) {
 }
 
 int Parser::getSize(Asset* assetPtr) {
-	filesystem::wifstream fileAsset;
+	nowide::ifstream fileAsset;
 	int retStatus = -1;
 	try {
-		fileAsset.open(assetPtr->getFilePath(), std::ios::binary);
+		fileAsset.open(assetPtr->getFilePath().string(), std::ios::binary);
 	} catch (...) {
 		retStatus = 1;
 	}
 	if (fileAsset.is_open()) {
 		assetPtr->setExist(true);
-		std::cout << "open " << assetPtr->getFilePath() << std::endl;
+		// std::cout << "open " << assetPtr->getFilePath() << std::endl;
 		fileAsset.seekg(0, std::ios::end); // set the pointer to the end
 		assetPtr->setFileBytes(fileAsset.tellg()); // get the length of the file
 		try {
@@ -305,10 +292,10 @@ int Parser::getSize(Asset* assetPtr) {
 
 int Parser::estimate(Asset* assetPtr) {
 	unsigned long long fileSize, processBytes;
-	filesystem::ifstream fileAsset;
+	nowide::ifstream fileAsset;
 	int retStatus = -1;
 	try {
-		fileAsset.open(assetPtr->getFilePath(), std::ios::binary);
+		fileAsset.open(assetPtr->getFilePath().string(), std::ios::binary);
 		assetPtr->setExist(true);
 	} catch (...) {
 		retStatus = 1;

@@ -18,6 +18,8 @@
 #include <fcntl.h>
 #include <boost/locale.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/nowide/fstream.hpp>
+#include <boost/nowide/iostream.hpp>
 #include "../contrib/json.hpp"
 #include "crc64.h"
 
