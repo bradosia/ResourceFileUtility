@@ -1,5 +1,5 @@
 # Architecture detection
-ifndef OS_DET
+ifndef HOST_OS
 	ifeq ($(OS),Windows_NT)
 	HOST_OS = WIN
 		ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
@@ -64,9 +64,9 @@ endif
 # CUSTOM PATHS START
 # these paths are custom to your installation
 ifeq ($(HOST_OS),WIN)
-	ifdef ($(COMPILER),MINGW)
-		BOOST_INCLUDE_DIR = C:/boost/include/boost-1_67
-		BOOST_LIBS_DIR = C:/boost/lib-mgw
+	ifeq ($(COMPILER),MINGW)
+		BOOST_INCLUDE_DIR = C:/boost_1_67_0/include
+		BOOST_LIBS_DIR = C:/boost_1_67_0/lib-mgw
 		ifeq ($(TARGET_ARCH),x86)
 			BOOST_LIBS_POST = -mgw73-mt-x32-1_67
 			GCC = x86_64-w64-mingw32-g++
@@ -78,9 +78,9 @@ ifeq ($(HOST_OS),WIN)
 			AR = ar
 		endif
 	endif
-	ifdef ($(COMPILER),MSVC)
-		BOOST_INCLUDE_DIR = C:/boost/include/boost-1_67
-		BOOST_LIBS_DIR = C:/boost/lib-msvc
+	ifeq ($(COMPILER),MSVC)
+		BOOST_INCLUDE_DIR = C:/boost_1_67_0/include
+		BOOST_LIBS_DIR = C:/boost_1_67_0/lib-msvc
 		ifeq ($(TARGET_ARCH),x86)
 			BOOST_LIBS_POST = -vc141-mt-x32-1_67
 			GCC = cl
@@ -92,7 +92,7 @@ ifeq ($(HOST_OS),WIN)
 			AR = lib
 		endif
 	endif
-	ifdef ($(TARGET_OS),ANDROID)
+	ifeq ($(TARGET_OS),ANDROID)
 		BOOST_INCLUDE_DIR = /usr/include
 		BOOST_LIBS_DIR = /usr/lib-android
 		BOOST_LIBS_POST = 
@@ -112,7 +112,7 @@ ifeq ($(HOST_OS),WIN)
 	endif
 endif
 ifeq ($(HOST_OS),OSX)
-	ifdef ($(COMPILER),CLANG)
+	ifeq ($(COMPILER),CLANG)
 		BOOST_INCLUDE_DIR = /usr/include
 		BOOST_LIBS_DIR = /usr/lib
 		BOOST_LIBS_POST = 
@@ -125,7 +125,7 @@ ifeq ($(HOST_OS),OSX)
 			AR = ar
 		endif
 	endif
-	ifdef ($(TARGET_OS),IOS)
+	ifeq ($(TARGET_OS),IOS)
 		BOOST_INCLUDE_DIR = /usr/include
 		BOOST_LIBS_DIR = /usr/lib-ios
 		BOOST_LIBS_POST = 
@@ -133,7 +133,7 @@ ifeq ($(HOST_OS),OSX)
 	endif
 endif
 ifeq ($(HOST_OS),LINUX)
-	ifdef ($(COMPILER),GCC)
+	ifeq ($(COMPILER),GCC)
 		BOOST_INCLUDE_DIR = /usr/local/include
 		BOOST_LIBS_DIR = /usr/local/lib
 		BOOST_LIBS_POST =
@@ -185,7 +185,7 @@ LIBRARY_CPP_NAME = ResourceFileUtility
 LIBRARY_CPP_HEADER = $(LIBRARY_INCLUDE_DIR)/$(LIBRARY_CPP_NAME).h
 LIBRARY_CPP_ONE_HEADER = $(LIBRARY_SRC_DIR)/OneHeader.h
 LIBRARY_CPP_VERSION = gnu++11
-LIBRARY_SHARED_LINK_INCLUDES = -lboost_filesystem$(BOOST_LIBS_POST) -lboost_thread$(BOOST_LIBS_POST) -lboost_locale$(BOOST_LIBS_POST) -lboost_system$(BOOST_LIBS_POST) -liconv
+LIBRARY_SHARED_LINK_INCLUDES = -lboost_filesystem$(BOOST_LIBS_POST) -lboost_thread$(BOOST_LIBS_POST) -lboost_locale$(BOOST_LIBS_POST) -lboost_system$(BOOST_LIBS_POST)
 # OneHeader c++ program
 PROGRAM_ONE_HEADER_SRC = contrib/OneHeader/src
 PROGRAM_ONE_HEADER_OBJ = contrib/OneHeader/obj
@@ -195,7 +195,7 @@ PROGRAM_ONE_HEADER_EXE = $(PROGRAM_ONE_HEADER_BIN)/OneHeader.exe
 PROGRAM_ONE_HEADER_MAIN_NAME = main
 # example c++ program
 ALL_CPP_COMPILE_INCLUDES = -I"$(LIBRARY_CONTRIB_DIR)" -I"$(LIBRARY_INCLUDE_DIR)"
-PROGRAM_EXAMPLE_CPP_LIBS_FLAG = -lResourceFileUtility -lboost_filesystem$(BOOST_LIBS_POST) -lboost_thread$(BOOST_LIBS_POST) -lboost_locale$(BOOST_LIBS_POST) -lboost_system$(BOOST_LIBS_POST) -liconv
+PROGRAM_EXAMPLE_CPP_LIBS_FLAG = -lResourceFileUtility -lboost_filesystem$(BOOST_LIBS_POST) -lboost_thread$(BOOST_LIBS_POST) -lboost_locale$(BOOST_LIBS_POST) -lboost_system$(BOOST_LIBS_POST)
 
 #compiler flags
 ifeq ($(COMPILER),CLANG)
@@ -270,7 +270,7 @@ endif
 ifeq ($(TARGET_OS),WIN)
 	# cpp library commands and flags
 	LIBRARY_OBJ_COMPILE_FLAGS = -I"$(BOOST_INCLUDE_DIR)" $(LIBRARY_OBJ_COMPILE_FLAGS_STANDARD)
-	LIBRARY_SHARED_LINK_FLAGS = -L"$(BOOST_LIBS_DIR)" -lstdc++ -shared $(LIBRARY_SHARED_LINK_INCLUDES)
+	LIBRARY_SHARED_LINK_FLAGS = -L"$(BOOST_LIBS_DIR)" -lstdc++ -shared
 	LIBRARY_STATIC_LINK_FLAGS = 
 	# program c#
 	PROGRAM_CSHARP_EXE_ENABLE = $(PROGRAM_CSHARP_EXE)
@@ -279,7 +279,7 @@ ifeq ($(TARGET_OS),WIN)
 	BUNDLE_CMD = 
 	# program c++
 	PROGRAM_CPP_COMPILE = -I"$(BOOST_INCLUDE_DIR)" $(EXAMPLE_PROGRAM_OBJ_COMPILE_FLAGS_STANDARD)
-	PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -L"$(LIBRARY_PLATFORM_DIR)" -L"$(BOOST_LIBS_DIR)" $(PROGRAM_EXAMPLE_CPP_LIBS_FLAG)
+	PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -L"$(LIBRARY_PLATFORM_DIR)" -L"$(BOOST_LIBS_DIR)"
 	# OneHeader c++
 	PROGRAM_ONE_HEADER_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -fmessage-length=0
 	PROGRAM_ONE_HEADER_LINK_FLAGS = -static-libgcc -static-libstdc++
@@ -347,16 +347,16 @@ ifeq ($(TARGET_OS),OSX)
 endif
 ifeq ($(TARGET_OS),IOS)
 	ifeq ($(TARGET_ARCH),armv7)
-		IPHONE_SDK_PATHLibs = lib/ios
+		IPHONE_SDK_LIBS_DIR = lib/ios
 		IOS_ARCH = armv7
 	endif
 	ifeq ($(TARGET_ARCH),armv7s)
-		IPHONE_SDK_PATHLibs = lib/ios
+		IPHONE_SDK_LIBS_DIR = lib/ios
 		IOS_ARCH = armv7s
 	endif
 	ifeq ($(TARGET_ARCH),arm64)
 		VERSION_NAME = ios-arm64
-		IPHONE_SDK_PATHLibs = lib/ios
+		IPHONE_SDK_LIBS_DIR = lib/ios
 		IOS_ARCH = arm64
 	endif
 	# cpp library commands and flags
@@ -374,7 +374,7 @@ ifeq ($(TARGET_OS),IOS)
 	PROGRAM_CPP_COMPILE_INCLUDES = 
 	PROGRAM_CPP_COMPILE = $(ALL_CPP_COMPILE_INCLUDES) -O3 -g3 -std=gnu++11 -stdlib=libc++ -Wall -c -fmessage-length=0 \
 		-arch $(IOS_ARCH) -mios-version-min=5.0 -isysroot $(IPHONE_SDK_PATH)
-	PROGRAM_CPP_LINK = -std=gnu++11 -stdlib=libc++ -L"$(LIBRARY_PLATFORM_DIR)" -L"$(IPHONE_SDK_PATHLibs)" -undefined dynamic_lookup \
+	PROGRAM_CPP_LINK = -std=gnu++11 -stdlib=libc++ -L"$(LIBRARY_PLATFORM_DIR)" -L"$(IPHONE_SDK_LIBS_DIR)" -undefined dynamic_lookup \
 		-arch $(IOS_ARCH) -mios-version-min=5.0 -isysroot $(IPHONE_SDK_PATH)
 endif
 
@@ -440,23 +440,43 @@ PROGRAM_OBJ_FILES := $(patsubst $(PROGRAM_SRC_DIR)/%.cpp,$(PROGRAM_OBJ_DIR)/%.o,
 EXAMPLE_SRC = *.cs
 EXTRA_SRC = ResourceFileUtility.cs
 
-all: directories $(PROGRAM_ONE_HEADER_EXE) one_header $(LIBRARY_CPP_STATIC_BIN) $(PROGRAM_CPP_EXE) $(PROGRAM_CSHARP_EXE_ENABLE) $(PROGRAM_CPP_APP_ENABLE)
+all: $(PROGRAM_ONE_HEADER_EXE) one_header library_setup $(LIBRARY_CPP_STATIC_BIN) $(LIBRARY_CPP_SHARED_BIN) library_clean program_cpp $(PROGRAM_CPP_EXE) program_csharp $(PROGRAM_CSHARP_EXE_ENABLE) $(PROGRAM_CPP_APP_ENABLE)
 
-$(PROGRAM_CSHARP_EXE_ENABLE):
-	$(CSC) $(CSC_FLAGS) /out:$@ /t:exe -lib:$(PROGRAM_SHARED_LIB_DIR) $(LIBRARY_INCLUDE_DIR)/$(EXTRA_SRC) $(PROGRAM_SRC_DIR)/*.cs
-	$(COPY_SHARED_LIBRARY_CMD)
-	$(BUNDLE_CMD)
-	$(PROGRAM_CSHARP_DEL_POST_CMD)
+# One header compile
+$(PROGRAM_ONE_HEADER_EXE):
+	$(PROGRAM_ONE_HEADER_EXE_DEL_CMD)
+	$(GCC) $(PROGRAM_ONE_HEADER_COMPILE_FLAGS) $(PROGRAM_ONE_HEADER_LINK_FLAGS) -o $@ $(PROGRAM_ONE_HEADER_SRC)/$(PROGRAM_ONE_HEADER_MAIN_NAME).cpp
+
+# One header execute
+one_header:
+	$(SHARED_LIBRARY_HEADER_DEL_CMD)
+	$(PROGRAM_ONE_HEADER_EXE) $(LIBRARY_CPP_ONE_HEADER) $(LIBRARY_CPP_HEADER)
+	
+# Library shared and static
+library_setup:
 	$(LIBRARY_TEMP_DIR_DEL)
+	$(SHARED_LIBRARY_DEL_CMD)
+	$(STATIC_LIBRARY_DEL_CMD)
+	$(LIBRARY_OBJ_DIR_CMD)
+	$(LIBRARY_PLATFORM_DIR_CMD)
 	
 $(LIBRARY_CPP_SHARED_BIN): $(LIBRARY_OBJ_FILES)
-	$(GCC) $(LIBRARY_SHARED_LINK_FLAGS) -o $@ $^
+	$(GCC) $(LIBRARY_SHARED_LINK_FLAGS) -o $@ $^ $(LIBRARY_SHARED_LINK_INCLUDES)
 	
 $(LIBRARY_CPP_STATIC_BIN): $(LIBRARY_OBJ_FILES)
 	$(AR) rcs $@ $^ $(LIBRARY_STATIC_LINK_FLAGS)
 
 $(LIBRARY_OBJ_DIR)/%.o: $(LIBRARY_SRC_DIR)/%.cpp
 	$(GCC) $(LIBRARY_OBJ_COMPILE_FLAGS) -c -o $@ $<
+	
+library_clean:
+	$(LIBRARY_TEMP_DIR_DEL)
+
+# Example programs
+program_cpp:
+	$(PROGRAM_OBJ_DIR_DEL)
+	$(PROGRAM_OBJ_DIR_CMD)
+	$(PROGRAM_CPP_DEL_CMD)
 	
 $(PROGRAM_CPP_EXE): $(PROGRAM_OBJ_FILES)
 	$(GCC) $(PROGRAM_CPP_LINK) -o $@ $^ $(PROGRAM_EXAMPLE_CPP_LIBS_FLAG)
@@ -465,33 +485,23 @@ $(PROGRAM_CPP_EXE): $(PROGRAM_OBJ_FILES)
 $(PROGRAM_OBJ_DIR)/%.o: $(PROGRAM_SRC_DIR)/%.cpp
 	$(GCC) $(PROGRAM_CPP_COMPILE) -c -o $@ $<
 
-$(PROGRAM_CPP_APP):
+program_csharp:
+	$(PROGRAM_CSHARP_DEL_CMD)
+	$(BUNDLE_CSHARP_DEL_CMD)
+	
+$(PROGRAM_CSHARP_EXE_ENABLE):
+	$(CSC) $(CSC_FLAGS) /out:$@ /t:exe -lib:$(PROGRAM_SHARED_LIB_DIR) $(LIBRARY_INCLUDE_DIR)/$(EXTRA_SRC) $(PROGRAM_SRC_DIR)/*.cs
+	$(COPY_SHARED_LIBRARY_CMD)
+	$(BUNDLE_CMD)
+	$(PROGRAM_CSHARP_DEL_POST_CMD)
+
+$(PROGRAM_CPP_APP_ENABLE):
+	$(PROGRAM_CPP_APP_DEL_CMD)
 	yes | rm -rf "$(PROGRAM_CPP_APP)"
 	mkdir -p $(PROGRAM_CPP_APP)/Contents/MacOS
 	mkdir -p $(PROGRAM_CPP_APP)/Contents/Resources
 	cp $(PROGRAM_SRC_DIR)/Info.plist "$(PROGRAM_CPP_APP)/Contents/"
 	cp $(PROGRAM_CPP_EXE) "$(PROGRAM_CPP_APP)/Contents/MacOS/$(PROGRAM_CPP_APP_NAME)"
-
-$(PROGRAM_ONE_HEADER_EXE):
-	$(GCC) $(PROGRAM_ONE_HEADER_COMPILE_FLAGS) $(PROGRAM_ONE_HEADER_LINK_FLAGS) -o $@ $(PROGRAM_ONE_HEADER_SRC)/$(PROGRAM_ONE_HEADER_MAIN_NAME).cpp
-	
-one_header:
-	$(SHARED_LIBRARY_HEADER_DEL_CMD)
-	$(PROGRAM_ONE_HEADER_EXE) $(LIBRARY_CPP_ONE_HEADER) $(LIBRARY_CPP_HEADER)
-	
-directories:
-	$(PROGRAM_ONE_HEADER_EXE_DEL_CMD)
-	$(PROGRAM_CPP_APP_DEL_CMD)
-	$(LIBRARY_TEMP_DIR_DEL)
-	$(PROGRAM_OBJ_DIR_DEL)
-	$(LIBRARY_OBJ_DIR_CMD)
-	$(PROGRAM_OBJ_DIR_CMD)
-	$(LIBRARY_PLATFORM_DIR_CMD)
-	$(SHARED_LIBRARY_DEL_CMD)
-	$(STATIC_LIBRARY_DEL_CMD)
-	$(PROGRAM_CSHARP_DEL_CMD)
-	$(BUNDLE_CSHARP_DEL_CMD)
-	$(PROGRAM_CPP_DEL_CMD)
 
 clean:
 	$(LIBRARY_TEMP_DIR_DEL)
