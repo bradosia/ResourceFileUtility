@@ -56,6 +56,7 @@ public:
 
 /*
  * @class Directory
+ * A pre-processed resource file directory.\n
  * Each Directory entry takes up the bytes
  * 8 bytes = file CRC64
  * 8 bytes = file start position (byte)
@@ -70,14 +71,19 @@ class Directory {
 private:
 	class Entry {
 	private:
-		unsigned long long CRC64, assetPosition, assetLength, assetInsertTime;
+		uint64_t CRC64, assetPosition // relative offset from file data start position
+				, assetLength, assetInsertTime;
 		char type[8], handle[32];
+		Asset* assetPtr;
 	};
-	std::unordered_map<char*, Entry*> hashTable;
+	std::vector<Entry*> entryList;
+	std::vector<std::pair<uint64_t,uint64_t>*> spaceList;
+	uint64_t spaceLast;
 public:
+	Directory();
 	unsigned char* toBytes();
-	unsigned int addFromAsset(Asset& assetObject);
-
+	int addFromAsset(Asset& assetObject);
+	uint64_t findSpace(uint64_t length);
 };
 
 /**
@@ -104,6 +110,7 @@ private:
 			, directoryStartByte, DataStartByte;
 	std::chrono::time_point<std::chrono::system_clock> writeTimeLast;
 	filesystem::path directoryPath;
+	std::unordered_map<char*, Asset*> hashTable;
 public:
 	ResourceFile();
 	virtual ~ResourceFile() {
@@ -126,6 +133,7 @@ public:
 	unsigned int write(std::string resourceFileName);
 	unsigned int write(std::wstring resourceFileName);
 	unsigned int write(filesystem::path resourceFilePath);
+	int buildDirectory();
 };
 
 class Parser {
@@ -150,6 +158,8 @@ public:
 	static char* ullToBytesSigned(unsigned long long val);
 	static unsigned long long bytesToUll(unsigned char* val);
 	static unsigned long long bytesToUll(char* val);
+	static int assetListToDirectory(std::vector<Asset*>& assetList,
+			Directory& directory);
 };
 
 }

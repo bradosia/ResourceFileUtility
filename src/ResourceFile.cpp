@@ -73,6 +73,43 @@ void Asset::setCRC64(uint64_t val) {
 	crc64 = val;
 }
 
+Directory::Directory() {
+	spaceLast = 0;
+}
+
+int Directory::addFromAsset(Asset& assetObject) {
+	int returnValue = 0;
+	Entry* entryTemp = new Entry();
+	entryTemp->CRC64 = assetObject.getCRC64();
+	entryTemp->assetLength = (uint64_t) assetObject.getFileBytes();
+	entryTemp->assetPosition = findSpace(entryTemp->assetLength);
+	// the insert time will be re-written when the actual packing occurs
+	entryTemp->assetInsertTime =
+			(uint64_t) std::chrono::time_point_cast<std::chrono::seconds>(
+					std::chrono::system_clock::now()).time_since_epoch().count();
+	entryTemp->type = assetObject.getOutType().substr(0, 7).c_str();
+	entryTemp->handle = assetObject.getHandle().substr(0, 31).c_str();
+	entryTemp->assetPtr = &assetObject;
+	entryList.push_back(entryTemp);
+	return returnValue;
+}
+
+uint64_t Directory::findSpace(uint64_t length) {
+	unsigned int i, n;
+	n = spaceList.size();
+	uint64_t returnValue = spaceLast;
+	if (n > 0) {
+		for (i = 0; i < n; i++) {
+			// pair->first = space starting position, pair->second = space length
+			if (length <= spaceList[i]->second) {
+				returnValue = spaceList[i]->first;
+				break;
+			}
+		}
+	}
+	return returnValue;
+}
+
 /* ResourceFile implementation */
 ResourceFile::ResourceFile() {
 	versionStatic = 1526521021;
@@ -260,6 +297,10 @@ unsigned int ResourceFile::write(filesystem::path resourceFilePath) {
 	return retStatus;
 }
 
+int ResourceFile::buildDirectory() {
+	return Parser::assetListToDirectory(assetList, directory);
+}
+
 int Parser::readDirectoryJSON(filesystem::fstream& fileJSON,
 		ResourceFile& resourceFileObj) {
 	nlohmann::json j;
@@ -432,6 +473,17 @@ unsigned long long Parser::bytesToUll(unsigned char* val) {
 unsigned long long Parser::bytesToUll(char* val) {
 	unsigned long long *temp = (unsigned long long*) (unsigned char*) val;
 	return *temp;
+}
+
+int Parser::assetListToDirectory(std::vector<Asset*>& assetList,
+		Directory& directory) {
+	int returnValue = 0;
+	unsigned int i, n;
+	n = assetList.size();
+	for (i = 0; i < n; i++) {
+		directory.addFromAsset(*assetList[i]);
+	}
+	return returnValue;
 }
 
 }
