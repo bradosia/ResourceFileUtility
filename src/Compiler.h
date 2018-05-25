@@ -15,6 +15,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <unordered_map>
 #include <boost/thread.hpp>
 #include <boost/filesystem.hpp>
 #include "../contrib/json.hpp"
@@ -49,8 +50,9 @@ public:
 	void info(std::string fileName);
 	void estimate();
 	void estimate(CBvoidResourceFile handler_);
-	void pack(std::string fileName);
-	void pack(std::string fileName, CBvoidResourceFile handler_);
+	unsigned int pack(std::string resourceFileName);
+	unsigned int pack(std::string resourceFileName,
+			CBvoidResourceFile handler_);
 	Asset resourceFileGetFile(int fileID);
 	void setCallbackFileComplete(CBintString handler_);
 	void setCallbackPackComplete(CBintString handler_);

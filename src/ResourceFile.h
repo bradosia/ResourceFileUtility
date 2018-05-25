@@ -12,10 +12,6 @@
 #include <vector>
 #include <fstream>
 #include <chrono>
-#include <locale>
-#include <codecvt>
-#include <io.h>
-#include <fcntl.h>
 #include <boost/locale.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/nowide/fstream.hpp>
@@ -26,30 +22,6 @@
 using namespace boost;
 
 namespace ResourceFileUtility {
-
-/*
- * @class Directory
- * Each Directory entry takes up the bytes
- * 8 bytes = file CRC64
- * 8 bytes = file start position (byte)
- * 8 bytes = file length (byte)
- * 8 bytes = insert time
- * 8 bytes = file type (8 digit ascii)
- * 32 bytes = file handle (32 digit ascii)
- * 58 bytes = custom
- * 128 bytes total
- */
-class Directory {
-private:
-	class Entry {
-	private:
-
-	};
-	unsigned long long filePosCurrent;
-	unsigned long long filePosNew;
-	unsigned long long fileLenCurrent;
-	unsigned long long fileLenNew;
-};
 
 class Asset {
 private:
@@ -82,6 +54,32 @@ public:
 	void setCRC64(uint64_t val);
 };
 
+/*
+ * @class Directory
+ * Each Directory entry takes up the bytes
+ * 8 bytes = file CRC64
+ * 8 bytes = file start position (byte)
+ * 8 bytes = file length (byte)
+ * 8 bytes = insert time
+ * 8 bytes = file type (8 digit ascii)
+ * 32 bytes = file handle (32 digit ascii)
+ * 58 bytes = custom
+ * 128 bytes total
+ */
+class Directory {
+private:
+	class Entry {
+	private:
+		unsigned long long CRC64, assetPosition, assetLength, assetInsertTime;
+		char type[8], handle[32];
+	};
+	std::unordered_map<char*, Entry*> hashTable;
+public:
+	unsigned char* toBytes();
+	unsigned int addFromAsset(Asset& assetObject);
+
+};
+
 /**
  * @class ResourceFile
  * Resource File Meta
@@ -101,15 +99,17 @@ class ResourceFile {
 private:
 	Directory directory;
 	std::vector<Asset*> assetList;
-	unsigned long long version, compatibilityVersion // equal compatibility versions can be read/written
-			, writeTimeLast, directoryStartByte, DataStartByte;
+	unsigned long long versionStatic, compatibilityVersionStatic, version,
+			compatibilityVersion // equal compatibility versions can be read/written
+			, directoryStartByte, DataStartByte;
+	std::chrono::time_point<std::chrono::system_clock> writeTimeLast;
 	filesystem::path directoryPath;
 public:
 	ResourceFile();
 	virtual ~ResourceFile() {
 	}
-	void addFile(std::string handle, std::string filePathString, std::string inType,
-			std::string outType);
+	void addFile(std::string handle, std::string filePathString,
+			std::string inType, std::string outType);
 	unsigned int assetListSize();
 	Asset* asset(unsigned int assetID);
 	unsigned long long getProcessingBytesTotal();
@@ -120,6 +120,12 @@ public:
 	std::string infoToString();
 	std::string estimateToString();
 	void setDirectory(filesystem::path path);
+	unsigned int open(std::string resourceFileName);
+	unsigned int open(std::wstring resourceFileName);
+	unsigned int open(filesystem::path resourceFilePath);
+	unsigned int write(std::string resourceFileName);
+	unsigned int write(std::wstring resourceFileName);
+	unsigned int write(filesystem::path resourceFilePath);
 };
 
 class Parser {
@@ -141,6 +147,9 @@ public:
 	static int insertAsset(filesystem::fstream& resourceFile, Asset& assetObj);
 	static int removeAsset(filesystem::fstream& resourceFile, Asset& assetObj);
 	static unsigned char* ullToBytes(unsigned long long val);
+	static char* ullToBytesSigned(unsigned long long val);
+	static unsigned long long bytesToUll(unsigned char* val);
+	static unsigned long long bytesToUll(char* val);
 };
 
 }

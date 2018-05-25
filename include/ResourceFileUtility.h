@@ -971,10 +971,6 @@ public:
 #include <vector>
 #include <fstream>
 #include <chrono>
-#include <locale>
-#include <codecvt>
-#include <io.h>
-#include <fcntl.h>
 #include <boost/locale.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/nowide/fstream.hpp>
@@ -1060,15 +1056,17 @@ class ResourceFile {
 private:
 	Directory directory;
 	std::vector<Asset*> assetList;
-	unsigned long long version, compatibilityVersion // equal compatibility versions can be read/written
-			, writeTimeLast, directoryStartByte, DataStartByte;
+	unsigned long long versionStatic, compatibilityVersionStatic, version,
+			compatibilityVersion // equal compatibility versions can be read/written
+			, directoryStartByte, DataStartByte;
+	std::chrono::time_point<std::chrono::system_clock> writeTimeLast;
 	filesystem::path directoryPath;
 public:
 	ResourceFile();
 	virtual ~ResourceFile() {
 	}
-	void addFile(std::string handle, std::string filePathString, std::string inType,
-			std::string outType);
+	void addFile(std::string handle, std::string filePathString,
+			std::string inType, std::string outType);
 	unsigned int assetListSize();
 	Asset* asset(unsigned int assetID);
 	unsigned long long getProcessingBytesTotal();
@@ -1079,6 +1077,12 @@ public:
 	std::string infoToString();
 	std::string estimateToString();
 	void setDirectory(filesystem::path path);
+	unsigned int open(std::string resourceFileName);
+	unsigned int open(std::wstring resourceFileName);
+	unsigned int open(filesystem::path resourceFilePath);
+	unsigned int write(std::string resourceFileName);
+	unsigned int write(std::wstring resourceFileName);
+	unsigned int write(filesystem::path resourceFilePath);
 };
 
 class Parser {
@@ -1100,6 +1104,9 @@ public:
 	static int insertAsset(filesystem::fstream& resourceFile, Asset& assetObj);
 	static int removeAsset(filesystem::fstream& resourceFile, Asset& assetObj);
 	static unsigned char* ullToBytes(unsigned long long val);
+	static char* ullToBytesSigned(unsigned long long val);
+	static unsigned long long bytesToUll(unsigned char* val);
+	static unsigned long long bytesToUll(char* val);
 };
 
 }
@@ -1161,8 +1168,9 @@ public:
 	void info(std::string fileName);
 	void estimate();
 	void estimate(CBvoidResourceFile handler_);
-	void pack(std::string fileName);
-	void pack(std::string fileName, CBvoidResourceFile handler_);
+	unsigned int pack(std::string resourceFileName);
+	unsigned int pack(std::string resourceFileName,
+			CBvoidResourceFile handler_);
 	Asset resourceFileGetFile(int fileID);
 	void setCallbackFileComplete(CBintString handler_);
 	void setCallbackPackComplete(CBintString handler_);
@@ -1194,12 +1202,15 @@ namespace ResourceFileUtility {
 class ResourceFile;
 class Asset;
 class Loader {
+private:
 	ResourceFile resourceFileObj;
 public:
 	Loader();
 	virtual ~Loader() {
 	}
-	void info(std::string fileName);
+	unsigned int data(std::string resourceFileName);
+	Asset* info(std::string assetHandle);
+	unsigned char** open(std::string assetHandle);
 };
 
 }

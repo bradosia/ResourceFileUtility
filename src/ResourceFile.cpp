@@ -75,8 +75,9 @@ void Asset::setCRC64(uint64_t val) {
 
 /* ResourceFile implementation */
 ResourceFile::ResourceFile() {
-	version = 1526521021;
-	compatibilityVersion = 1526521021;
+	versionStatic = 1526521021;
+	compatibilityVersionStatic = 1526521021;
+	version = compatibilityVersion = 0;
 }
 
 void ResourceFile::addFile(std::string handle, std::string filePathStringUTF8,
@@ -84,8 +85,10 @@ void ResourceFile::addFile(std::string handle, std::string filePathStringUTF8,
 	unsigned int i, n;
 	// boost::nowide being used instead of wide strings
 	/*std::wstring filePathStringUTF16 = boost::locale::conv::utf_to_utf<wchar_t,
-			char>(filePathStringUTF8);*/
-	assetList.push_back(new Asset(handle, filesystem::path(filePathStringUTF8), inType, outType));
+	 char>(filePathStringUTF8);*/
+	assetList.push_back(
+			new Asset(handle, filesystem::path(filePathStringUTF8), inType,
+					outType));
 }
 unsigned int ResourceFile::assetListSize() {
 	return (unsigned int) assetList.size();
@@ -175,6 +178,86 @@ std::string ResourceFile::estimateToString() {
 
 void ResourceFile::setDirectory(filesystem::path path) {
 	directoryPath = path;
+}
+
+unsigned int ResourceFile::open(std::string resourceFileName) {
+	filesystem::path resourceFilePath = filesystem::path(resourceFileName);
+	return open(resourceFilePath);
+}
+unsigned int ResourceFile::open(std::wstring resourceFileName) {
+	filesystem::path resourceFilePath = filesystem::path(resourceFileName);
+	return open(resourceFilePath);
+}
+unsigned int ResourceFile::open(filesystem::path resourceFilePath) {
+	int retStatus = -1;
+	nowide::ifstream resourceFileStream;
+	try {
+		resourceFileStream.open(resourceFilePath.string(), std::ios::binary);
+	} catch (...) {
+		retStatus = 1;
+	}
+	if (resourceFileStream.is_open()) {
+		char bufferBytes[8];
+		retStatus = 0;
+		// 8 bytes = file version
+		resourceFileStream.seekg(0, std::ios::beg); // set the pointer to the beginning
+		resourceFileStream.read(bufferBytes, 8);
+		version = Parser::bytesToUll(bufferBytes);
+		// 8 bytes = file compatibility version
+		resourceFileStream.seekg(8, std::ios::beg);
+		resourceFileStream.read(bufferBytes, 8);
+		compatibilityVersion = Parser::bytesToUll(bufferBytes);
+		std::cout << "version = " << version << "\n";
+		std::cout << "compatibilityVersion = " << compatibilityVersion << "\n";
+		if (compatibilityVersionStatic != compatibilityVersion) {
+			retStatus = 2;
+		} else {
+			// 8 bytes = last write time (seconds since unix epoch)
+			resourceFileStream.read(bufferBytes, 8);
+			writeTimeLast = std::chrono::time_point<std::chrono::system_clock>(
+					std::chrono::seconds(Parser::bytesToUll(bufferBytes)));
+			std::cout << "writeTimeLast = "
+					<< std::chrono::time_point_cast<std::chrono::seconds>(
+							writeTimeLast).time_since_epoch().count() << "\n";
+		}
+	}
+	return retStatus;
+}
+
+unsigned int ResourceFile::write(std::string resourceFileName) {
+	filesystem::path resourceFilePath = filesystem::path(resourceFileName);
+	return write(resourceFilePath);
+}
+unsigned int ResourceFile::write(std::wstring resourceFileName) {
+	filesystem::path resourceFilePath = filesystem::path(resourceFileName);
+	return write(resourceFilePath);
+}
+unsigned int ResourceFile::write(filesystem::path resourceFilePath) {
+	int retStatus = -1;
+	nowide::ofstream resourceFileStream;
+	try {
+		resourceFileStream.open(resourceFilePath.string(), std::ios::binary);
+	} catch (...) {
+		retStatus = 1;
+	}
+	if (resourceFileStream.is_open()) {
+		// 8 bytes = file version
+		resourceFileStream.seekp(0, std::ios::beg); // set the pointer to the beginning
+		resourceFileStream.write(Parser::ullToBytesSigned(versionStatic), 8);
+		// 8 bytes = file compatibility version
+		resourceFileStream.seekp(8, std::ios::beg);
+		resourceFileStream.write(
+				Parser::ullToBytesSigned(compatibilityVersionStatic), 8);
+		// 8 bytes = last write time (seconds since unix epoch)
+		writeTimeLast = std::chrono::system_clock::now();
+		unsigned long long t =
+				std::chrono::time_point_cast<std::chrono::seconds>(
+						writeTimeLast).time_since_epoch().count();
+		resourceFileStream.seekp(16, std::ios::beg);
+		resourceFileStream.write(Parser::ullToBytesSigned(t), 8);
+		// 8 bytes = directory start position (byte)
+	}
+	return retStatus;
 }
 
 int Parser::readDirectoryJSON(filesystem::fstream& fileJSON,
@@ -334,6 +417,21 @@ int Parser::estimate(Asset* assetPtr) {
 unsigned char* Parser::ullToBytes(unsigned long long val) {
 	unsigned long long *temp = new unsigned long long(val);
 	return (unsigned char*) temp;
+}
+
+char* Parser::ullToBytesSigned(unsigned long long val) {
+	unsigned long long *temp = new unsigned long long(val);
+	return (char*) (unsigned char*) temp;
+}
+
+unsigned long long Parser::bytesToUll(unsigned char* val) {
+	unsigned long long *temp = (unsigned long long*) val;
+	return *temp;
+}
+
+unsigned long long Parser::bytesToUll(char* val) {
+	unsigned long long *temp = (unsigned long long*) (unsigned char*) val;
+	return *temp;
 }
 
 }

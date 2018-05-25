@@ -93,21 +93,28 @@ ifeq ($(HOST_OS),WIN)
 		endif
 	endif
 	ifeq ($(TARGET_OS),ANDROID)
-		BOOST_INCLUDE_DIR = /usr/include
-		BOOST_LIBS_DIR = /usr/lib-android
+		BOOST_INCLUDE_DIR = C:/boost_1_64_0/include
 		BOOST_LIBS_POST = 
-		NDK_PATH=C:\android-ndk-r16b-windows-x86_64\android-ndk-r16b
+		NDK_PATH = C:/android-ndk-r16b-windows-x86_64/ndroid-ndk-r16b
 		ifeq ($(TARGET_ARCH),armeabi)
+			BOOST_LIBS_DIR = C:/boost_1_64_0/armeabi/lib
 			GCC = arm-linux-androideabi-g++
 			AR = arm-linux-androideabi-ar
 		endif
 		ifeq ($(TARGET_ARCH),armeabi-v7a)
+			BOOST_LIBS_DIR = C:/boost_1_64_0/armeabi-v7a/lib
 			GCC = arm-linux-androideabi-g++
 			AR = arm-linux-androideabi-ar
 		endif
 		ifeq ($(TARGET_ARCH),arm64-v8a)
+			BOOST_LIBS_DIR = 
 			GCC = aarch64-linux-android-g++
 			AR = aarch64-linux-android-ar
+		endif
+		ifeq ($(TARGET_ARCH),x86)
+			BOOST_LIBS_DIR = C:/boost_1_64_0/x86/lib
+			GCC = i686-linux-android-g++
+			AR = i686-linux-android-ar
 		endif
 	endif
 endif
@@ -185,7 +192,7 @@ LIBRARY_CPP_NAME = ResourceFileUtility
 LIBRARY_CPP_HEADER = $(LIBRARY_INCLUDE_DIR)/$(LIBRARY_CPP_NAME).h
 LIBRARY_CPP_ONE_HEADER = $(LIBRARY_SRC_DIR)/OneHeader.h
 LIBRARY_CPP_VERSION = gnu++11
-LIBRARY_SHARED_LINK_INCLUDES = -lboost_filesystem$(BOOST_LIBS_POST) -lboost_thread$(BOOST_LIBS_POST) -lboost_locale$(BOOST_LIBS_POST) -lboost_system$(BOOST_LIBS_POST)
+LIBRARY_SHARED_LINK_INCLUDES = -lboost_filesystem$(BOOST_LIBS_POST) -lboost_thread$(BOOST_LIBS_POST) -lboost_locale$(BOOST_LIBS_POST) -lboost_system$(BOOST_LIBS_POST) -lboost_iostreams$(BOOST_LIBS_POST)
 # OneHeader c++ program
 PROGRAM_ONE_HEADER_SRC = contrib/OneHeader/src
 PROGRAM_ONE_HEADER_OBJ = contrib/OneHeader/obj
@@ -195,7 +202,7 @@ PROGRAM_ONE_HEADER_EXE = $(PROGRAM_ONE_HEADER_BIN)/OneHeader.exe
 PROGRAM_ONE_HEADER_MAIN_NAME = main
 # example c++ program
 ALL_CPP_COMPILE_INCLUDES = -I"$(LIBRARY_CONTRIB_DIR)" -I"$(LIBRARY_INCLUDE_DIR)"
-PROGRAM_EXAMPLE_CPP_LIBS_FLAG = -lResourceFileUtility -lboost_filesystem$(BOOST_LIBS_POST) -lboost_thread$(BOOST_LIBS_POST) -lboost_locale$(BOOST_LIBS_POST) -lboost_system$(BOOST_LIBS_POST)
+PROGRAM_EXAMPLE_CPP_LIBS_FLAG = -lResourceFileUtility $(LIBRARY_SHARED_LINK_INCLUDES)
 
 #compiler flags
 ifeq ($(COMPILER),CLANG)

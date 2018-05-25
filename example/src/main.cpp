@@ -1,7 +1,9 @@
 #include <string>
 #include <iostream>
 #include <ResourceFileUtility.h>
+#include <boost/nowide/iostream.hpp>
 
+using namespace boost;
 using namespace std;
 
 class Callback: public ResourceFileUtility::CallbackHandler {
@@ -21,7 +23,7 @@ public:
 };
 
 void CBprocess(ResourceFileUtility::ResourceFile* resourceFilePtr) {
-	unsigned int sizeTotal, sizeCurrent, loadBarNumber, n, i;
+	unsigned int sizeTotal, sizeCurrent, loadBarNumber;
 	sizeTotal = resourceFilePtr->getProcessingBytesTotal();
 	while (true) {
 		sizeCurrent = resourceFilePtr->getProcessingBytes();
@@ -38,7 +40,8 @@ void CBprocess(ResourceFileUtility::ResourceFile* resourceFilePtr) {
 }
 
 int main() {
-	unsigned fileNumber, sizeTotal, sizeCurrent, loadBarNumber;
+	std::ios::sync_with_stdio(false);
+	unsigned int fileNumber, sizeTotal, dataStatus;
 	ResourceFileUtility::Compiler* RFUCompiler =
 			new ResourceFileUtility::Compiler();
 	RFUCompiler->info("resources.json");
@@ -50,7 +53,24 @@ int main() {
 	RFUCompiler->pack("assets.data", CBprocess);
 	sizeTotal = resourceFile->getProcessingBytesTotal();
 
-// Keep the console window open in debug mode.
+	ResourceFileUtility::Loader* RFULoader = new ResourceFileUtility::Loader();
+	dataStatus = RFULoader->data("assets.data");
+	if (dataStatus == 0) {
+		cout << "Sucessfully opened data file!\n";
+		ResourceFileUtility::Asset* coneAsset = RFULoader->info("cone");
+		unsigned char** modelBytes = RFULoader->open("cone"); //loads all cone data to memory
+		if (coneAsset != NULL && coneAsset->getInType() == "FILE_FORMAT") {
+			// handle FILE_FORMAT
+		}
+	} else if (dataStatus == -1) {
+		cout << "Unknown error opening data file!\n";
+	} else if (dataStatus == 1) {
+		cout << "Could not open resource file!\n";
+	} else if (dataStatus == 2) {
+		cout << "Resource file not compatible with this version!\n";
+	}
+
+	// Keep the console window open in debug mode.
 	string temp;
 	cout << "Press any key to exit." << endl;
 	getline(cin, temp);

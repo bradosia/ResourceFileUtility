@@ -60,34 +60,16 @@ void Compiler::estimate(CBvoidResourceFile handler_) {
 		resourceFileObj.asset(i)->setProcess(false);
 	}
 }
-void Compiler::pack(std::string fileName) {
-	Compiler::pack(fileName, [](ResourceFile* resourceFilePtr) {});
+unsigned int Compiler::pack(std::string resourceFileName) {
+	return Compiler::pack(resourceFileName, [](ResourceFile* resourceFilePtr) {});
 }
-void Compiler::pack(std::string fileName, CBvoidResourceFile handler_) {
-	std::cout << "Opening \"" << fileName << "\" as the resource output file."
-			<< std::endl;
-	std::fstream fileOut;
-	fileOut.open(fileName, std::fstream::out);
-	if (fileOut.is_open()) {
-		std::cout << "Opened \"" << fileName
-				<< "\" as the resource output file." << std::endl;
-		fileOut.seekg(0, std::ios::beg); // set the pointer to the beginning
-		fileOut.write(
-				(const char*) Parser::ullToBytes(resourceFileObj.getVersion()),
-				8);
-		fileOut.seekg(8, std::ios::beg);
-		fileOut.write(
-				(const char*) Parser::ullToBytes(
-						resourceFileObj.getCompatibilityVersion()), 8);
-	} else {
-		std::cout << "Failed opening \"" << fileName
-				<< "\" as the resource output file." << std::endl;
-	}
+unsigned int Compiler::pack(std::string resourceFileName, CBvoidResourceFile handler_) {
+	unsigned int returnValue = resourceFileObj.write(resourceFileName);
 	if (callbackFileComplete != 0) {
 		char test[] = "packed a file test !!";
 		callbackFileComplete(test);
 	}
-	fileOut.close();
+	return returnValue;
 }
 
 void Compiler::setCallbackFileComplete(CBintString handler_) {

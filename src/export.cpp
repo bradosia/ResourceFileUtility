@@ -64,7 +64,7 @@ void compiler_setCallbackPackComplete(intptr_t ptr, ResourceFileUtility::CBintSt
 
 void compiler_pack(intptr_t ptr, char* fileName) {
 	ResourceFileUtility::Compiler* objPtr = (ResourceFileUtility::Compiler*) ptr;
-	return objPtr->pack(std::string(fileName));
+	objPtr->pack(std::string(fileName));
 }
 
 intptr_t stream_new() {
