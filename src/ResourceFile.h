@@ -12,6 +12,7 @@
 #include <vector>
 #include <fstream>
 #include <chrono>
+#include <unordered_map>
 #include <boost/locale.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/nowide/fstream.hpp>
@@ -70,7 +71,7 @@ public:
 class Directory {
 private:
 	class Entry {
-	private:
+	public:
 		uint64_t CRC64, assetPosition // relative offset from file data start position
 				, assetLength, assetInsertTime;
 		char type[8], handle[32];
@@ -78,12 +79,15 @@ private:
 	};
 	std::vector<Entry*> entryList;
 	std::vector<std::pair<uint64_t,uint64_t>*> spaceList;
-	uint64_t spaceLast;
+	uint64_t spaceLast, offsetPosition;
+	unsigned int entryReserve;
 public:
 	Directory();
-	unsigned char* toBytes();
+	unsigned char* toBytes(unsigned int& size);
 	int addFromAsset(Asset& assetObject);
 	uint64_t findSpace(uint64_t length);
+	void setOffsetPosition(uint64_t pos);
+	void setEntryReserve(unsigned int val);
 };
 
 /**
@@ -111,6 +115,7 @@ private:
 	std::chrono::time_point<std::chrono::system_clock> writeTimeLast;
 	filesystem::path directoryPath;
 	std::unordered_map<char*, Asset*> hashTable;
+	unsigned int metaSize, directoryEntryReserve, directoryEntrySize;
 public:
 	ResourceFile();
 	virtual ~ResourceFile() {

@@ -74,7 +74,40 @@ void Asset::setCRC64(uint64_t val) {
 }
 
 Directory::Directory() {
-	spaceLast = 0;
+	spaceLast = offsetPosition = 0;
+	entryReserve = 0;
+}
+
+unsigned char* Directory::toBytes(unsigned int& size) {
+	unsigned int i, n, offset;
+	unsigned char* returnValue;
+	n = entryReserve;
+	if (entryList.size() > n)
+		n = entryList.size();
+	size = 128 * n;
+	returnValue = new unsigned char[size];
+	memset(&*returnValue, 0, size);
+	for (i = 0; i < n; i++) {
+		offset = i * 128;
+		// 8 bytes = file CRC64
+		memcpy(&returnValue[offset + 0],
+				Parser::ullToBytesSigned(entryList[i]->CRC64), 8);
+		// 8 bytes = file start position (byte)
+		memcpy(&returnValue[offset + 8],
+				Parser::ullToBytesSigned(
+						entryList[i]->assetPosition + offsetPosition), 8);
+		// 8 bytes = file length (byte)
+		memcpy(&returnValue[offset + 16],
+				Parser::ullToBytesSigned(entryList[i]->assetLength), 8);
+		// 8 bytes = insert time
+		memcpy(&returnValue[offset + 24],
+				Parser::ullToBytesSigned(entryList[i]->assetInsertTime), 8);
+		// 8 bytes = file type (8 digit ascii)
+		memcpy(&returnValue[offset + 32], entryList[i]->type, 8);
+		// 32 bytes = file handle (32 digit ascii)
+		memcpy(&returnValue[offset + 40], entryList[i]->handle, 8);
+	}
+	return &*returnValue;
 }
 
 int Directory::addFromAsset(Asset& assetObject) {
@@ -87,10 +120,14 @@ int Directory::addFromAsset(Asset& assetObject) {
 	entryTemp->assetInsertTime =
 			(uint64_t) std::chrono::time_point_cast<std::chrono::seconds>(
 					std::chrono::system_clock::now()).time_since_epoch().count();
-	entryTemp->type = assetObject.getOutType().substr(0, 7).c_str();
-	entryTemp->handle = assetObject.getHandle().substr(0, 31).c_str();
+	memcpy(&entryTemp->type, assetObject.getOutType().substr(0, 7).c_str(), 8);
+	memcpy(&entryTemp->handle, assetObject.getHandle().substr(0, 31).c_str(), 32);
 	entryTemp->assetPtr = &assetObject;
 	entryList.push_back(entryTemp);
+	// increment if last space was used
+	if (entryTemp->assetPosition == spaceLast) {
+		spaceLast += entryTemp->assetLength;
+	}
 	return returnValue;
 }
 
@@ -110,11 +147,21 @@ uint64_t Directory::findSpace(uint64_t length) {
 	return returnValue;
 }
 
+void Directory::setOffsetPosition(uint64_t pos) {
+	offsetPosition = pos;
+}
+
+void Directory::setEntryReserve(unsigned int val) {
+	entryReserve = val;
+}
+
 /* ResourceFile implementation */
 ResourceFile::ResourceFile() {
 	versionStatic = 1526521021;
 	compatibilityVersionStatic = 1526521021;
 	version = compatibilityVersion = 0;
+	directoryEntryReserve = 0;
+	metaSize = directoryEntrySize = 128;
 }
 
 void ResourceFile::addFile(std::string handle, std::string filePathStringUTF8,
@@ -293,6 +340,41 @@ unsigned int ResourceFile::write(filesystem::path resourceFilePath) {
 		resourceFileStream.seekp(16, std::ios::beg);
 		resourceFileStream.write(Parser::ullToBytesSigned(t), 8);
 		// 8 bytes = directory start position (byte)
+		resourceFileStream.seekp(24, std::ios::beg);
+		resourceFileStream.write(Parser::ullToBytesSigned(metaSize), 8);
+		// 8 bytes = directory length (byte)
+		unsigned int directoryBytesSize = directoryEntryReserve
+				* directoryEntrySize;
+		unsigned int dataPositionStart = metaSize + directoryBytesSize;
+		directory.setOffsetPosition(dataPositionStart);
+		directory.setEntryReserve(directoryEntryReserve);
+		unsigned char* directoryBytes = directory.toBytes(directoryBytesSize);
+		resourceFileStream.seekp(24, std::ios::beg);
+		resourceFileStream.write(Parser::ullToBytesSigned(directoryBytesSize),
+				8);
+		// 8 bytes = directory CRC64
+		uint64_t directoryCrcHash = hashExt::crc64(0, directoryBytes,
+				(uint64_t) directoryBytesSize);
+		resourceFileStream.seekp(32, std::ios::beg);
+		resourceFileStream.write(
+				Parser::ullToBytesSigned((unsigned long long) directoryCrcHash),
+				8);
+		// 8 bytes = data start position (byte)
+		resourceFileStream.seekp(40, std::ios::beg);
+		resourceFileStream.write(
+				Parser::ullToBytesSigned(
+						(unsigned long long) dataPositionStart), 8);
+		// 8 bytes = data length (byte)
+		resourceFileStream.seekp(48, std::ios::beg);
+		resourceFileStream.write(
+				Parser::ullToBytesSigned((unsigned long long) 50000), 8);
+		// write directory
+		resourceFileStream.seekp(metaSize, std::ios::beg);
+		resourceFileStream.write((char*) directoryBytes, directoryBytesSize);
+		// write data
+		resourceFileStream.seekp(dataPositionStart, std::ios::beg);
+		unsigned char test[50] = "test";
+		resourceFileStream.write((char*) test, 50000);
 	}
 	return retStatus;
 }
