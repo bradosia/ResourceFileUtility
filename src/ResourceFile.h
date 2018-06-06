@@ -15,6 +15,7 @@
 #include <unordered_map>
 #include <boost/locale.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <boost/nowide/fstream.hpp>
 #include <boost/nowide/iostream.hpp>
 #include "../contrib/json.hpp"
