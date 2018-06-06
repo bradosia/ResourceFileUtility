@@ -928,56 +928,14 @@ using json = basic_json<>;
  * ResourceFileUtility
  * By: Brad Lee
  */
-#ifndef CALLBACK_HANDLER_H
-#define CALLBACK_HANDLER_H
+#ifndef RFU_ASSET_H
+#define RFU_ASSET_H
 
 #include <iostream>
 #include <string>
-#include <fstream>
-
-namespace ResourceFileUtility {
-
-class CallbackHandler {
-public:
-	CallbackHandler() {
-
-	}
-	virtual ~CallbackHandler() {
-	}
-	virtual int fileComplete(char* filePath);
-	virtual int packComplete(char* filePath);
-	virtual int estimateFileComplete(int fileID);
-};
-
-}
-
-#endif
-
-
-//--------------------------------------------
-//--------------------------------------------
-
-/*
- * ResourceFileUtility
- * By: Brad Lee
- */
-#ifndef RESOURCE_FILE_H
-#define RESOURCE_FILE_H
-
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <string>
-#include <vector>
-#include <fstream>
 #include <chrono>
-#include <unordered_map>
 #include <boost/locale.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/nowide/fstream.hpp>
-#include <boost/nowide/iostream.hpp>
-
-
 
 using namespace boost;
 
@@ -1013,6 +971,145 @@ public:
 	uint64_t getCRC64();
 	void setCRC64(uint64_t val);
 };
+
+}
+
+#endif
+
+
+//--------------------------------------------
+//--------------------------------------------
+
+/*
+ * ResourceFileUtility
+ * By: Brad Lee
+ */
+#ifndef CALLBACK_HANDLER_H
+#define CALLBACK_HANDLER_H
+
+#include <iostream>
+#include <string>
+#include <fstream>
+
+namespace ResourceFileUtility {
+
+class CallbackHandler {
+public:
+	CallbackHandler() {
+
+	}
+	virtual ~CallbackHandler() {
+	}
+	virtual int fileComplete(char* filePath);
+	virtual int packComplete(char* filePath);
+	virtual int estimateFileComplete(int fileID);
+};
+
+}
+
+#endif
+
+
+//--------------------------------------------
+//--------------------------------------------
+
+/*
+ * ResourceFileUtility
+ * By: Brad Lee
+ */
+#ifndef RFU_PARSER_H
+#define RFU_PARSER_H
+
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <fstream>
+#include <chrono>
+#include <unordered_map>
+#include <boost/locale.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/nowide/fstream.hpp>
+#include <boost/nowide/iostream.hpp>
+
+
+
+
+
+using namespace boost;
+
+namespace ResourceFileUtility {
+
+class Asset;
+class Directory;
+class ResourceFile;
+
+class Parser {
+public:
+	Parser() {
+
+	}
+	virtual ~Parser() {
+	}
+	static int readDirectoryJSON(filesystem::fstream& resourceFile,
+			ResourceFile& directoryObj);
+	static int readDirectory(filesystem::fstream& resourceFile,
+			ResourceFile& directoryObj);
+	static int getSize(ResourceFile& directoryObj);
+	static int getSize(Asset* assetPtr);
+	static int estimate(Asset* assetPtr);
+	static int writeDirectory(filesystem::fstream& resourceFile,
+			ResourceFile& directoryObj);
+	static int insertAsset(filesystem::fstream& resourceFile, Asset& assetObj);
+	static int removeAsset(filesystem::fstream& resourceFile, Asset& assetObj);
+	static unsigned char* ullToBytes(unsigned long long val);
+	static char* ullToBytesSigned(unsigned long long val);
+	static char* ullToBytesSigned(unsigned long long val,
+			unsigned long long size);
+	static unsigned long long bytesToUll(unsigned char* val);
+	static unsigned long long bytesToUll(char* val);
+	static void ofstreamWrite(nowide::ofstream& outStream,
+			unsigned long long val, unsigned long long size);
+	static int assetListToDirectory(std::vector<Asset*>& assetList,
+			Directory& directory);
+};
+
+}
+
+#endif
+
+
+//--------------------------------------------
+//--------------------------------------------
+
+/*
+ * ResourceFileUtility
+ * By: Brad Lee
+ */
+#ifndef RFU_RESOURCE_FILE_H
+#define RFU_RESOURCE_FILE_H
+
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <fstream>
+#include <chrono>
+#include <unordered_map>
+#include <boost/locale.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/nowide/fstream.hpp>
+#include <boost/nowide/iostream.hpp>
+
+
+
+
+
+using namespace boost;
+
+namespace ResourceFileUtility {
 
 /*
  * @class Directory
@@ -1100,32 +1197,6 @@ public:
 	int buildDirectory();
 };
 
-class Parser {
-public:
-	Parser() {
-
-	}
-	virtual ~Parser() {
-	}
-	static int readDirectoryJSON(filesystem::fstream& resourceFile,
-			ResourceFile& directoryObj);
-	static int readDirectory(filesystem::fstream& resourceFile,
-			ResourceFile& directoryObj);
-	static int getSize(ResourceFile& directoryObj);
-	static int getSize(Asset* assetPtr);
-	static int estimate(Asset* assetPtr);
-	static int writeDirectory(filesystem::fstream& resourceFile,
-			ResourceFile& directoryObj);
-	static int insertAsset(filesystem::fstream& resourceFile, Asset& assetObj);
-	static int removeAsset(filesystem::fstream& resourceFile, Asset& assetObj);
-	static unsigned char* ullToBytes(unsigned long long val);
-	static char* ullToBytesSigned(unsigned long long val);
-	static unsigned long long bytesToUll(unsigned char* val);
-	static unsigned long long bytesToUll(char* val);
-	static int assetListToDirectory(std::vector<Asset*>& assetList,
-			Directory& directory);
-};
-
 }
 
 #endif
@@ -1154,6 +1225,12 @@ public:
 #include <unordered_map>
 #include <boost/thread.hpp>
 #include <boost/filesystem.hpp>
+
+
+
+
+
+//
 
 using namespace boost;
 
@@ -1211,6 +1288,8 @@ public:
 #include <string>
 
 
+
+
 namespace ResourceFileUtility {
 
 class ResourceFile;
@@ -1222,9 +1301,16 @@ public:
 	Loader();
 	virtual ~Loader() {
 	}
+	/*
+	 * Opens the resource file and populates the Resource File Object
+	 */
 	unsigned int data(std::string resourceFileName);
 	Asset* info(std::string assetHandle);
-	unsigned char** open(std::string assetHandle);
+	/*
+	 * Opens the resource file asset byte array
+	 * @return asset byte array
+	 */
+	unsigned char* open(std::string assetHandle);
 };
 
 }

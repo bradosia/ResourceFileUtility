@@ -2,8 +2,8 @@
  * ResourceFileUtility
  * By: Brad Lee
  */
-#ifndef RESOURCE_FILE_H
-#define RESOURCE_FILE_H
+#ifndef RFU_RESOURCE_FILE_H
+#define RFU_RESOURCE_FILE_H
 
 #include <iostream>
 #include <iomanip>
@@ -19,41 +19,12 @@
 #include <boost/nowide/iostream.hpp>
 #include "../contrib/json.hpp"
 #include "crc64.h"
+#include "Asset.h"
+#include "Parser.h"
 
 using namespace boost;
 
 namespace ResourceFileUtility {
-
-class Asset {
-private:
-	bool fileExist, fileWritten, fileProcessing;
-	unsigned long long filePosCurrent, filePosNew, fileLenCurrent, fileLenNew,
-			processBytes, fileBytes, fileReadBytesLast;
-	std::chrono::microseconds processTime, fileReadTimeLast,
-			fileReadTimePerByteLast;
-	std::string handle, inType, outType;
-	filesystem::path filePath;
-	uint64_t crc64;
-public:
-	Asset();
-	Asset(std::string handle_, filesystem::path filePath_, std::string inType_,
-			std::string outType_);
-	void init();
-	std::string getHandle();
-	filesystem::path getFilePath();
-	std::string getInType();
-	std::string getOutType();
-	void setExist(bool flag);
-	void setProcess(bool flag);
-	bool getProcess();
-	unsigned long long getProcessBytes();
-	unsigned long long getFileBytes();
-	void setProcessBytes(unsigned long long val);
-	void setFileBytes(unsigned long long val);
-	void setProcessTime(std::chrono::microseconds val);
-	uint64_t getCRC64();
-	void setCRC64(uint64_t val);
-};
 
 /*
  * @class Directory
@@ -139,32 +110,6 @@ public:
 	unsigned int write(std::wstring resourceFileName);
 	unsigned int write(filesystem::path resourceFilePath);
 	int buildDirectory();
-};
-
-class Parser {
-public:
-	Parser() {
-
-	}
-	virtual ~Parser() {
-	}
-	static int readDirectoryJSON(filesystem::fstream& resourceFile,
-			ResourceFile& directoryObj);
-	static int readDirectory(filesystem::fstream& resourceFile,
-			ResourceFile& directoryObj);
-	static int getSize(ResourceFile& directoryObj);
-	static int getSize(Asset* assetPtr);
-	static int estimate(Asset* assetPtr);
-	static int writeDirectory(filesystem::fstream& resourceFile,
-			ResourceFile& directoryObj);
-	static int insertAsset(filesystem::fstream& resourceFile, Asset& assetObj);
-	static int removeAsset(filesystem::fstream& resourceFile, Asset& assetObj);
-	static unsigned char* ullToBytes(unsigned long long val);
-	static char* ullToBytesSigned(unsigned long long val);
-	static unsigned long long bytesToUll(unsigned char* val);
-	static unsigned long long bytesToUll(char* val);
-	static int assetListToDirectory(std::vector<Asset*>& assetList,
-			Directory& directory);
 };
 
 }

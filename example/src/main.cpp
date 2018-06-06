@@ -58,7 +58,7 @@ int main() {
 	if (dataStatus == 0) {
 		cout << "Sucessfully opened data file!\n";
 		ResourceFileUtility::Asset* coneAsset = RFULoader->info("cone");
-		unsigned char** modelBytes = RFULoader->open("cone"); //loads all cone data to memory
+		unsigned char* modelBytes = RFULoader->open("cone"); //loads all cone data to memory
 		if (coneAsset != NULL && coneAsset->getInType() == "FILE_FORMAT") {
 			// handle FILE_FORMAT
 		}

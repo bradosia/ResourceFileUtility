@@ -447,11 +447,13 @@ PROGRAM_OBJ_FILES := $(patsubst $(PROGRAM_SRC_DIR)/%.cpp,$(PROGRAM_OBJ_DIR)/%.o,
 EXAMPLE_SRC = *.cs
 EXTRA_SRC = ResourceFileUtility.cs
 
-all: $(PROGRAM_ONE_HEADER_EXE) one_header library_setup $(LIBRARY_CPP_STATIC_BIN) $(LIBRARY_CPP_SHARED_BIN) library_clean program_cpp $(PROGRAM_CPP_EXE) program_csharp $(PROGRAM_CSHARP_EXE_ENABLE) $(PROGRAM_CPP_APP_ENABLE)
+all: one_header_setup $(PROGRAM_ONE_HEADER_EXE) one_header library_setup $(LIBRARY_CPP_STATIC_BIN) $(LIBRARY_CPP_SHARED_BIN) library_clean program_cpp $(PROGRAM_CPP_EXE) program_csharp $(PROGRAM_CSHARP_EXE_ENABLE) $(PROGRAM_CPP_APP_ENABLE)
 
 # One header compile
-$(PROGRAM_ONE_HEADER_EXE):
+one_header_setup:
 	$(PROGRAM_ONE_HEADER_EXE_DEL_CMD)
+	
+$(PROGRAM_ONE_HEADER_EXE):
 	$(GCC) $(PROGRAM_ONE_HEADER_COMPILE_FLAGS) $(PROGRAM_ONE_HEADER_LINK_FLAGS) -o $@ $(PROGRAM_ONE_HEADER_SRC)/$(PROGRAM_ONE_HEADER_MAIN_NAME).cpp
 
 # One header execute

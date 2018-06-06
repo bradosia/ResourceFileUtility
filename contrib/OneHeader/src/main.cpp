@@ -17,6 +17,7 @@ bool copyProcess(ifstream &streamIn, ofstream &streamOut) {
 	bufferSize = 256;
 	char bufferInChar[bufferSize + 1];
 	string streamBuffer;
+	unsigned int positionNone = (unsigned int) string::npos;
 	mode = filePos = 0;
 	streamIn.seekg(0, ios::end); // set the pointer to the end
 	fileSize = streamIn.tellg(); // get the length of the file
@@ -33,23 +34,34 @@ bool copyProcess(ifstream &streamIn, ofstream &streamOut) {
 			if (mode == 0) {
 				directiveStartPos = (unsigned int) streamBuffer.find(
 						"#include \"");
-				if (directiveStartPos != (unsigned int) string::npos) {
+				if (directiveStartPos != positionNone) {
+					cout << "[OneHeader] FOUND #include \" AT "
+							<< directiveStartPos << endl;
 					mode = 1;
 					// write data before #
 					streamOut << streamBuffer.substr(0, directiveStartPos);
 					streamBuffer.erase(0, directiveStartPos);
 				} else {
-					// nothing to do, just write
-					streamOut << streamBuffer;
-					streamBuffer.clear();
+					/*
+					 * 2018-05-31 Update
+					 * Do not write and erase stream buffer if token not found.
+					 * Maybe buffer ended in the middle of the token.
+					 */
+					//streamOut << streamBuffer;
+					//streamBuffer.clear();
 					break;
 				}
 			} else if (mode == 1) {
 				directiveEndPos = (unsigned int) streamBuffer.substr(10).find(
 						'"');
-				if (directiveEndPos != (unsigned int) string::npos) {
+				if (directiveEndPos != positionNone) {
+					cout << "[OneHeader] FOUND \" AT " << directiveEndPos
+							<< endl;
 					mode = 0;
 					// erase data at '"'
+					cout << "[OneHeader] ERASING "
+							<< streamBuffer.substr(0, directiveEndPos + 11)
+							<< endl;
 					streamBuffer.erase(0, directiveEndPos + 11);
 				} else {
 					break;
@@ -133,8 +145,8 @@ int main(int argc, char** argv) {
 	} else {
 		fileInName = argv[1];
 		fileOutputName = argv[2];
-		cout << "test " << fileInName << endl;
-		cout << "test2 " << fileOutputName << endl;
+		cout << "[OneHeader] Input File: " << fileInName << endl;
+		cout << "[OneHeader] Output File: " << fileOutputName << endl;
 		streamIn.open(fileInName, ios::binary);
 		fileOutput.open(fileOutputName, ios::binary);
 		if (!streamIn.is_open()) {

@@ -7,7 +7,9 @@
 
 #include <iostream>
 #include <string>
+#include "Asset.h"
 #include "ResourceFile.h"
+#include "Parser.h"
 
 namespace ResourceFileUtility {
 
@@ -20,9 +22,16 @@ public:
 	Loader();
 	virtual ~Loader() {
 	}
+	/*
+	 * Opens the resource file and populates the Resource File Object
+	 */
 	unsigned int data(std::string resourceFileName);
 	Asset* info(std::string assetHandle);
-	unsigned char** open(std::string assetHandle);
+	/*
+	 * Opens the resource file asset byte array
+	 * @return asset byte array
+	 */
+	unsigned char* open(std::string assetHandle);
 };
 
 }

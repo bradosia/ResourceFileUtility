@@ -20,7 +20,9 @@
 #include <boost/filesystem.hpp>
 #include "../contrib/json.hpp"
 #include "CallbackHandler.h"
+#include "Asset.h"
 #include "ResourceFile.h"
+#include "Parser.h"
 //#include "mingw_threads.h"
 
 using namespace boost;
