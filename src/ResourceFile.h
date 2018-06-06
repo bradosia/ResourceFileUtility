@@ -15,7 +15,7 @@
 #include <unordered_map>
 #include <boost/locale.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/fstream.hpp>		// linux-x86_64-gcc needs this for boost::filesystem::fstream
 #include <boost/nowide/fstream.hpp>
 #include <boost/nowide/iostream.hpp>
 #include "../contrib/json.hpp"
