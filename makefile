@@ -330,7 +330,7 @@ ifeq ($(TARGET_OS),LINUX)
 	BUNDLE_CMD = 
 	# program c++
 	PROGRAM_CPP_COMPILE = -I"$(BOOST_INCLUDE_DIR)" $(EXAMPLE_PROGRAM_OBJ_COMPILE_FLAGS_STANDARD)
-	PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -L"$(LIBRARY_PLATFORM_DIR)" -L"$(BOOST_LIBS_DIR)" $(PROGRAM_EXAMPLE_CPP_LIBS_FLAG)
+	PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -static-libc -static -L"$(LIBRARY_PLATFORM_DIR)" -L"$(BOOST_LIBS_DIR)" $(PROGRAM_EXAMPLE_CPP_LIBS_FLAG)
 	# OneHeader c++
 	PROGRAM_ONE_HEADER_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -fmessage-length=0
 	PROGRAM_ONE_HEADER_LINK_FLAGS = -static-libgcc -static-libstdc++
