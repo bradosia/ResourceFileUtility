@@ -333,7 +333,7 @@ ifeq ($(TARGET_OS),LINUX)
 	PROGRAM_CPP_LINK = -static-libgcc -static-libstdc++ -static -pthread -L"$(LIBRARY_PLATFORM_DIR)" -L"$(BOOST_LIBS_DIR)" $(PROGRAM_EXAMPLE_CPP_LIBS_FLAG)
 	# OneHeader c++
 	PROGRAM_ONE_HEADER_COMPILE_FLAGS = -O3 -g3 -std=gnu++11 -Wall -fmessage-length=0
-	PROGRAM_ONE_HEADER_LINK_FLAGS = -static-libgcc -static-libstdc++
+	PROGRAM_ONE_HEADER_LINK_FLAGS = -static-libgcc -static-libstdc++ -static -pthread
 endif
 ifeq ($(TARGET_OS),OSX)
 	# cpp library commands and flags
