@@ -8,12 +8,12 @@ cd /Users/CKMo/Brad
 #debian
 cd /home/demo
 
-#github reset
+# github reset
 cd ResourceFileUtility
 git reset --hard
 git pull origin master
 
-#build command
+# build command
 make HOST_OS=LINUX TARGET_ARCH=x86_64
 
 make
@@ -24,6 +24,7 @@ mono example/example_cpp.exe
 
 example/example_csharp
 
+# github commit
 git status
 git add .
 git commit -m "fixed"
