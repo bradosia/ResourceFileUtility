@@ -164,12 +164,13 @@ int main(int argc, char** argv) {
 		string includeFilePath;
 		string relativeDirectory = "";
 		string fileInNameStr = string(fileInName);
-		unsigned int slashLastPosition =
-				(unsigned int) fileInNameStr.find_last_of('/');
-		if (slashLastPosition != (unsigned int) string::npos) {
+		size_t slashLastPosition = fileInNameStr.find_last_of('/');
+		if (slashLastPosition != string::npos) {
 			relativeDirectory = fileInNameStr.substr(0, slashLastPosition + 1);
 		}
-		unsigned int i, n;
+		/* used to disable certain includes in the monolithic header */
+		fileOutput << "#define ONE_HEADER\n";
+		size_t i, n;
 		n = includeList.size();
 		for (i = 0; i < n; i++) {
 			string includeFilePath;

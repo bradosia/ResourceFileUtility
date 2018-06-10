@@ -18,7 +18,6 @@
 #include <boost/filesystem/fstream.hpp>		// linux-x86_64-gcc needs this for boost::filesystem::fstream
 #include <boost/nowide/fstream.hpp>
 #include <boost/nowide/iostream.hpp>
-#include "../contrib/json.hpp"
 #include "crc64.h"
 #include "Asset.h"
 #include "Parser.h"

@@ -18,7 +18,6 @@
 #include <unordered_map>
 #include <boost/thread.hpp>
 #include <boost/filesystem.hpp>
-#include "../contrib/json.hpp"
 #include "CallbackHandler.h"
 #include "Asset.h"
 #include "ResourceFile.h"

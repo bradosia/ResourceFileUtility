@@ -1,4 +1,5 @@
-﻿{
+﻿// nlohmann::json crashes parsing this comment
+{
 	"options": {
 		"directoryEntryReserve": 256,
 		"tryToUpdate": true
@@ -105,7 +106,7 @@
 			"path": "resources/music/justinbiebebabyfeat.mp3",
 			"inType": "mp3",
 			"outType": "vorbis"
-		} ,
+		},
 		{
 			"handle": "some object",
 			"path": "resources/objects/体系结构.json",

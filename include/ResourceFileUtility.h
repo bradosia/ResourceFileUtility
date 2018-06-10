@@ -1,3 +1,4 @@
+#define ONE_HEADER
 #ifdef __MINGW32__
 #ifndef _GLIBCXX_HAS_GTHREADS
 #include <mutex>          // std::mutex, std::unique_lock
@@ -859,72 +860,6 @@ public:
 //--------------------------------------------
 
 /*
- * credit to https://github.com/nlohmann
- */
-#ifndef NLOHMANN_JSON_FWD_HPP
-#define NLOHMANN_JSON_FWD_HPP
-
-#include <cstdint> // int64_t, uint64_t
-#include <map> // map
-#include <memory> // allocator
-#include <string> // string
-#include <vector> // vector
-
-/*!
-@brief namespace for Niels Lohmann
-@see https://github.com/nlohmann
-@since version 1.0.0
-*/
-namespace nlohmann
-{
-/*!
-@brief default JSONSerializer template argument
-This serializer ignores the template arguments and uses ADL
-([argument-dependent lookup](http://en.cppreference.com/w/cpp/language/adl))
-for serialization.
-*/
-template<typename = void, typename = void>
-struct adl_serializer;
-
-template<template<typename U, typename V, typename... Args> class ObjectType =
-         std::map,
-         template<typename U, typename... Args> class ArrayType = std::vector,
-         class StringType = std::string, class BooleanType = bool,
-         class NumberIntegerType = std::int64_t,
-         class NumberUnsignedType = std::uint64_t,
-         class NumberFloatType = double,
-         template<typename U> class AllocatorType = std::allocator,
-         template<typename T, typename SFINAE = void> class JSONSerializer =
-         adl_serializer>
-class basic_json;
-
-/*!
-@brief JSON Pointer
-A JSON pointer defines a string syntax for identifying a specific value
-within a JSON document. It can be used with functions `at` and
-`operator[]`. Furthermore, JSON pointers are the base for JSON patches.
-@sa [RFC 6901](https://tools.ietf.org/html/rfc6901)
-@since version 2.0.0
-*/
-template<typename BasicJsonType>
-class json_pointer;
-
-/*!
-@brief default JSON class
-This type is the default specialization of the @ref basic_json class which
-uses the standard template types.
-@since version 1.0.0
-*/
-using json = basic_json<>;
-}
-
-#endif
-
-
-//--------------------------------------------
-//--------------------------------------------
-
-/*
  * ResourceFileUtility
  * By: Brad Lee
  */
@@ -1033,7 +968,11 @@ public:
 #include <boost/filesystem/fstream.hpp>		// linux-x86_64-gcc needs this for boost::filesystem::fstream
 #include <boost/nowide/fstream.hpp>
 #include <boost/nowide/iostream.hpp>
-
+#ifndef ONE_HEADER
+#include <rapidjson/document.h>
+#include <rapidjson/istreamwrapper.h>
+#include <rapidjson/encodedstream.h>
+#endif
 
 
 
@@ -1104,7 +1043,6 @@ public:
 #include <boost/filesystem/fstream.hpp>		// linux-x86_64-gcc needs this for boost::filesystem::fstream
 #include <boost/nowide/fstream.hpp>
 #include <boost/nowide/iostream.hpp>
-
 
 
 
@@ -1227,7 +1165,6 @@ public:
 #include <unordered_map>
 #include <boost/thread.hpp>
 #include <boost/filesystem.hpp>
-
 
 
 

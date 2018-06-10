@@ -1,6 +1,6 @@
+#define ONE_HEADER 1
 #include "mingw_threads.h"
 #include "crc64.h"
-#include "json_fwd.h"
 #include "Asset.h"
 #include "CallbackHandler.h"
 #include "Parser.h"

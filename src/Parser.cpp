@@ -4,80 +4,76 @@ namespace ResourceFileUtility {
 
 int Parser::readDirectoryJSON(filesystem::fstream& fileJSON,
 		ResourceFile& resourceFileObj) {
-	nlohmann::json j;
 	std::string handle;
 	std::string filePath;
 	std::string inType;
 	std::string outType;
-	unsigned int i, n;
-	bool parseFlag = false;
-	nlohmann::json files;
 	int status = -1;
-	if (fileJSON.is_open()) {
-		try {
-			fileJSON >> j;
-			parseFlag = true;
-		} catch (...) {
-			std::cout << "Failed to parse JSON!" << std::endl;
+	rapidjson::IStreamWrapper isw(fileJSON);
+	rapidjson::EncodedInputStream<rapidjson::UTF8<>, rapidjson::IStreamWrapper> eis(
+			isw);
+	rapidjson::Document jsonDocument; // Document is GenericDocument<UTF8<> >
+	jsonDocument.ParseStream<0, rapidjson::UTF8<> >(eis); // Parses UTF-8 file into UTF-8 in memory
+	if (jsonDocument.HasParseError()) {
+		std::cout << "Failed to parse JSON!";
+		if (jsonDocument.GetParseError() == 3) {
+			std::cout << " Possible reason: file encoding incorrect\n";
+		} else {
+			std::cout << " Error code: " << jsonDocument.GetParseError()
+					<< " at position " << jsonDocument.GetErrorOffset() << "\n";
 		}
+	} else if (!jsonDocument.IsObject()) {
+		std::cout << "JSON is not an object\n";
+	} else if (!jsonDocument.HasMember("files")) {
+		std::cout << "JSON does not have the \"files\" attribute\n";
+	} else if (!jsonDocument["files"].IsArray()) {
+		std::cout << "\"files\" attribute attributes is not an array\n";
 	} else {
-		status = 1;
-	}
-	/* the user defined json file is very unsafe
-	 * we wrap all the attribute accessing in try{}catch(...){}
-	 */
-	if (parseFlag) {
-		parseFlag = false;
-		try {
-			files = j.at("files");
-			parseFlag = true;
-		} catch (...) {
-			std::cout << "JSON does not have the \"files\" attribute"
-					<< std::endl;
-		}
-	}
-	/* Too many nested try {} statements will confuse me so this part
-	 * gets its own if block
-	 */
-	if (parseFlag) {
-		n = files.size();
-		for (i = 0; i < n; i++) {
-			std::string handle = "";
-			std::string filePath = "";
-			std::string inType = "";
-			std::string outType = "";
-			try {
-				handle = files[i].at("handle").get<std::string>();
-			} catch (...) {
-				std::cout
-						<< "JSON file object does not have the \"handle\" attribute"
-						<< std::endl;
+		rapidjson::Value& fileArray = jsonDocument["files"];
+		for (auto& fileObject : fileArray.GetArray()) {
+			if (fileObject.IsObject()) {
+				std::string handle = "";
+				std::string filePath = "";
+				std::string inType = "";
+				std::string outType = "";
+				/* get handle */
+				if (fileObject.HasMember("handle")
+						&& fileObject["handle"].IsString()) {
+					handle = fileObject["handle"].GetString();
+				} else {
+					std::cout
+							<< "JSON file object does not have the \"handle\" attribute\n";
+				}
+				/* get filePath */
+				if (fileObject.HasMember("path")
+						&& fileObject["path"].IsString()) {
+					filePath = fileObject["path"].GetString();
+				} else {
+					std::cout
+							<< "JSON file object does not have the \"path\" attribute\n";
+				}
+				/* get inType */
+				if (fileObject.HasMember("inType")
+						&& fileObject["inType"].IsString()) {
+					inType = fileObject["inType"].GetString();
+				} else {
+					std::cout
+							<< "JSON file object does not have the \"inType\" attribute\n";
+				}
+				/* get inType */
+				if (fileObject.HasMember("outType")
+						&& fileObject["outType"].IsString()) {
+					outType = fileObject["outType"].GetString();
+				} else {
+					std::cout
+							<< "JSON file object does not have the \"outType\" attribute\n";
+				}
+				resourceFileObj.addFile(handle, filePath, inType, outType);
 			}
-			try {
-				filePath = files[i].at("path").get<std::string>();
-			} catch (...) {
-				std::cout
-						<< "JSON file object does not have the \"path\" attribute"
-						<< std::endl;
-			}
-			try {
-				inType = files[i].at("inType").get<std::string>();
-			} catch (...) {
-				std::cout
-						<< "JSON file object does not have the \"inType\" attribute"
-						<< std::endl;
-			}
-			try {
-				outType = files[i].at("outType").get<std::string>();
-			} catch (...) {
-				std::cout
-						<< "JSON file object does not have the \"outType\" attribute"
-						<< std::endl;
-			}
-			resourceFileObj.addFile(handle, filePath, inType, outType);
 		}
 		status = 0; //okay
 	}
+
 	return status;
 }
 
