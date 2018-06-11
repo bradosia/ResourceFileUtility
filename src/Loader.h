@@ -9,7 +9,7 @@
 #include <string>
 #include "Asset.h"
 #include "ResourceFile.h"
-#include "Parser.h"
+#include "StreamUtilities.h"
 
 namespace ResourceFileUtility {
 

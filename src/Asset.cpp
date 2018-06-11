@@ -2,29 +2,6 @@
 
 namespace ResourceFileUtility {
 
-Asset::Asset() {
-	init();
-}
-
-Asset::Asset(std::string handle_, filesystem::path filePath_,
-		std::string inType_, std::string outType_) {
-	init();
-	handle = handle_;
-	filePath = filePath_;
-	inType = inType_;
-	outType = outType_;
-}
-
-void Asset::init() {
-	fileExist = fileWritten = fileProcessing = false;
-	filePosCurrent = filePosNew = fileLenCurrent = fileLenNew = processBytes =
-			fileBytes = fileReadBytesLast = 0;
-	processTime = fileReadTimeLast = fileReadTimePerByteLast =
-			std::chrono::microseconds(0);
-	handle = inType = outType = "";
-	crc64 = 0;
-}
-
 std::string Asset::getHandle() {
 	return handle;
 }

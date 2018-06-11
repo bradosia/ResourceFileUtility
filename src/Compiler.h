@@ -21,7 +21,7 @@
 #include "CallbackHandler.h"
 #include "Asset.h"
 #include "ResourceFile.h"
-#include "Parser.h"
+#include "ResourceFileUtilities.h"
 //#include "mingw_threads.h"
 
 using namespace boost;

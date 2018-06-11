@@ -16,7 +16,7 @@ void Compiler::info(std::string filePathString) {
 	filesystem::fstream fileIn;
 	int readDirectoryJSONStatus;
 	fileIn.open(filePath);
-	readDirectoryJSONStatus = Parser::readDirectoryJSON(fileIn,
+	readDirectoryJSONStatus = ResourceFileUtilities::readDirectoryJSON(fileIn,
 			resourceFileObj);
 	if (readDirectoryJSONStatus) {
 		if (readDirectoryJSONStatus == 1) {
@@ -28,7 +28,7 @@ void Compiler::info(std::string filePathString) {
 		}
 	} else {
 		resourceFileObj.setDirectory(filePath.parent_path());
-		Parser::getSize(resourceFileObj);
+		ResourceFileUtilities::getSize(resourceFileObj);
 		std::cout << "Success opening \"" << filePath.string()
 				<< "\" as the resource info file." << std::endl;
 	}
@@ -39,13 +39,13 @@ void Compiler::estimate() {
 void Compiler::estimate(CBvoidResourceFile handler_) {
 	unsigned int i, n;
 	// re check sizes
-	Parser::getSize(resourceFileObj);
+	ResourceFileUtilities::getSize(resourceFileObj);
 	// begin estimate threads and set processing flag
 	n = resourceFileObj.assetListSize();
 	for (i = 0; i < n; i++) {
 		resourceFileObj.asset(i)->setProcess(true);
 		estimateThreadList.push_back(
-				new thread(Parser::estimate, resourceFileObj.asset(i)));
+				new thread(ResourceFileUtilities::estimate, resourceFileObj.asset(i)));
 	}
 	// custom handler
 	estimateThreadList.push_back(new thread(handler_, &resourceFileObj));

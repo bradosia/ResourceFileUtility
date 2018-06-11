@@ -20,46 +20,12 @@
 #include <boost/nowide/iostream.hpp>
 #include "crc64.h"
 #include "Asset.h"
-#include "Parser.h"
+#include "AssetUtilities.h"
+#include "StreamUtilities.h"
 
 using namespace boost;
 
 namespace ResourceFileUtility {
-
-/*
- * @class Directory
- * A pre-processed resource file directory.\n
- * Each Directory entry takes up the bytes
- * 8 bytes = file CRC64
- * 8 bytes = file start position (byte)
- * 8 bytes = file length (byte)
- * 8 bytes = insert time
- * 8 bytes = file type (8 digit ascii)
- * 32 bytes = file handle (32 digit ascii)
- * 58 bytes = custom
- * 128 bytes total
- */
-class Directory {
-private:
-	class Entry {
-	public:
-		uint64_t CRC64, assetPosition // relative offset from file data start position
-				, assetLength, assetInsertTime;
-		char type[8], handle[32];
-		Asset* assetPtr;
-	};
-	std::vector<Entry*> entryList;
-	std::vector<std::pair<uint64_t,uint64_t>*> spaceList;
-	uint64_t spaceLast, offsetPosition;
-	unsigned int entryReserve;
-public:
-	Directory();
-	unsigned char* toBytes(unsigned int& size);
-	int addFromAsset(Asset& assetObject);
-	uint64_t findSpace(uint64_t length);
-	void setOffsetPosition(uint64_t pos);
-	void setEntryReserve(unsigned int val);
-};
 
 /**
  * @class ResourceFile
@@ -88,11 +54,26 @@ private:
 	std::unordered_map<char*, Asset*> hashTable;
 	unsigned int metaSize, directoryEntryReserve, directoryEntrySize;
 public:
-	ResourceFile();
+	ResourceFile()
+			:
+				versionStatic(1526521021),
+				compatibilityVersionStatic(1526521021),
+				version(0),
+				compatibilityVersion(0),
+				directoryStartByte(0),
+				DataStartByte(0),
+				directoryEntryReserve(0),
+				metaSize(128),
+				directoryEntrySize(128) {
+	}
+	;
 	virtual ~ResourceFile() {
 	}
-	void addFile(std::string handle, std::string filePathString,
-			std::string inType, std::string outType);
+	void addFile(
+		std::string handle,
+		std::string filePathString,
+		std::string inType,
+		std::string outType);
 	unsigned int assetListSize();
 	Asset* asset(unsigned int assetID);
 	unsigned long long getProcessingBytesTotal();

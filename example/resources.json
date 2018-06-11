@@ -1,7 +1,17 @@
-﻿// nlohmann::json crashes parsing this comment
+﻿/* Resource File Configuration
+ * contains file options and a directory of files to compile
+ * using rapidJSON instead of nlohmann::json
+ * nlohmann::json does not allow single or multiline comments
+ */
 {
 	"options": {
+		/* directory entries to reserve in the compiled blob
+		 * reserving entries allows resource file updates to be faster
+		 */
 		"directoryEntryReserve": 256,
+		/* enables the resource file compiler to update rather than recompile all the assets
+		 * updating is usually faster
+		 */
 		"tryToUpdate": true
 	},
 	"files": [

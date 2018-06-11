@@ -26,10 +26,53 @@ private:
 	filesystem::path filePath;
 	uint64_t crc64;
 public:
-	Asset();
-	Asset(std::string handle_, filesystem::path filePath_, std::string inType_,
-			std::string outType_);
-	void init();
+	Asset()
+			:
+				fileExist(false),
+				fileWritten(false),
+				fileProcessing(false),
+				filePosCurrent(0),
+				filePosNew(0),
+				fileLenCurrent(0),
+				fileLenNew(0),
+				processBytes(0),
+				fileBytes(0),
+				fileReadBytesLast(0),
+				processTime(std::chrono::microseconds(0)),
+				fileReadTimeLast(std::chrono::microseconds(0)),
+				fileReadTimePerByteLast(std::chrono::microseconds(0)),
+				crc64(0),
+				handle(""),
+				filePath(""),
+				inType(""),
+				outType("") {
+	}
+
+	Asset(
+		std::string handle_,
+		filesystem::path filePath_,
+		std::string inType_,
+		std::string outType_)
+			:
+				fileExist(false),
+				fileWritten(false),
+				fileProcessing(false),
+				filePosCurrent(0),
+				filePosNew(0),
+				fileLenCurrent(0),
+				fileLenNew(0),
+				processBytes(0),
+				fileBytes(0),
+				fileReadBytesLast(0),
+				processTime(std::chrono::microseconds(0)),
+				fileReadTimeLast(std::chrono::microseconds(0)),
+				fileReadTimePerByteLast(std::chrono::microseconds(0)),
+				crc64(0),
+				handle(handle_),
+				filePath(filePath_),
+				inType(inType_),
+				outType(outType_) {
+	}
 	std::string getHandle();
 	filesystem::path getFilePath();
 	std::string getInType();

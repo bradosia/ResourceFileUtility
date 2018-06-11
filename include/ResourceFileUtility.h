@@ -863,6 +863,46 @@ public:
  * ResourceFileUtility
  * By: Brad Lee
  */
+#ifndef RFU_STREAM_UTILITIES_H
+#define RFU_STREAM_UTILITIES_H
+
+#include <boost/locale.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>		// linux-x86_64-gcc needs this for boost::filesystem::fstream
+#include <boost/nowide/fstream.hpp>
+#include <boost/nowide/iostream.hpp>
+
+using namespace boost;
+
+namespace ResourceFileUtility {
+
+class StreamUtilities {
+public:
+	static unsigned char* ullToBytes(unsigned long long val);
+	static char* ullToBytesSigned(unsigned long long val);
+	static char* ullToBytesSigned(
+		unsigned long long val,
+		unsigned long long size);
+	static unsigned long long bytesToUll(unsigned char* val);
+	static unsigned long long bytesToUll(char* val);
+	static void ofstreamWrite(
+		nowide::ofstream& outStream,
+		unsigned long long val,
+		unsigned long long size);
+};
+
+}
+
+#endif
+
+
+//--------------------------------------------
+//--------------------------------------------
+
+/*
+ * ResourceFileUtility
+ * By: Brad Lee
+ */
 #ifndef RFU_ASSET_H
 #define RFU_ASSET_H
 
@@ -887,10 +927,53 @@ private:
 	filesystem::path filePath;
 	uint64_t crc64;
 public:
-	Asset();
-	Asset(std::string handle_, filesystem::path filePath_, std::string inType_,
-			std::string outType_);
-	void init();
+	Asset()
+			:
+				fileExist(false),
+				fileWritten(false),
+				fileProcessing(false),
+				filePosCurrent(0),
+				filePosNew(0),
+				fileLenCurrent(0),
+				fileLenNew(0),
+				processBytes(0),
+				fileBytes(0),
+				fileReadBytesLast(0),
+				processTime(std::chrono::microseconds(0)),
+				fileReadTimeLast(std::chrono::microseconds(0)),
+				fileReadTimePerByteLast(std::chrono::microseconds(0)),
+				crc64(0),
+				handle(""),
+				filePath(""),
+				inType(""),
+				outType("") {
+	}
+
+	Asset(
+		std::string handle_,
+		filesystem::path filePath_,
+		std::string inType_,
+		std::string outType_)
+			:
+				fileExist(false),
+				fileWritten(false),
+				fileProcessing(false),
+				filePosCurrent(0),
+				filePosNew(0),
+				fileLenCurrent(0),
+				fileLenNew(0),
+				processBytes(0),
+				fileBytes(0),
+				fileReadBytesLast(0),
+				processTime(std::chrono::microseconds(0)),
+				fileReadTimeLast(std::chrono::microseconds(0)),
+				fileReadTimePerByteLast(std::chrono::microseconds(0)),
+				crc64(0),
+				handle(handle_),
+				filePath(filePath_),
+				inType(inType_),
+				outType(outType_) {
+	}
 	std::string getHandle();
 	filesystem::path getFilePath();
 	std::string getInType();
@@ -952,8 +1035,8 @@ public:
  * ResourceFileUtility
  * By: Brad Lee
  */
-#ifndef RFU_PARSER_H
-#define RFU_PARSER_H
+#ifndef RFU_DIRECTORY_H
+#define RFU_DIRECTORY_H
 
 #include <iostream>
 #include <iomanip>
@@ -963,16 +1046,64 @@ public:
 #include <fstream>
 #include <chrono>
 #include <unordered_map>
-#include <boost/locale.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>		// linux-x86_64-gcc needs this for boost::filesystem::fstream
-#include <boost/nowide/fstream.hpp>
-#include <boost/nowide/iostream.hpp>
-#ifndef ONE_HEADER
-#include <rapidjson/document.h>
-#include <rapidjson/istreamwrapper.h>
-#include <rapidjson/encodedstream.h>
+
+
+
+using namespace boost;
+
+namespace ResourceFileUtility {
+
+/*
+ * @class Directory
+ * A pre-processed resource file directory.\n
+ * Each Directory entry takes up the bytes
+ * 8 bytes = file CRC64
+ * 8 bytes = file start position (byte)
+ * 8 bytes = file length (byte)
+ * 8 bytes = insert time
+ * 8 bytes = file type (8 digit ascii)
+ * 32 bytes = file handle (32 digit ascii)
+ * 58 bytes = custom
+ * 128 bytes total
+ */
+class Directory {
+private:
+	class Entry {
+	public:
+		uint64_t CRC64, assetPosition // relative offset from file data start position
+				, assetLength, assetInsertTime;
+		char type[8], handle[32];
+		Asset* assetPtr;
+	};
+	std::vector<Entry*> entryList;
+	std::vector<std::pair<uint64_t, uint64_t>*> spaceList;
+	uint64_t spaceLast, offsetPosition;
+	unsigned int entryReserve;
+public:
+	Directory()
+			: spaceLast(0), offsetPosition(0), entryReserve(0) {
+	}
+	unsigned char* toBytes(unsigned int& size);
+	int addFromAsset(Asset& assetObject);
+	uint64_t findSpace(uint64_t length);
+	void setOffsetPosition(uint64_t pos);
+	void setEntryReserve(unsigned int val);
+};
+
+}
+
 #endif
+
+
+//--------------------------------------------
+//--------------------------------------------
+
+/*
+ * ResourceFileUtility
+ * By: Brad Lee
+ */
+#ifndef RFU_ASSET_UTILITIES_H
+#define RFU_ASSET_UTILITIES_H
 
 
 
@@ -981,38 +1112,11 @@ using namespace boost;
 
 namespace ResourceFileUtility {
 
-class Asset;
-class Directory;
-class ResourceFile;
-
-class Parser {
+class AssetUtilities {
 public:
-	Parser() {
-
-	}
-	virtual ~Parser() {
-	}
-	static int readDirectoryJSON(filesystem::fstream& resourceFile,
-			ResourceFile& directoryObj);
-	static int readDirectory(filesystem::fstream& resourceFile,
-			ResourceFile& directoryObj);
-	static int getSize(ResourceFile& directoryObj);
-	static int getSize(Asset* assetPtr);
-	static int estimate(Asset* assetPtr);
-	static int writeDirectory(filesystem::fstream& resourceFile,
-			ResourceFile& directoryObj);
-	static int insertAsset(filesystem::fstream& resourceFile, Asset& assetObj);
-	static int removeAsset(filesystem::fstream& resourceFile, Asset& assetObj);
-	static unsigned char* ullToBytes(unsigned long long val);
-	static char* ullToBytesSigned(unsigned long long val);
-	static char* ullToBytesSigned(unsigned long long val,
-			unsigned long long size);
-	static unsigned long long bytesToUll(unsigned char* val);
-	static unsigned long long bytesToUll(char* val);
-	static void ofstreamWrite(nowide::ofstream& outStream,
-			unsigned long long val, unsigned long long size);
-	static int assetListToDirectory(std::vector<Asset*>& assetList,
-			Directory& directory);
+	static int assetListToDirectory(
+		std::vector<Asset*>& assetList,
+		Directory& directory);
 };
 
 }
@@ -1047,44 +1151,10 @@ public:
 
 
 
+
 using namespace boost;
 
 namespace ResourceFileUtility {
-
-/*
- * @class Directory
- * A pre-processed resource file directory.\n
- * Each Directory entry takes up the bytes
- * 8 bytes = file CRC64
- * 8 bytes = file start position (byte)
- * 8 bytes = file length (byte)
- * 8 bytes = insert time
- * 8 bytes = file type (8 digit ascii)
- * 32 bytes = file handle (32 digit ascii)
- * 58 bytes = custom
- * 128 bytes total
- */
-class Directory {
-private:
-	class Entry {
-	public:
-		uint64_t CRC64, assetPosition // relative offset from file data start position
-				, assetLength, assetInsertTime;
-		char type[8], handle[32];
-		Asset* assetPtr;
-	};
-	std::vector<Entry*> entryList;
-	std::vector<std::pair<uint64_t,uint64_t>*> spaceList;
-	uint64_t spaceLast, offsetPosition;
-	unsigned int entryReserve;
-public:
-	Directory();
-	unsigned char* toBytes(unsigned int& size);
-	int addFromAsset(Asset& assetObject);
-	uint64_t findSpace(uint64_t length);
-	void setOffsetPosition(uint64_t pos);
-	void setEntryReserve(unsigned int val);
-};
 
 /**
  * @class ResourceFile
@@ -1113,11 +1183,26 @@ private:
 	std::unordered_map<char*, Asset*> hashTable;
 	unsigned int metaSize, directoryEntryReserve, directoryEntrySize;
 public:
-	ResourceFile();
+	ResourceFile()
+			:
+				versionStatic(1526521021),
+				compatibilityVersionStatic(1526521021),
+				version(0),
+				compatibilityVersion(0),
+				directoryStartByte(0),
+				DataStartByte(0),
+				directoryEntryReserve(0),
+				metaSize(128),
+				directoryEntrySize(128) {
+	}
+	;
 	virtual ~ResourceFile() {
 	}
-	void addFile(std::string handle, std::string filePathString,
-			std::string inType, std::string outType);
+	void addFile(
+		std::string handle,
+		std::string filePathString,
+		std::string inType,
+		std::string outType);
 	unsigned int assetListSize();
 	Asset* asset(unsigned int assetID);
 	unsigned long long getProcessingBytesTotal();
@@ -1135,6 +1220,66 @@ public:
 	unsigned int write(std::wstring resourceFileName);
 	unsigned int write(filesystem::path resourceFilePath);
 	int buildDirectory();
+};
+
+}
+
+#endif
+
+
+//--------------------------------------------
+//--------------------------------------------
+
+/*
+ * ResourceFileUtility
+ * By: Brad Lee
+ */
+#ifndef RFU_RESOURCE_FILE_UTILITIES_H
+#define RFU_RESOURCE_FILE_UTILITIES_H
+
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <fstream>
+#include <chrono>
+#include <unordered_map>
+#include <boost/locale.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>		// linux-x86_64-gcc needs this for boost::filesystem::fstream
+#include <boost/nowide/fstream.hpp>
+#include <boost/nowide/iostream.hpp>
+#ifndef ONE_HEADER
+#include <rapidjson/document.h>
+#include <rapidjson/istreamwrapper.h>
+#include <rapidjson/encodedstream.h>
+#endif
+
+
+
+
+
+using namespace boost;
+
+namespace ResourceFileUtility {
+
+class ResourceFileUtilities {
+public:
+	static int readDirectoryJSON(
+		filesystem::fstream& resourceFile,
+		ResourceFile& directoryObj);
+	static int readDirectory(
+		filesystem::fstream& resourceFile,
+		ResourceFile& directoryObj);
+	static int getSize(ResourceFile& directoryObj);
+	static int getSize(Asset* assetPtr);
+	static int estimate(Asset* assetPtr);
+	static int writeDirectory(
+		filesystem::fstream& resourceFile,
+		ResourceFile& directoryObj);
+	static int insertAsset(filesystem::fstream& resourceFile, Asset& assetObj);
+	static int removeAsset(filesystem::fstream& resourceFile, Asset& assetObj);
 };
 
 }
